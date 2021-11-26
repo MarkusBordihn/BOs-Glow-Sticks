@@ -1,0 +1,20 @@
+{
+  "item.glow_sticks.glow_stick": "Glow Stick",
+  "item.glow_sticks.glow_stick_white": "Glow Stick (white)",
+  "item.glow_sticks.glow_stick_orange": "Glow Stick (orange)",
+  "item.glow_sticks.glow_stick_magenta": "Glow Stick (magenta)",
+  "item.glow_sticks.glow_stick_light_blue": "Glow Stick (light_blue)",
+  "item.glow_sticks.glow_stick_yellow": "Glow Stick (yellow)",
+  "item.glow_sticks.glow_stick_lime": "Glow Stick (lime)",
+  "item.glow_sticks.glow_stick_pink": "Glow Stick (pink)",
+  "item.glow_sticks.glow_stick_gray": "Glow Stick (gray)",
+  "item.glow_sticks.glow_stick_light_gray": "Glow Stick (light_gray)",
+  "item.glow_sticks.glow_stick_cyan": "Glow Stick (cyan)",
+  "item.glow_sticks.glow_stick_purple": "Glow Stick (purple)",
+  "item.glow_sticks.glow_stick_blue": "Glow Stick (blue)",
+  "item.glow_sticks.glow_stick_brown": "Glow Stick (brown)",
+  "item.glow_sticks.glow_stick_green": "Glow Stick (green)",
+  "item.glow_sticks.glow_stick_red": "Glow Stick (red)",
+  "item.glow_sticks.glow_stick_black": "Glow Stick (black)",
+  "itemGroup.glow_sticks": "Glow Sticks"
+}

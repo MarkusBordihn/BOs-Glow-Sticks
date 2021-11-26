@@ -1,0 +1,121 @@
+{
+	"credit": "Made with Blockbench by Markus Bordihn",
+	"textures": {
+		"particle": "glow_sticks:item/glow_stick/green_25pc",
+		"shell": "glow_sticks:item/glow_stick/green_25pc",
+		"core": "glow_sticks:item/glow_stick/green_50pc"
+	},
+	"elements": [
+		{
+			"name": "Shell",
+			"from": [6, 0, 5.5],
+			"to": [9.002, 9, 8.5],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [7.5, 8, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 16], "texture": "#shell"},
+				"east": {"uv": [3, 0, 6, 16], "texture": "#shell"},
+				"south": {"uv": [6, 0, 9, 16], "texture": "#shell"},
+				"west": {"uv": [9, 0, 12, 16], "texture": "#shell"},
+				"up": {"uv": [15, 3, 12, 0], "texture": "#shell"},
+				"down": {"uv": [15, 3, 12, 6], "texture": "#shell"}
+			}
+		},
+		{
+			"name": "Core",
+			"from": [7, 1, 7],
+			"to": [8, 8.25, 8],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [7.5, 8, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 16], "texture": "#core"},
+				"east": {"uv": [9, 0, 12, 16], "texture": "#core"},
+				"south": {"uv": [6, 0, 9, 16], "texture": "#core"},
+				"west": {"uv": [3, 0, 6, 16], "texture": "#core"},
+				"up": {"uv": [15, 3, 12, 0], "texture": "#core"},
+				"down": {"uv": [15, 3, 12, 6], "texture": "#core"}
+			}
+		},
+		{
+			"name": "Shell",
+			"from": [5.998, 8.001, 5.9],
+			"to": [8.998, 17.001, 8.9],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [7.5, 8, 7.5]},
+			"faces": {
+				"north": {"uv": [3, 14, 0, 0], "texture": "#shell"},
+				"east": {"uv": [3, 14, 6, 0], "texture": "#shell"},
+				"south": {"uv": [6, 14, 9, 0], "texture": "#shell"},
+				"west": {"uv": [12, 14, 9, 0], "texture": "#shell"},
+				"up": {"uv": [15, 3, 12, 0], "texture": "#shell"},
+				"down": {"uv": [15, 3, 12, 6], "texture": "#shell"}
+			}
+		},
+		{
+			"name": "Core",
+			"from": [7.001, 7.8, 7],
+			"to": [8.003, 15.05, 8],
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [7.5, 8, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 3, 14], "texture": "#core"},
+				"east": {"uv": [9, 0, 12, 14], "texture": "#core"},
+				"south": {"uv": [6, 0, 9, 14], "texture": "#core"},
+				"west": {"uv": [3, 0, 6, 14], "texture": "#core"},
+				"up": {"uv": [15, 3, 12, 0], "texture": "#core"},
+				"down": {"uv": [15, 3, 12, 6], "texture": "#core"}
+			}
+		}
+	],
+	"gui_light": "front",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [0, 0, 90],
+			"translation": [-5.5, 0, 1.4],
+			"scale": [0.4, 0.6, 0.4]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [0, 0, 90],
+			"translation": [-5.5, 0, 1.4],
+			"scale": [0.4, 0.6, 0.4]
+		},
+		"firstperson_righthand": {
+			"rotation": [-90, 0, 90],
+			"translation": [-8.75, 2.5, 0],
+			"scale": [0.4, 1, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [-90, 0, 90],
+			"translation": [-9.5, 2.5, 0],
+			"scale": [0.4, 1, 0.4]
+		},
+		"ground": {
+			"translation": [0, 1, 0],
+			"scale": [0.4, 0.6, 0.4]
+		},
+		"gui": {
+			"rotation": [20, 45, 0],
+			"scale": [0.6, 0.7, 0.6]
+		},
+		"head": {
+			"rotation": [0, 90, 0],
+			"translation": [0.25, 12, 0],
+			"scale": [0.4, 0.6, 0.4]
+		},
+		"fixed": {
+			"rotation": [0, 90, 0],
+			"translation": [2, 0, -0.5],
+			"scale": [0.8, 0.9, 0.8]
+		}
+	},
+	"groups": [
+		{
+			"name": "GlowStick",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1]
+		},
+		{
+			"name": "GlowStick",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [2, 3]
+		}
+	]
+}

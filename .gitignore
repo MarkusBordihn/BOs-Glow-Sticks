@@ -1,0 +1,35 @@
+# Eclipse
+bin
+.classpath
+.metadata
+.project
+.settings
+*.launch
+
+# Idea
+out
+.idea
+*.ipr
+*.iws
+*.iml
+
+# Gradle
+build
+.gradle
+*local.properties
+
+# NodeJs
+node_modules
+npm-debug.log
+
+# Other
+.DS_Store
+eclipse
+generated
+run
+*.clip
+*.stackdump
+*.log
+
+# Files from Forge MDK
+forge*changelog.txt

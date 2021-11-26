@@ -1,0 +1,8 @@
+{
+  "parent": "glow_sticks:item/glow_stick/template/glow_stick_step_6",
+  "textures": {
+    "particle": "glow_sticks:item/glow_stick/gray_75pc",
+    "shell": "glow_sticks:item/glow_stick/gray_75pc",
+    "core": "glow_sticks:item/glow_stick/gray_100pc"
+  }
+}

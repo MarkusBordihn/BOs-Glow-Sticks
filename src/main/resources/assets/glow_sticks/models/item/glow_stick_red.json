@@ -1,0 +1,41 @@
+{
+  "parent": "glow_sticks:item/glow_stick/red/glow_stick",
+  "overrides": [
+    {
+      "predicate": {
+        "glow_sticks:step": 1
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_1"
+    },
+    {
+      "predicate": {
+        "glow_sticks:step": 2
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_2"
+    },
+    {
+      "predicate": {
+        "glow_sticks:step": 3
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_3"
+    },
+    {
+      "predicate": {
+        "glow_sticks:step": 4
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_4"
+    },
+    {
+      "predicate": {
+        "glow_sticks:step": 5
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_5"
+    },
+    {
+      "predicate": {
+        "glow_sticks:step": 6
+      },
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_step_6"
+    }
+  ]
+}

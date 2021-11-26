@@ -1,0 +1,38 @@
+{
+	"credit": "Made with Blockbench by Markus Bordihn",
+	"textures": {
+		"particle": "glow_sticks:item/glow_stick/green_25pc",
+		"shell": "glow_sticks:item/glow_stick/green_25pc",
+		"core": "glow_sticks:item/glow_stick/green_50pc"
+	},
+	"elements": [
+		{
+			"name": "Shell",
+			"from": [8.975, 0, 3.75],
+			"to": [9.975, 1, 11.75],
+			"rotation": {"angle": 45, "axis": "y", "origin": [6.4875, 0.4875, 7.625]},
+			"faces": {
+				"north": {"uv": [15, 3, 12, 0], "texture": "#shell"},
+				"east": {"uv": [9, 0, 12, 16], "rotation": 90, "texture": "#shell"},
+				"south": {"uv": [15, 3, 12, 6], "rotation": 180, "texture": "#shell"},
+				"west": {"uv": [3, 0, 6, 16], "rotation": 270, "texture": "#shell"},
+				"up": {"uv": [0, 0, 3, 16], "texture": "#shell"},
+				"down": {"uv": [6, 0, 9, 16], "rotation": 180, "texture": "#shell"}
+			}
+		},
+		{
+			"name": "Core",
+			"from": [9.375, 0.35, 4],
+			"to": [9.625, 0.6, 11],
+			"rotation": {"angle": 45, "axis": "y", "origin": [6.4875, 0.4875, 7.625]},
+			"faces": {
+				"north": {"uv": [15, 3, 12, 0], "texture": "#core"},
+				"east": {"uv": [3, 0, 6, 16], "rotation": 90, "texture": "#core"},
+				"south": {"uv": [15, 3, 12, 6], "rotation": 180, "texture": "#core"},
+				"west": {"uv": [9, 0, 12, 16], "rotation": 270, "texture": "#core"},
+				"up": {"uv": [0, 0, 3, 16], "texture": "#core"},
+				"down": {"uv": [6, 0, 9, 16], "rotation": 180, "texture": "#core"}
+			}
+		}
+	]
+}
