@@ -25,8 +25,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ItemParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,9 +36,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fmllegacy.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
@@ -54,7 +55,7 @@ public class GlowStick extends ThrowableItemProjectile {
 
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  private static final int TICK_TTL = 600;
+  private static final int TICK_TTL = 650;
   private int ticks;
 
   private RegistryObject<Block> defaultBlock = null;
@@ -86,12 +87,6 @@ public class GlowStick extends ThrowableItemProjectile {
     return ModItems.GLOW_STICK_GREEN.get();
   }
 
-  private ParticleOptions getParticle() {
-    ItemStack itemstack = this.getItemRaw();
-    return (itemstack.isEmpty() ? ParticleTypes.END_ROD
-        : new ItemParticleOption(ParticleTypes.ITEM, itemstack));
-  }
-
   private boolean canPlaceBlock(BlockState blockState) {
     Material material = blockState.getMaterial();
     return blockState.isAir() || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
@@ -116,7 +111,17 @@ public class GlowStick extends ThrowableItemProjectile {
   }
 
   @Override
+  protected void onHitEntity(EntityHitResult result) {
+    // Drop item if we hit an entity like the player or so.
+    super.onHitEntity(result);
+    if (!this.level.isClientSide) {
+      dropDefaultItem(this.level, new BlockPos(result.getLocation()));
+    }
+  }
+
+  @Override
   protected void onHitBlock(BlockHitResult result) {
+    // Perform some checks to decide if we drop the item or place the item block instead.
     super.onHitBlock(result);
     if (!this.level.isClientSide && defaultBlock != null) {
       BlockPos blockPos = result.getBlockPos();
@@ -152,10 +157,16 @@ public class GlowStick extends ThrowableItemProjectile {
         // Skip existing glow stick block below or at place to avoid floating sticks
         dropDefaultItem(this.level, possibleBlockPosition);
       } else if (possibleBlockPosition != null) {
+        // Check if placing position is full (>=8) water block to avoid jumping animations.
+        BlockState blockStatePossiblePosition = this.level.getBlockState(possibleBlockPosition);
+        boolean isWaterBlock = blockStatePossiblePosition.is(Blocks.WATER)
+            && blockStatePossiblePosition.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
+
         // Place and update block facing to the current facing direction and use a random number for
         // the variants between 1 and 3.
         this.level.setBlockAndUpdate(possibleBlockPosition,
             blockState.setValue(GlowStickBlock.FACING, defaultDirection)
+                .setValue(GlowStickBlock.WATERLOGGED, isWaterBlock)
                 .setValue(GlowStickBlock.VARIANT, RandomUtils.nextInt(1, 4)));
       }
     }
@@ -163,12 +174,24 @@ public class GlowStick extends ThrowableItemProjectile {
 
   @Override
   public void tick() {
+    if (!isAlive()) {
+      return;
+    }
     super.tick();
 
-    // Place light blocks which are following the projectile
-    if (this.isAlive() && !this.level.isClientSide) {
+    if (this.level.isClientSide && !this.isInWater() && ticks % RandomUtils.nextInt(10, 15) == 0) {
+      // Add basic particle effect for every 10 to 15 ticks
+      Vec3 vec3 = this.getDeltaMovement();
+      double d2 = this.getX() + vec3.x;
+      double d0 = this.getY() + vec3.y;
+      double d1 = this.getZ() + vec3.z;
+      this.level.addParticle(ParticleTypes.END_ROD, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D,
+          d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
+    } else {
+      // Place light blocks which are following the projectile
       BlockPos blockPos = this.blockPosition();
       if (blockPos != null) {
+
         BlockPos blockPosAbove = blockPos.above();
         BlockState blockState = this.level.getBlockState(blockPosAbove);
 
@@ -190,17 +213,6 @@ public class GlowStick extends ThrowableItemProjectile {
     // Automatically kill entity if it exceeds time to live.
     if (ticks++ > TICK_TTL) {
       this.remove(RemovalReason.DISCARDED);
-    }
-  }
-
-  @Override
-  public void handleEntityEvent(byte p_37402_) {
-    if (p_37402_ == 3) {
-      ParticleOptions particleOptions = this.getParticle();
-      for (int i = 0; i < 8; ++i) {
-        this.level.addParticle(particleOptions, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,
-            0.0D);
-      }
     }
   }
 

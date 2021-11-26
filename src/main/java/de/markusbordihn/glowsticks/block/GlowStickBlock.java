@@ -60,7 +60,23 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
   public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
   public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 1, 3);
+
   public static final VoxelShape SHAPE_AABB = Block.box(0, 0, 0, 16, 1, 16);
+
+  public static final VoxelShape SHAPE_1_0deg_AABB = Block.box(1.65, 0, 4.75, 5.75, 1, 12.6);
+  public static final VoxelShape SHAPE_1_90deg_AABB = Block.box(4.75, 0, 10.25, 12.6, 1, 14.35);
+  public static final VoxelShape SHAPE_1_180deg_AABB = Block.box(10.25, 0, 3.4, 14.35, 1, 11.25);
+  public static final VoxelShape SHAPE_1_270deg_AABB = Block.box(3.4, 0, 1.65, 11.25, 1, 5.75);
+
+  public static final VoxelShape SHAPE_2_0deg_AABB = Block.box(5.5, 0, 2.4, 12, 1, 8.9);
+  public static final VoxelShape SHAPE_2_90deg_AABB = Block.box(2.4, 0, 4, 8.9, 1, 10.5);
+  public static final VoxelShape SHAPE_2_180deg_AABB = Block.box(4, 0, 7.1, 10.5, 1, 13.6);
+  public static final VoxelShape SHAPE_2_270deg_AABB = Block.box(7.1, 0, 5.5, 13.6, 1, 12);
+
+  public static final VoxelShape SHAPE_3_0deg_AABB = Block.box(2.5, 0, 9.1, 10.4, 1, 13.1);
+  public static final VoxelShape SHAPE_3_90deg_AABB = Block.box(9.1, 0, 5.6, 13.1, 1, 13.5);
+  public static final VoxelShape SHAPE_3_180deg_AABB = Block.box(5.6, 0, 2.9, 13.5, 1, 6.9);
+  public static final VoxelShape SHAPE_3_270deg_AABB = Block.box(2.9, 0, 2.5, 6.9, 1, 10.4);
 
   private int randomTicker = 0;
 
@@ -92,7 +108,6 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   @Override
   public void onBrokenAfterFall(Level level, BlockPos blockPos,
       FallingBlockEntity fallingBlockEntity) {
-    log.info("onBrokenAfterFall {} {}", blockPos);
     level.addFreshEntity(new ItemEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
         new ItemStack(getItem())));
   }
@@ -100,6 +115,47 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   @Override
   public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
       CollisionContext collisionContext) {
+    int shapeVariant = blockState.getValue(VARIANT);
+    Direction shapeFacing = blockState.getValue(FACING);
+    if (shapeVariant == 1) {
+      switch (shapeFacing) {
+        case NORTH:
+          return SHAPE_1_90deg_AABB;
+        case SOUTH:
+          return SHAPE_1_270deg_AABB;
+        case WEST:
+          return SHAPE_1_180deg_AABB;
+        case EAST:
+        default:
+          return SHAPE_1_0deg_AABB;
+      }
+    }
+    if (shapeVariant == 2) {
+      switch (shapeFacing) {
+        case NORTH:
+          return SHAPE_2_90deg_AABB;
+        case SOUTH:
+          return SHAPE_2_270deg_AABB;
+        case WEST:
+          return SHAPE_2_180deg_AABB;
+        case EAST:
+        default:
+          return SHAPE_2_0deg_AABB;
+      }
+    }
+    if (shapeVariant == 3) {
+      switch (shapeFacing) {
+        case NORTH:
+          return SHAPE_3_90deg_AABB;
+        case SOUTH:
+          return SHAPE_3_270deg_AABB;
+        case WEST:
+          return SHAPE_3_180deg_AABB;
+        case EAST:
+        default:
+          return SHAPE_3_0deg_AABB;
+      }
+    }
     return SHAPE_AABB;
   }
 

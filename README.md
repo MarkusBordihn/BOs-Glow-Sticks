@@ -11,12 +11,12 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 - Relative easy to craft.
 - Available in different colors.
 - Eco-friendly (disappearing automatically after a certain time).
-- Works in the on land and in water.
+- Works on land and in water.
 - Use no custom renderer or any other core modifications.
 
 Requires:
 
 - [Bo's Material and Elements][material-elements]
 
-[logo]: logo.png
+[logo]: src/main/resources/logo.png
 [material-elements]: https://www.curseforge.com/minecraft/mc-mods/material-elements

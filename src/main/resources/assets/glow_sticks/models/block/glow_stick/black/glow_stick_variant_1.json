@@ -1,8 +1,8 @@
 {
   "parent": "glow_sticks:block/glow_stick/template/glow_stick_variant_1",
   "textures": {
-    "particle": "glow_sticks:item/glow_stick/black_50pc",
-    "shell": "glow_sticks:item/glow_stick/black_50pc",
-    "core": "glow_sticks:item/glow_stick/black_75pc"
+    "particle": "glow_sticks:item/glow_stick/black_75pc",
+    "shell": "glow_sticks:item/glow_stick/black_75pc",
+    "core": "glow_sticks:item/glow_stick/black_100pc"
   }
 }
