@@ -1,5 +1,6 @@
 # Eclipse
 bin
+eclipse
 .classpath
 .metadata
 .project
@@ -15,6 +16,7 @@ out
 
 # Gradle
 build
+run
 .gradle
 *local.properties
 
@@ -22,14 +24,16 @@ build
 node_modules
 npm-debug.log
 
+# Files from Forge MDK
+forge*changelog.txt
+
+# VSCode
+.vscode/launch.json
+
 # Other
 .DS_Store
-eclipse
 generated
-run
 *.clip
 *.stackdump
 *.log
-
-# Files from Forge MDK
-forge*changelog.txt
+*.bak
