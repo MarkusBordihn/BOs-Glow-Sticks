@@ -1,0 +1,20 @@
+{
+  "item.glow_sticks.glow_stick": "Leuchtstab",
+  "item.glow_sticks.glow_stick_white": "Leuchtstab (weiß)",
+  "item.glow_sticks.glow_stick_orange": "Leuchtstab (orange)",
+  "item.glow_sticks.glow_stick_magenta": "Leuchtstab (magenta)",
+  "item.glow_sticks.glow_stick_light_blue": "Leuchtstab (hellblau)",
+  "item.glow_sticks.glow_stick_yellow": "Leuchtstab (gelb)",
+  "item.glow_sticks.glow_stick_lime": "Leuchtstab (limette)",
+  "item.glow_sticks.glow_stick_pink": "Leuchtstab (rosa)",
+  "item.glow_sticks.glow_stick_gray": "Leuchtstab (grau)",
+  "item.glow_sticks.glow_stick_light_gray": "Leuchtstab (hellgrau)",
+  "item.glow_sticks.glow_stick_cyan": "Leuchtstab (cyan)",
+  "item.glow_sticks.glow_stick_purple": "Leuchtstab (violett)",
+  "item.glow_sticks.glow_stick_blue": "Leuchtstab (blau)",
+  "item.glow_sticks.glow_stick_brown": "Leuchtstab (braun)",
+  "item.glow_sticks.glow_stick_green": "Leuchtstab (grün)",
+  "item.glow_sticks.glow_stick_red": "Leuchtstab (rot)",
+  "item.glow_sticks.glow_stick_black": "Leuchtstab (schwarz)",
+  "itemGroup.glow_sticks": "Leuchtstäbe"
+}

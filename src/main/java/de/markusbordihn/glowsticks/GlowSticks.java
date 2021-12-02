@@ -37,16 +37,16 @@ public class GlowSticks {
   public GlowSticks() {
     FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::new);
 
-    log.info("🧪 Register Glow Stick Entities ...");
+    log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
-    log.info("🧪 Register Glow Stick Items ...");
+    log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
     ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
-    log.info("🧪 Register Glow Stick Blocks ...");
+    log.info("{} Blocks ...", Constants.LOG_REGISTER_PREFIX);
     ModBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
-    log.info("🧪 Register Glow Stick Blocks Entities ...");
+    log.info("{} Blocks Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModBlocks.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
   }
 

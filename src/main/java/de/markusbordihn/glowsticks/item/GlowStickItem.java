@@ -35,11 +35,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.config.CommonConfig;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStick;
 
+@Mod.EventBusSubscriber
 public class GlowStickItem extends Item {
 
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
@@ -50,7 +55,25 @@ public class GlowStickItem extends Item {
   public static final int ANIMATION_STEPS = 6;
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
 
+  // Config
+  public static final CommonConfig.Config COMMON = CommonConfig.COMMON;
+  private static boolean glowStickDespawning = COMMON.glowStickDespawning.get();
+  private static int glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
+
   private RegistryObject<Block> defaultBlock = null;
+
+  @SubscribeEvent
+  public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
+    glowStickDespawning = COMMON.glowStickDespawning.get();
+    glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
+
+    if (glowStickDespawning) {
+      log.info("🧪 \u25BA Glow Sticks age will be decreased every {} random ticks ...",
+          glowStickDespawningTick);
+    } else {
+      log.info("🧪 \u25A0 Glow Sticks will not despawn !");
+    }
+  }
 
   public GlowStickItem(Item.Properties properties) {
     super(properties);
@@ -138,7 +161,7 @@ public class GlowStickItem extends Item {
   @Override
   public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int tick) {
     // Add animation steps to the use animation
-    if (!level.isClientSide && tick % 2 == 0) {
+    if (!level.isClientSide && glowStickDespawning && tick % glowStickDespawningTick == 0) {
       int currentStep = increaseStep(itemStack);
       // Play sound after breaking the glow stick
       if (currentStep == 4) {

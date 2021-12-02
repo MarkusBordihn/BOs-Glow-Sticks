@@ -27,6 +27,7 @@ public final class Constants {
   // General Mod definitions
   public static final String ISSUE_REPORT = "https://github.com/MarkusBordihn/glow_sticks/issues/";
   public static final String LOG_NAME = "Glow Sticks";
+  public static final String LOG_REGISTER_PREFIX = "🧪 Register Glow Sticks";
   public static final String MOD_COMMAND = "glowsticks";
   public static final String MOD_ID = "glow_sticks";
   public static final String MOD_NAME = "Glow Sticks";

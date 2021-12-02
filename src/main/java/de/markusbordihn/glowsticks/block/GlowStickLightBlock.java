@@ -51,7 +51,7 @@ public class GlowStickLightBlock extends Block {
 
   public void scheduleTick(Level level, BlockPos blockPos) {
     if (!level.getBlockTicks().hasScheduledTick(blockPos, this)) {
-      level.getBlockTicks().scheduleTick(blockPos, this, TICK_TTL);
+      level.scheduleTick(blockPos, this, TICK_TTL);
     }
   }
 

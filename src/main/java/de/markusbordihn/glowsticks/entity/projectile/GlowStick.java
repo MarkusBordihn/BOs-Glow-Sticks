@@ -42,7 +42,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fmllegacy.RegistryObject;
+
+import net.minecraftforge.registries.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;

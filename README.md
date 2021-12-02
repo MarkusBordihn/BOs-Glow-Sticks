@@ -1,3 +1,6 @@
+[![Glow Sticks Downloads](http://cf.way2muchnoise.eu/full_glow-sticks_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
+[![Glow Sticks MC Versions](http://cf.way2muchnoise.eu/versions/Minecraft_glow-sticks_all.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
+
 # Glow Sticks
 
 ![Glow Sticks][logo]
@@ -16,7 +19,7 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 
 Requires:
 
-- [Bo's Material and Elements][material-elements]
+- [Bo's Material and Elements][glow-sticks]
 
 [logo]: src/main/resources/logo.png
-[material-elements]: https://www.curseforge.com/minecraft/mc-mods/material-elements
+[glow-sticks]: https://www.curseforge.com/minecraft/mc-mods/glow-sticks
