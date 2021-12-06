@@ -22,7 +22,7 @@ apply plugin: 'maven-publish'
 version = "${version_major}.${version_minor}.${version_patch}"
 archivesBaseName = "${mod_id}_${mc_version}"
 
-// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
+// Mojang ships Java 17 to end users in 1.18+.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
@@ -122,13 +122,13 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.18-38.0.10'
+    minecraft 'net.minecraftforge:forge:1.18-38.0.15'
 
     // Required: Bo's Material Elements (dev dependency)
     implementation fg.deobf("curse.maven:material_elements-541620:${material_elements_version}")
 
     // Additional helpful Mods for development (runtime depenedency)
-    // runtimeOnly fg.deobf("curse.maven:jei-238222:3526062")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:3550020")
     // runtimeOnly fg.deobf("curse.maven:item_zoom-261725:3485445")
     // runtimeOnly fg.deobf("curse.maven:spark-361579:3485140")
 }

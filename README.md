@@ -21,5 +21,13 @@ Requires:
 
 - [Bo's Material and Elements][glow-sticks]
 
+## Version Status Overview 🛠️
+
+| Version        | Status                |
+| -------------- | --------------------- |
+| Fabric Version | ❌ Not planned        |
+| Forge 1.17.1   | ⚠️ Maintenance only   |
+| Forge 1.18     | ✔️ Active development |
+
 [logo]: src/main/resources/logo.png
 [glow-sticks]: https://www.curseforge.com/minecraft/mc-mods/glow-sticks
