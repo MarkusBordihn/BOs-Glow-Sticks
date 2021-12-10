@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "glow_sticks:glow_stick_black",
+    "glow_sticks:glow_stick_blue",
+    "glow_sticks:glow_stick_brown",
+    "glow_sticks:glow_stick_cyan",
+    "glow_sticks:glow_stick_gray",
+    "glow_sticks:glow_stick_green",
+    "glow_sticks:glow_stick_light_blue",
+    "glow_sticks:glow_stick_light_gray",
+    "glow_sticks:glow_stick_lime",
+    "glow_sticks:glow_stick_magenta",
+    "glow_sticks:glow_stick_orange",
+    "glow_sticks:glow_stick_pink",
+    "glow_sticks:glow_stick_purple",
+    "glow_sticks:glow_stick_red",
+    "glow_sticks:glow_stick_white",
+    "glow_sticks:glow_stick_yellow"
+  ]
+}

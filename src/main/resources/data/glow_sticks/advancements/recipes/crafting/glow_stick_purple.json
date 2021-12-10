@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": ["glow_sticks:glow_stick_purple_from_test_tube_purple"]
+  },
+  "criteria": {
+    "has_dye": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["minecraft:purple_dye"]
+          }
+        ]
+      }
+    },
+    "has_test_tube_glow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["material_elements:test_tube_glow"]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "glow_sticks:glow_stick_purple_from_test_tube_purple"
+      }
+    }
+  },
+  "requirements": [["has_dye", "has_test_tube_glow", "has_the_recipe"]]
+}

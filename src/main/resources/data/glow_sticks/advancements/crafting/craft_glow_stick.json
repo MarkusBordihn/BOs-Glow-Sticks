@@ -1,0 +1,31 @@
+{
+  "parent": "glow_sticks:crafting/root",
+  "display": {
+    "icon": {
+      "item": "glow_sticks:glow_stick_green"
+    },
+    "title": {
+      "translate": "advancements.glow_sticks.crafting.craft_glow_stick.title"
+    },
+    "description": {
+      "translate": "advancements.glow_sticks.crafting.craft_glow_stick.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "glow_stick": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "glow_sticks:glow_sticks"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [["glow_stick"]]
+}

@@ -1,0 +1,201 @@
+{
+  "parent": "glow_sticks:crafting/craft_glow_stick",
+  "display": {
+    "icon": {
+      "item": "glow_sticks:glow_stick_pink"
+    },
+    "title": {
+      "translate": "advancements.glow_sticks.crafting.craft_all_glow_sticks.title"
+    },
+    "description": {
+      "translate": "advancements.glow_sticks.crafting.craft_all_glow_sticks.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "rewards": {
+    "experience": 100
+  },
+  "criteria": {
+    "glow_stick_black": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_black"]
+          }
+        ]
+      }
+    },
+    "glow_stick_blue": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_blue"]
+          }
+        ]
+      }
+    },
+    "glow_stick_brown": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_brown"]
+          }
+        ]
+      }
+    },
+    "glow_stick_cyan": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_cyan"]
+          }
+        ]
+      }
+    },
+    "glow_stick_gray": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_gray"]
+          }
+        ]
+      }
+    },
+    "glow_stick_green": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_green"]
+          }
+        ]
+      }
+    },
+    "glow_stick_light_blue": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_light_blue"]
+          }
+        ]
+      }
+    },
+    "glow_stick_light_gray": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_light_gray"]
+          }
+        ]
+      }
+    },
+    "glow_stick_lime": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_lime"]
+          }
+        ]
+      }
+    },
+    "glow_stick_magenta": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_magenta"]
+          }
+        ]
+      }
+    },
+    "glow_stick_orange": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_orange"]
+          }
+        ]
+      }
+    },
+    "glow_stick_pink": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_pink"]
+          }
+        ]
+      }
+    },
+    "glow_stick_purple": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_purple"]
+          }
+        ]
+      }
+    },
+    "glow_stick_red": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_red"]
+          }
+        ]
+      }
+    },
+    "glow_stick_white": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_white"]
+          }
+        ]
+      }
+    },
+    "glow_stick_yellow": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["glow_sticks:glow_stick_yellow"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["glow_stick_black"],
+    ["glow_stick_blue"],
+    ["glow_stick_brown"],
+    ["glow_stick_cyan"],
+    ["glow_stick_gray"],
+    ["glow_stick_green"],
+    ["glow_stick_light_blue"],
+    ["glow_stick_light_gray"],
+    ["glow_stick_lime"],
+    ["glow_stick_magenta"],
+    ["glow_stick_orange"],
+    ["glow_stick_pink"],
+    ["glow_stick_purple"],
+    ["glow_stick_red"],
+    ["glow_stick_white"],
+    ["glow_stick_yellow"]
+  ]
+}

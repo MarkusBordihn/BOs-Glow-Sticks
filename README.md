@@ -15,7 +15,8 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 - Available in different colors.
 - Eco-friendly (disappearing automatically after a certain time).
 - Works on land and in water.
-- Use no custom renderer or any other core modifications.
+- Use NO custom renderer or any other core modifications.
+- Translation Support: English, German
 
 Requires:
 

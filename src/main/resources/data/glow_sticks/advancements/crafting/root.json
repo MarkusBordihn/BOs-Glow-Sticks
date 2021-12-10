@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "glow_sticks:glow_stick_red"
+    },
+    "title": {
+      "translate": "advancements.glow_sticks.crafting.root.title"
+    },
+    "description": {
+      "translate": "advancements.glow_sticks.crafting.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "glow_sticks:textures/gui/advancements/backgrounds/crafting.png"
+  },
+  "criteria": {
+    "test_tube": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": ["material_elements:test_tube"]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [["test_tube"]]
+}

@@ -1,4 +1,13 @@
 {
+  "advancements.glow_sticks.crafting.root.title": "Glow Sticks",
+  "advancements.glow_sticks.crafting.root.description": "Get some light in the darkest areas of the world.",
+  "advancements.glow_sticks.crafting.craft_glow_stick.title": "Craft a glow stick",
+  "advancements.glow_sticks.crafting.craft_glow_stick.description": "Just combine a test tube, glowing test tube and some water to get a glow stick.",
+  "advancements.glow_sticks.crafting.craft_all_glow_sticks.title": "Get all glow sticks.",
+  "advancements.glow_sticks.crafting.craft_all_glow_sticks.description": "Get all 16 colored glow sticks.",
+  "advancements.glow_sticks.interaction.share_glow_stick.title": "Sharing is caring.",
+  "advancements.glow_sticks.interaction.share_glow_stick.description": "It's dangerous in the dark! Share a glow stick with a player.",
+
   "item.glow_sticks.glow_stick": "Glow Stick",
   "item.glow_sticks.glow_stick_white": "Glow Stick (white)",
   "item.glow_sticks.glow_stick_orange": "Glow Stick (orange)",
