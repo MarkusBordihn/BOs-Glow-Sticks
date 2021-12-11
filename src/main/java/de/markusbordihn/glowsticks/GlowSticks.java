@@ -22,6 +22,7 @@ package de.markusbordihn.glowsticks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -35,19 +36,16 @@ public class GlowSticks {
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public GlowSticks() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::new);
+    final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
-    ModEntity.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModEntity.ENTITIES.register(modEventBus);
 
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
-    ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModItems.ITEMS.register(modEventBus);
 
     log.info("{} Blocks ...", Constants.LOG_REGISTER_PREFIX);
-    ModBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-    log.info("{} Blocks Entities ...", Constants.LOG_REGISTER_PREFIX);
-    ModBlocks.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModBlocks.BLOCKS.register(modEventBus);
   }
 
 }

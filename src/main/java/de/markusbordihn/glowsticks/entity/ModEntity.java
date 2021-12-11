@@ -19,11 +19,12 @@
 
 package de.markusbordihn.glowsticks.entity;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.RegistryObject;
+
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -39,7 +40,7 @@ public class ModEntity {
 
   public static final RegistryObject<EntityType<GlowStick>> GLOW_STICK =
       ENTITIES.register("glow_stick",
-          () -> EntityType.Builder.<GlowStick>of(GlowStick::new, MobCategory.MISC)
+          () -> EntityType.Builder.<GlowStick>of(GlowStick::new, EntityClassification.MISC)
               .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
               .build(new ResourceLocation(Constants.MOD_ID, "glow_stick").toString()));
 }

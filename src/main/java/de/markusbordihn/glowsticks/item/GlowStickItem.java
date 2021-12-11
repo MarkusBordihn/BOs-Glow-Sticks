@@ -22,23 +22,24 @@ package de.markusbordihn.glowsticks.item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.block.Block;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.world.World;
+
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.config.CommonConfig;
@@ -63,7 +64,7 @@ public class GlowStickItem extends Item {
   private RegistryObject<Block> defaultBlock = null;
 
   @SubscribeEvent
-  public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
+  public static void onServerAboutToStartEvent(FMLServerAboutToStartEvent event) {
     glowStickDespawning = COMMON.glowStickDespawning.get();
     glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
 
@@ -85,22 +86,22 @@ public class GlowStickItem extends Item {
   }
 
   public static boolean isActivated(ItemStack itemStack) {
-    CompoundTag compoundTag = itemStack.getTag();
+    CompoundNBT compoundTag = itemStack.getTag();
     return compoundTag != null && compoundTag.getBoolean(TAG_ACTIVATED);
   }
 
   public static void setActivated(ItemStack itemStack, boolean activated) {
-    CompoundTag compoundTag = itemStack.getOrCreateTag();
+    CompoundNBT compoundTag = itemStack.getOrCreateTag();
     compoundTag.putBoolean(TAG_ACTIVATED, activated);
   }
 
   public static int getStep(ItemStack itemStack) {
-    CompoundTag compoundTag = itemStack.getTag();
+    CompoundNBT compoundTag = itemStack.getTag();
     return compoundTag != null ? compoundTag.getInt(TAG_STEP) : 0;
   }
 
   public static int setStep(ItemStack itemStack, int step) {
-    CompoundTag compoundTag = itemStack.getOrCreateTag();
+    CompoundNBT compoundTag = itemStack.getOrCreateTag();
     if (compoundTag.getInt(TAG_STEP) != step) {
       compoundTag.putInt(TAG_STEP, step);
     }
@@ -117,8 +118,8 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public UseAnim getUseAnimation(ItemStack itemStack) {
-    return UseAnim.NONE;
+  public UseAction getUseAnimation(ItemStack itemStack) {
+    return UseAction.NONE;
   }
 
   @Override
@@ -128,45 +129,45 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+  public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
     ItemStack itemStack = player.getItemInHand(hand);
 
     // Only throw item if it is already activated, otherwise start activation animation.
     if (isActivated(itemStack)) {
-      if (!level.isClientSide) {
+      if (!world.isClientSide) {
         player.getCooldowns().addCooldown(this, DURATION_TICKS);
         player.stopUsingItem();
 
         // Create new glowStick Entity with block reference and facing direction.
-        GlowStick glowStick = new GlowStick(level, player, defaultBlock);
+        GlowStick glowStick = new GlowStick(world, player, defaultBlock);
         glowStick.setItem(itemStack);
-        glowStick.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
-        level.addFreshEntity(glowStick);
+        glowStick.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 1.5F, 1.0F);
+        world.addFreshEntity(glowStick);
       }
 
       player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 
-      if (!player.getAbilities().instabuild) {
+      if (!player.abilities.instabuild) {
         itemStack.shrink(1);
       }
       setActivated(itemStack, false);
       setStep(itemStack, 0);
-      return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+      return ActionResult.sidedSuccess(itemStack, world.isClientSide());
     } else {
       player.startUsingItem(hand);
-      return InteractionResultHolder.consume(itemStack);
+      return ActionResult.consume(itemStack);
     }
   }
 
   @Override
-  public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int tick) {
+  public void onUseTick(World world, LivingEntity livingEntity, ItemStack itemStack, int tick) {
     // Add animation steps to the use animation
-    if (!level.isClientSide && glowStickDespawning && tick % glowStickDespawningTick == 0) {
+    if (!world.isClientSide && glowStickDespawning && tick % glowStickDespawningTick == 0) {
       int currentStep = increaseStep(itemStack);
       // Play sound after breaking the glow stick
       if (currentStep == 4) {
-        level.playSound((Player) null, livingEntity.getX(), livingEntity.getY(),
-            livingEntity.getZ(), SoundEvents.TRIDENT_HIT, SoundSource.NEUTRAL, 1.0F, 1.0F);
+        world.playSound((PlayerEntity) null, livingEntity.getX(), livingEntity.getY(),
+            livingEntity.getZ(), SoundEvents.TRIDENT_HIT, SoundCategory.NEUTRAL, 1.0F, 1.0F);
       }
       if (currentStep > ANIMATION_STEPS) {
         setStep(itemStack, 0);
@@ -175,7 +176,7 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public void releaseUsing(ItemStack itemStack, Level level, LivingEntity livingEntity,
+  public void releaseUsing(ItemStack itemStack, World world, LivingEntity livingEntity,
       int duration) {
     // Reset steps if item is release before.
     if (!isActivated(itemStack)) {
@@ -184,9 +185,9 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
+  public ItemStack finishUsingItem(ItemStack itemStack, World world, LivingEntity livingEntity) {
     // Active item after use animation is done.
-    if (livingEntity instanceof Player && !level.isClientSide && !isActivated(itemStack)) {
+    if (livingEntity instanceof PlayerEntity && !world.isClientSide && !isActivated(itemStack)) {
       setActivated(itemStack, true);
     }
     return itemStack;

@@ -27,6 +27,7 @@ Requires:
 | Version        | Status                |
 | -------------- | --------------------- |
 | Fabric Version | ❌ Not planned        |
+| Forge 1.16.5   | ⚠️ Maintenance only   |
 | Forge 1.17.1   | ⚠️ Maintenance only   |
 | Forge 1.18     | ✔️ Active development |
 

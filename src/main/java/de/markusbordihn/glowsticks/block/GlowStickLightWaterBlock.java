@@ -19,30 +19,31 @@
 
 package de.markusbordihn.glowsticks.block;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ILiquidContainer;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 
-public class GlowStickLightWaterBlock extends GlowStickLightBlock implements LiquidBlockContainer {
+public class GlowStickLightWaterBlock extends GlowStickLightBlock implements ILiquidContainer {
 
   public GlowStickLightWaterBlock(Properties properties) {
     super(properties);
   }
 
   @Override
-  public boolean canPlaceLiquid(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState,
+  public boolean canPlaceLiquid(
+      IBlockReader blockGetter, BlockPos blockPos, BlockState blockState,
       Fluid fluid) {
     return false;
   }
 
   @Override
-  public boolean placeLiquid(LevelAccessor p_154520_, BlockPos p_154521_, BlockState p_154522_,
-      FluidState p_154523_) {
+  public boolean placeLiquid(IWorld p_204509_1_, BlockPos p_204509_2_, BlockState p_204509_3_,
+      FluidState p_204509_4_) {
     return false;
   }
 

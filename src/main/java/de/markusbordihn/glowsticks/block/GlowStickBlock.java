@@ -24,36 +24,36 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.block.IWaterLoggable;
+import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
 
-public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlock {
+public class GlowStickBlock extends FallingBlock implements IWaterLoggable {
 
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
@@ -101,21 +101,20 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   }
 
   @Override
-  public void onLand(Level level, BlockPos blockPos, BlockState blockState1, BlockState blockState2,
+  public void onLand(World world, BlockPos blockPos, BlockState blockState1, BlockState blockState2,
       FallingBlockEntity fallingBlockEntity) {
     fallingBlockEntity.playSound(SoundEvents.SCAFFOLDING_HIT, 1, 1);
   }
 
   @Override
-  public void onBrokenAfterFall(Level level, BlockPos blockPos,
-      FallingBlockEntity fallingBlockEntity) {
-    level.addFreshEntity(new ItemEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
+  public void onBroken(World world, BlockPos blockPos, FallingBlockEntity fallingBlockEntity) {
+    world.addFreshEntity(new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
         new ItemStack(getItem())));
   }
 
   @Override
-  public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
-      CollisionContext collisionContext) {
+  public VoxelShape getShape(BlockState blockState, IBlockReader worldIn, BlockPos blockPos,
+      ISelectionContext collisionContext) {
     int shapeVariant = blockState.getValue(VARIANT);
     Direction shapeFacing = blockState.getValue(FACING);
     if (shapeVariant == 1) {
@@ -161,12 +160,12 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   }
 
   @Override
-  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> blockState) {
-    blockState.add(AGE, FACING, VARIANT, WATERLOGGED);
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    builder.add(AGE, FACING, VARIANT, WATERLOGGED);
   }
 
   @Override
-  public BlockState getStateForPlacement(BlockPlaceContext context) {
+  public BlockState getStateForPlacement(BlockItemUseContext context) {
     return this.defaultBlockState().setValue(FACING,
         context.getHorizontalDirection().getOpposite());
   }
@@ -178,7 +177,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   }
 
   @Override
-  public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos,
+  public void randomTick(BlockState blockState, ServerWorld serverLevel, BlockPos blockPos,
       Random random) {
     int age = blockState.getValue(AGE);
     if (age >= 15) {

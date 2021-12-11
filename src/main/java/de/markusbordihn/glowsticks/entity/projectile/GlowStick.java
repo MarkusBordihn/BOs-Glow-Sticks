@@ -23,27 +23,27 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.projectile.ProjectileItemEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.client.model.obj.MaterialLibrary.Material;
+import net.minecraftforge.fml.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
@@ -52,9 +52,10 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
 
-public class GlowStick extends ThrowableItemProjectile {
+public class GlowStick extends ProjectileItemEntity {
 
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  public static final int FLUID_AMOUNT_FULL = 8;
 
   private static final int TICK_TTL = 650;
   private int ticks;
@@ -62,57 +63,56 @@ public class GlowStick extends ThrowableItemProjectile {
   private RegistryObject<Block> defaultBlock = null;
   private Direction defaultDirection = Direction.NORTH;
 
-  public GlowStick(EntityType<? extends GlowStick> entityType, Level level) {
-    super(entityType, level);
+  public GlowStick(EntityType<? extends GlowStick> entityType, World world) {
+    super(entityType, world);
   }
 
-  public GlowStick(Level level, LivingEntity player) {
-    super(ModEntity.GLOW_STICK.get(), player, level);
+  public GlowStick(World world, LivingEntity player) {
+    super(ModEntity.GLOW_STICK.get(), player, world);
     defaultDirection = player.getDirection().getOpposite();
   }
 
-  public GlowStick(Level level, LivingEntity player, RegistryObject<Block> block) {
-    super(ModEntity.GLOW_STICK.get(), player, level);
+  public GlowStick(World world, LivingEntity player, RegistryObject<Block> block) {
+    super(ModEntity.GLOW_STICK.get(), player, world);
     defaultBlock = block;
     defaultDirection = player.getDirection().getOpposite();
   }
 
-  public GlowStick(Level level, double x, double y, double z) {
-    super(ModEntity.GLOW_STICK.get(), x, y, z, level);
+  public GlowStick(World world, double x, double y, double z) {
+    super(ModEntity.GLOW_STICK.get(), x, y, z, world);
   }
 
   protected Item getDefaultItem() {
-    if (defaultBlock != null && defaultBlock.get() instanceof GlowStickBlock glowStickBlock) {
-      return glowStickBlock.getItem();
+    if (defaultBlock != null && defaultBlock.get() instanceof GlowStickBlock) {
+      return ((GlowStickBlock) defaultBlock.get()).getItem();
     }
     return ModItems.GLOW_STICK_GREEN.get();
   }
 
   private boolean canPlaceBlock(BlockState blockState) {
-    Material material = blockState.getMaterial();
-    return blockState.isAir() || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
+    return blockState.is(Blocks.AIR) || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
         || blockState.is(Blocks.TALL_GRASS) || blockState.is(Blocks.POPPY)
         || blockState.is(Blocks.KELP) || blockState.is(Blocks.SEAGRASS)
-        || blockState.is(Blocks.TALL_SEAGRASS) || material.isLiquid() || material.isReplaceable()
+        || blockState.is(Blocks.TALL_SEAGRASS)
         || blockState.getBlock() instanceof GlowStickBlock;
   }
 
-  private void dropDefaultItem(Level level, BlockPos blockPos) {
+  private void dropDefaultItem(World world, BlockPos blockPos) {
     level.addFreshEntity(new ItemEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
         new ItemStack(getDefaultItem())));
   }
 
   @Override
-  protected void onHit(HitResult result) {
+  protected void onHit(RayTraceResult result) {
     super.onHit(result);
     if (!this.level.isClientSide) {
       this.level.broadcastEntityEvent(this, (byte) 3);
-      this.discard();
+      this.remove();
     }
   }
 
   @Override
-  protected void onHitEntity(EntityHitResult result) {
+  protected void onHitEntity(EntityRayTraceResult result) {
     // Drop item if we hit an entity like the player or so.
     super.onHitEntity(result);
     if (!this.level.isClientSide) {
@@ -121,7 +121,7 @@ public class GlowStick extends ThrowableItemProjectile {
   }
 
   @Override
-  protected void onHitBlock(BlockHitResult result) {
+  protected void onHitBlock(BlockRayTraceResult result) {
     // Perform some checks to decide if we drop the item or place the item block instead.
     super.onHitBlock(result);
     if (!this.level.isClientSide && defaultBlock != null) {
@@ -161,7 +161,7 @@ public class GlowStick extends ThrowableItemProjectile {
         // Check if placing position is full (>=8) water block to avoid jumping animations.
         BlockState blockStatePossiblePosition = this.level.getBlockState(possibleBlockPosition);
         boolean isWaterBlock = blockStatePossiblePosition.is(Blocks.WATER)
-            && blockStatePossiblePosition.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
+            && blockStatePossiblePosition.getFluidState().getAmount() >= FLUID_AMOUNT_FULL;
 
         // Place and update block facing to the current facing direction and use a random number for
         // the variants between 1 and 3.
@@ -182,7 +182,7 @@ public class GlowStick extends ThrowableItemProjectile {
 
     if (this.level.isClientSide && !this.isInWater() && ticks % RandomUtils.nextInt(10, 15) == 0) {
       // Add basic particle effect for every 10 to 15 ticks
-      Vec3 vec3 = this.getDeltaMovement();
+      Vector3d vec3 = this.getDeltaMovement();
       double d2 = this.getX() + vec3.x;
       double d0 = this.getY() + vec3.y;
       double d1 = this.getZ() + vec3.z;
@@ -203,9 +203,10 @@ public class GlowStick extends ThrowableItemProjectile {
               ? ModBlocks.GLOW_STICK_LIGHT_WATER.get().defaultBlockState()
               : ModBlocks.GLOW_STICK_LIGHT.get().defaultBlockState();
           this.level.setBlockAndUpdate(blockPosAbove, newBlockState);
-          if (this.level.getBlockState(blockPosAbove)
-              .getBlock() instanceof GlowStickLightBlock glowStickLightBlock) {
-            glowStickLightBlock.scheduleTick(level, blockPosAbove);
+          Block block = this.level.getBlockState(blockPosAbove)
+              .getBlock();
+          if (block instanceof GlowStickLightBlock) {
+            ((GlowStickLightBlock) block).scheduleTick(level, blockPosAbove);
           }
         }
       }
@@ -213,7 +214,7 @@ public class GlowStick extends ThrowableItemProjectile {
 
     // Automatically kill entity if it exceeds time to live.
     if (ticks++ > TICK_TTL) {
-      this.remove(RemovalReason.DISCARDED);
+      this.remove();
     }
   }
 

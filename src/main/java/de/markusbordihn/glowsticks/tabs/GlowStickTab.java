@@ -19,15 +19,20 @@
 
 package de.markusbordihn.glowsticks.tabs;
 
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import de.markusbordihn.glowsticks.item.ModItems;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 
 public class GlowStickTab {
 
   protected GlowStickTab() {}
 
-  public static final CreativeModeTab GLOW_STICKS = new CreativeModeTab("glow_sticks") {
+  public static final ItemGroup GLOW_STICKS = new ItemGroup("glow_sticks") {
+    @OnlyIn(Dist.CLIENT)
     public ItemStack makeIcon() {
       return new ItemStack(ModItems.GLOW_STICK_GREEN.get());
     }

@@ -25,18 +25,18 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import de.markusbordihn.glowsticks.Constants;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class GlowStickLightBlock extends Block {
 
@@ -49,29 +49,29 @@ public class GlowStickLightBlock extends Block {
     super(properties);
   }
 
-  public void scheduleTick(Level level, BlockPos blockPos) {
-    if (!level.getBlockTicks().hasScheduledTick(blockPos, this)) {
-      level.scheduleTick(blockPos, this, TICK_TTL);
+  public void scheduleTick(World world, BlockPos blockPos) {
+    if (!world.getBlockTicks().hasScheduledTick(blockPos, this)) {
+      world.getBlockTicks().scheduleTick(blockPos, this, TICK_TTL);
     }
   }
 
   @Override
-  public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
-      CollisionContext collisionContext) {
+  public VoxelShape getShape(BlockState blockState, IBlockReader worldIn, BlockPos blockPos,
+      ISelectionContext collisionContext) {
     return SHAPE_AABB;
   }
 
   @Override
-  public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState,
+  public void setPlacedBy(World world, BlockPos blockPos, BlockState blockState,
       @Nullable LivingEntity placer, ItemStack itemStack) {
-    scheduleTick(level, blockPos);
+    scheduleTick(world, blockPos);
   }
 
   @Override
-  public void tick(BlockState blockState, ServerLevel level, BlockPos blockPos, Random random) {
+  public void tick(BlockState blockState, ServerWorld world, BlockPos blockPos, Random random) {
     Block block = blockState.getBlock();
-    if (!level.isClientSide && block instanceof GlowStickLightBlock) {
-      level.removeBlock(blockPos, true);
+    if (!world.isClientSide && block instanceof GlowStickLightBlock) {
+      world.removeBlock(blockPos, true);
     }
   }
 
