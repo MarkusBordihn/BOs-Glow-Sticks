@@ -21,11 +21,10 @@ package de.markusbordihn.glowsticks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.CowRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
@@ -33,6 +32,7 @@ import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,14 +51,13 @@ public class ClientSetup {
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public ClientSetup(final FMLClientSetupEvent event) {
-    log.info("🧪 Register Glow Stick Client Setup ...");
+    log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     event.enqueueWork(() -> {
 
+      // Glow Stick (animation steps)
       ResourceLocation animationStep =
           new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_STEP);
-
-      // Glow Stick (animation steps)
       ItemModelsProperties.register(ModItems.GLOW_STICK_WHITE.get(), animationStep,
           ClientSetup::getStepFromTag);
       ItemModelsProperties.register(ModItems.GLOW_STICK_ORANGE.get(), animationStep,
@@ -119,17 +118,17 @@ public class ClientSetup {
     });
   }
 
-  public static float getStepFromTag(ItemStack itemStack, ClientWorld world, LivingEntity living) {
-    CompoundNBT compoundNBT = itemStack.getTag();
-    return (living != null && compoundNBT != null) ? compoundNBT.getInt(GlowStickItem.TAG_STEP)
-        : 0.0F;
+  @SubscribeEvent
+  public static void registerModels(final ModelRegistryEvent event) {
+    log.info("{} Client Models and Renderer ...", Constants.LOG_REGISTER_PREFIX);
+    RenderingRegistry.registerEntityRenderingHandler(ModEntity.GLOW_STICK.get(),
+        renderManager -> new SpriteRenderer<>(renderManager,
+            Minecraft.getInstance().getItemRenderer()));
   }
 
-  @SubscribeEvent
-  public static void registerRenderers(ModelRegistryEvent event) {
-    log.info("🧪 Register Glow Stick Client Renderer ...");
-    RenderingRegistry.registerEntityRenderingHandler(ModEntity.GLOW_STICK.get(),
-        renderManager -> new SpriteRenderer(renderManager,
-            Minecraft.getInstance().getItemRenderer()));
+  public static float getStepFromTag(ItemStack itemStack, ClientWorld world, LivingEntity living) {
+    CompoundNBT compoundNBT = itemStack.getTag();
+    return (living != null && living.isUsingItem() && living.getUseItem() == itemStack
+        && compoundNBT != null) ? compoundNBT.getInt(GlowStickItem.TAG_STEP) : 0.0F;
   }
 }

@@ -37,6 +37,7 @@ public class GlowSticks {
 
   public GlowSticks() {
     final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    modEventBus.addListener(ClientSetup::new);
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(modEventBus);

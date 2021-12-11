@@ -30,9 +30,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.projectile.ProjectileItemEntity;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -42,7 +43,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
-import net.minecraftforge.client.model.obj.MaterialLibrary.Material;
 import net.minecraftforge.fml.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
@@ -73,20 +73,13 @@ public class GlowStick extends ProjectileItemEntity {
   }
 
   public GlowStick(World world, LivingEntity player, RegistryObject<Block> block) {
-    super(ModEntity.GLOW_STICK.get(), player, world);
+    super(EntityType.SNOWBALL, player, world);
     defaultBlock = block;
     defaultDirection = player.getDirection().getOpposite();
   }
 
-  public GlowStick(World world, double x, double y, double z) {
-    super(ModEntity.GLOW_STICK.get(), x, y, z, world);
-  }
-
-  protected Item getDefaultItem() {
-    if (defaultBlock != null && defaultBlock.get() instanceof GlowStickBlock) {
-      return ((GlowStickBlock) defaultBlock.get()).getItem();
-    }
-    return ModItems.GLOW_STICK_GREEN.get();
+  public GlowStick(World level, double x, double y, double z) {
+    super(ModEntity.GLOW_STICK.get(), x, y, z, level);
   }
 
   private boolean canPlaceBlock(BlockState blockState) {
@@ -97,9 +90,17 @@ public class GlowStick extends ProjectileItemEntity {
         || blockState.getBlock() instanceof GlowStickBlock;
   }
 
-  private void dropDefaultItem(World world, BlockPos blockPos) {
+  private void dropDefaultItem(World level, BlockPos blockPos) {
     level.addFreshEntity(new ItemEntity(level, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
         new ItemStack(getDefaultItem())));
+  }
+
+  @Override
+  protected Item getDefaultItem() {
+    if (defaultBlock != null && defaultBlock.get() instanceof GlowStickBlock) {
+      return ((GlowStickBlock) defaultBlock.get()).getItem();
+    }
+    return ModItems.GLOW_STICK_GREEN.get();
   }
 
   @Override
@@ -216,6 +217,11 @@ public class GlowStick extends ProjectileItemEntity {
     if (ticks++ > TICK_TTL) {
       this.remove();
     }
+  }
+
+  @Override
+  public IPacket<?> getAddEntityPacket() {
+    return new SSpawnObjectPacket(this);
   }
 
 }
