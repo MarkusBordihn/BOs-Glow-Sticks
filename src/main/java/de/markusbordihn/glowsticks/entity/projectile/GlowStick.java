@@ -85,8 +85,8 @@ public class GlowStick extends ProjectileItemEntity {
   private boolean canPlaceBlock(BlockState blockState) {
     return blockState.is(Blocks.AIR) || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
         || blockState.is(Blocks.TALL_GRASS) || blockState.is(Blocks.POPPY)
-        || blockState.is(Blocks.KELP) || blockState.is(Blocks.SEAGRASS)
-        || blockState.is(Blocks.TALL_SEAGRASS)
+        || blockState.is(Blocks.SNOW) || blockState.is(Blocks.KELP)
+        || blockState.is(Blocks.SEAGRASS) || blockState.is(Blocks.TALL_SEAGRASS)
         || blockState.getBlock() instanceof GlowStickBlock;
   }
 
@@ -204,8 +204,7 @@ public class GlowStick extends ProjectileItemEntity {
               ? ModBlocks.GLOW_STICK_LIGHT_WATER.get().defaultBlockState()
               : ModBlocks.GLOW_STICK_LIGHT.get().defaultBlockState();
           this.level.setBlockAndUpdate(blockPosAbove, newBlockState);
-          Block block = this.level.getBlockState(blockPosAbove)
-              .getBlock();
+          Block block = this.level.getBlockState(blockPosAbove).getBlock();
           if (block instanceof GlowStickLightBlock) {
             ((GlowStickLightBlock) block).scheduleTick(level, blockPosAbove);
           }
