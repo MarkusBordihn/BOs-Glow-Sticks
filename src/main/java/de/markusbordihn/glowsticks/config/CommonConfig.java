@@ -47,7 +47,7 @@ public class CommonConfig {
         new ForgeConfigSpec.Builder().configure(Config::new);
     commonSpec = specPair.getRight();
     COMMON = specPair.getLeft();
-    log.info("{} Coins common config ...", Constants.LOG_REGISTER_PREFIX);
+    log.info("{} common config ...", Constants.LOG_REGISTER_PREFIX);
     ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, commonSpec);
   }
 
