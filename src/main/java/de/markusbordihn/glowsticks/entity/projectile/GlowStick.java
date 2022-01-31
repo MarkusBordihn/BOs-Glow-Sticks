@@ -19,7 +19,6 @@
 
 package de.markusbordihn.glowsticks.entity.projectile;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -168,7 +167,7 @@ public class GlowStick extends ThrowableItemProjectile {
         this.level.setBlockAndUpdate(possibleBlockPosition,
             blockState.setValue(GlowStickBlock.FACING, defaultDirection)
                 .setValue(GlowStickBlock.WATERLOGGED, isWaterBlock)
-                .setValue(GlowStickBlock.VARIANT, RandomUtils.nextInt(1, 4)));
+                .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 4)));
       }
     }
   }
@@ -180,7 +179,7 @@ public class GlowStick extends ThrowableItemProjectile {
     }
     super.tick();
 
-    if (this.level.isClientSide && !this.isInWater() && ticks % RandomUtils.nextInt(10, 15) == 0) {
+    if (this.level.isClientSide && !this.isInWater() && ticks % random.nextInt(10, 15) == 0) {
       // Add basic particle effect for every 10 to 15 ticks
       Vec3 vec3 = this.getDeltaMovement();
       double d2 = this.getX() + vec3.x;

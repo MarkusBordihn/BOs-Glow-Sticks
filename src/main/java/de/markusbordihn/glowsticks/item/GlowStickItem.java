@@ -35,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -68,10 +69,10 @@ public class GlowStickItem extends Item {
     glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
 
     if (glowStickDespawning) {
-      log.info("🧪 \u25BA Glow Sticks age will be decreased every {} random ticks ...",
+      log.info("\u25BA Glow Sticks age will be decreased every {} random ticks ...",
           glowStickDespawningTick);
     } else {
-      log.info("🧪 \u25A0 Glow Sticks will not despawn !");
+      log.info("\u25A0 Glow Sticks will not despawn !");
     }
   }
 

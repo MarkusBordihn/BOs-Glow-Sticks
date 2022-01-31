@@ -31,11 +31,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
@@ -47,7 +49,7 @@ public class ClientSetup {
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public ClientSetup(final FMLClientSetupEvent event) {
-    log.info("🧪 Register Glow Stick Client Setup ...");
+    log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     event.enqueueWork(() -> {
 
@@ -138,7 +140,7 @@ public class ClientSetup {
 
   @SubscribeEvent
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-    log.info("🧪 Register Glow Stick Client Renderer ...");
+    log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
     event.registerEntityRenderer(ModEntity.GLOW_STICK.get(), ThrownItemRenderer::new);
   }
 }

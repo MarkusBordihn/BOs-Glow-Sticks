@@ -28,7 +28,7 @@ license="MIT"
     logoFile="logo.png"
     credits=""
     authors="Markus Bordihn"
-    description='''This Minecraft mod adds glow sticks in different colors which can be lit up in the world / underwater for a limited time for better exploring and/or rpg.'''
+    description='''Adds glow sticks in different colors which can be lit up in the world / underwater for a limited time for better exploring and/or rpg feeling.'''
 
 [[dependencies.glow_sticks]] #optional
     # the modid of the dependency
@@ -54,6 +54,6 @@ license="MIT"
     modId="material_elements"
     mandatory=true
     # This version range declares a minimum of the material elements version
-    versionRange="[2.2.0,)"
+    versionRange="[2.4.0,)"
     ordering="NONE"
     side="BOTH"
