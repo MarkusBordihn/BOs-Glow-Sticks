@@ -9,7 +9,7 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 
 [![Watch the video](https://img.youtube.com/vi/so-65YewqYw/maxresdefault.jpg)](https://youtu.be/so-65YewqYw)
 
-🧪 Features:
+## 🧪 Features
 
 - Relative easy to craft.
 - Available in different colors.
@@ -18,7 +18,7 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 - Use NO custom renderer or any other core modifications.
 - Translation Support: English, German
 
-Requires:
+## Requires
 
 - [Bo's Material and Elements][material-elements]
 
