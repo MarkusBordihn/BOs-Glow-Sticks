@@ -196,7 +196,7 @@ public class GlowStick extends ThrowableItemProjectile {
         BlockState blockState = this.level.getBlockState(blockPosAbove);
 
         // Make sure we are not destroying anything and only place the block for air and water.
-        if (blockState.is(Blocks.AIR) || blockState.is(Blocks.WATER)) {
+        if (blockState.isAir() || blockState.is(Blocks.WATER)) {
           // Use different kind of blocks depending on the environment.
           BlockState newBlockState = blockState.is(Blocks.WATER)
               ? ModBlocks.GLOW_STICK_LIGHT_WATER.get().defaultBlockState()
