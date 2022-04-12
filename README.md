@@ -1,5 +1,5 @@
 [![Glow Sticks Downloads](http://cf.way2muchnoise.eu/full_glow-sticks_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
-[![Glow Sticks MC Versions](http://cf.way2muchnoise.eu/versions/Minecraft_glow-sticks_all.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
+[![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_glow-sticks_all.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
 
 # Glow Sticks
 
@@ -29,7 +29,8 @@ Requires:
 | Fabric Version | ❌ Not planned        |
 | Forge 1.16.5   | ⚠️ Maintenance only   |
 | Forge 1.17.1   | ⚠️ Maintenance only   |
-| Forge 1.18     | ✔️ Active development |
+| Forge 1.18.1   | ⚠️ Maintenance only   |
+| Forge 1.18.2   | ✔️ Active development |
 
 [logo]: src/main/resources/logo.png
 [glow-sticks]: https://www.curseforge.com/minecraft/mc-mods/glow-sticks

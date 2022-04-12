@@ -33,7 +33,7 @@ import de.markusbordihn.glowsticks.item.ModItems;
 @Mod(Constants.MOD_ID)
 public class GlowSticks {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  protected static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public GlowSticks() {
     final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

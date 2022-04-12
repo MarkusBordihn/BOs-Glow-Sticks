@@ -55,7 +55,7 @@ import de.markusbordihn.glowsticks.Constants;
 
 public class GlowStickBlock extends FallingBlock implements IWaterLoggable {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  protected static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;

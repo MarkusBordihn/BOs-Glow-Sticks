@@ -48,13 +48,14 @@ import net.minecraftforge.fml.RegistryObject;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickLightBlock;
+import de.markusbordihn.glowsticks.block.GlowStickLightWaterBlock;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
 
 public class GlowStick extends ProjectileItemEntity {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  protected static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
   public static final int FLUID_AMOUNT_FULL = 8;
 
   private static final int TICK_TTL = 650;
@@ -83,11 +84,14 @@ public class GlowStick extends ProjectileItemEntity {
   }
 
   private boolean canPlaceBlock(BlockState blockState) {
-    return blockState.is(Blocks.AIR) || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
-        || blockState.is(Blocks.TALL_GRASS) || blockState.is(Blocks.POPPY)
-        || blockState.is(Blocks.SNOW) || blockState.is(Blocks.KELP)
+    return blockState.is(Blocks.AIR) || blockState.is(Blocks.CAVE_AIR)
+        || blockState.is(Blocks.VOID_AIR) || blockState.is(Blocks.WATER)
+        || blockState.is(Blocks.GRASS) || blockState.is(Blocks.TALL_GRASS)
+        || blockState.is(Blocks.POPPY) || blockState.is(Blocks.SNOW) || blockState.is(Blocks.KELP)
         || blockState.is(Blocks.SEAGRASS) || blockState.is(Blocks.TALL_SEAGRASS)
-        || blockState.getBlock() instanceof GlowStickBlock;
+        || blockState.getBlock() instanceof GlowStickBlock
+        || blockState.getBlock() instanceof GlowStickLightBlock
+        || blockState.getBlock() instanceof GlowStickLightWaterBlock;
   }
 
   private void dropDefaultItem(World level, BlockPos blockPos) {
@@ -198,7 +202,8 @@ public class GlowStick extends ProjectileItemEntity {
         BlockState blockState = this.level.getBlockState(blockPosAbove);
 
         // Make sure we are not destroying anything and only place the block for air and water.
-        if (blockState.is(Blocks.AIR) || blockState.is(Blocks.WATER)) {
+        if (blockState.is(Blocks.AIR) || blockState.is(Blocks.CAVE_AIR)
+            || blockState.is(Blocks.VOID_AIR) || blockState.is(Blocks.WATER)) {
           // Use different kind of blocks depending on the environment.
           BlockState newBlockState = blockState.is(Blocks.WATER)
               ? ModBlocks.GLOW_STICK_LIGHT_WATER.get().defaultBlockState()

@@ -39,7 +39,7 @@ import de.markusbordihn.glowsticks.item.ModItems;
 
 public class ClientSetup {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  protected static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public ClientSetup(final FMLClientSetupEvent event) {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);

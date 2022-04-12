@@ -48,7 +48,7 @@ import de.markusbordihn.glowsticks.entity.projectile.GlowStick;
 @Mod.EventBusSubscriber
 public class GlowStickItem extends Item {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  protected static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   // Using CompoundTag for item status and animation steps
   public static final String TAG_ACTIVATED = "activated";

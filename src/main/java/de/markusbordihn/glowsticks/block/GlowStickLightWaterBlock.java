@@ -42,13 +42,13 @@ public class GlowStickLightWaterBlock extends GlowStickLightBlock implements ILi
   }
 
   @Override
-  public boolean placeLiquid(IWorld p_204509_1_, BlockPos p_204509_2_, BlockState p_204509_3_,
-      FluidState p_204509_4_) {
+  public boolean placeLiquid(IWorld world, BlockPos blockPos, BlockState blockState,
+      FluidState fluidState) {
     return false;
   }
 
   @Override
-  public FluidState getFluidState(BlockState p_154537_) {
+  public FluidState getFluidState(BlockState blockState) {
     return Fluids.WATER.getSource(false);
   }
 

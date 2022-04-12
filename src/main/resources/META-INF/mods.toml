@@ -17,43 +17,43 @@ license="MIT"
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
-    modId="glow_sticks"
-    version="${file.jarVersion}"
-    displayName="Glow Sticks"
-    # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-    #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-    # A URL for the "homepage" for this mod, displayed in the mod UI
-    #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
-    # A file name (in the root of the mod JAR) containing a logo for display
-    logoFile="logo.png"
-    credits=""
-    authors="Markus Bordihn"
-    description='''This Minecraft mod adds glow sticks in different colors which can be lit up in the world / underwater for a limited time for better exploring and/or rpg.'''
+  modId="glow_sticks"
+  version="${file.jarVersion}"
+  displayName="Glow Sticks"
+  # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
+  #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+  # A URL for the "homepage" for this mod, displayed in the mod UI
+  #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+  # A file name (in the root of the mod JAR) containing a logo for display
+  logoFile="logo.png"
+  credits=""
+  authors="Markus Bordihn"
+  description='''This Minecraft mod adds glow sticks in different colors which can be lit up in the world / underwater for a limited time for better exploring and/or rpg.'''
 
 [[dependencies.glow_sticks]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[36,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+  # the modid of the dependency
+  modId="forge" #mandatory
+  # Does this dependency have to exist - if not, ordering below must be specified
+  mandatory=true #mandatory
+  # The version range of the dependency
+  versionRange="[36,)" #mandatory
+  # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+  ordering="NONE"
+  # Side this dependency is applied on - BOTH, CLIENT or SERVER
+  side="BOTH"
 
 [[dependencies.glow_sticks]]
-    modId="minecraft"
-    mandatory=true
-    # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.16.5,1.17)"
-    ordering="NONE"
-    side="BOTH"
+  modId="minecraft"
+  mandatory=true
+  # This version range declares a minimum of the current minecraft version up to but not including the next major version
+  versionRange="[1.16.5,1.17)"
+  ordering="NONE"
+  side="BOTH"
 
 [[dependencies.glow_sticks]]
-    modId="material_elements"
-    mandatory=true
-    # This version range declares a minimum of the material elements version up to but not including the next major version
-    versionRange="[1.1.0,)"
-    ordering="NONE"
-    side="BOTH"
+  modId="material_elements"
+  mandatory=true
+  # This version range declares a minimum of the material elements version up to but not including the next major version
+  versionRange="[1.1.0,)"
+  ordering="NONE"
+  side="BOTH"
