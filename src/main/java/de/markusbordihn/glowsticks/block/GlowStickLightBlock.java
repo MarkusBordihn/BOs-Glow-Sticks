@@ -55,6 +55,8 @@ public class GlowStickLightBlock extends Block {
     }
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
   public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
       CollisionContext collisionContext) {
@@ -67,6 +69,8 @@ public class GlowStickLightBlock extends Block {
     scheduleTick(level, blockPos);
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
   public void tick(BlockState blockState, ServerLevel level, BlockPos blockPos, Random random) {
     Block block = blockState.getBlock();

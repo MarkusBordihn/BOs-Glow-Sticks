@@ -93,7 +93,8 @@ public class GlowStick extends ThrowableItemProjectile {
         || blockState.is(Blocks.TALL_GRASS) || blockState.is(Blocks.POPPY)
         || blockState.is(Blocks.KELP) || blockState.is(Blocks.SEAGRASS)
         || blockState.is(Blocks.TALL_SEAGRASS) || material.isLiquid() || material.isReplaceable()
-        || blockState.getBlock() instanceof GlowStickBlock;
+        || blockState.getBlock() instanceof GlowStickBlock
+        || blockState.getBlock() instanceof GlowStickLightBlock;
   }
 
   private void dropDefaultItem(Level level, BlockPos blockPos) {

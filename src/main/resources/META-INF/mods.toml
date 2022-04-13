@@ -54,6 +54,6 @@ license="MIT"
   modId="material_elements"
   mandatory=true
   # This version range declares a minimum of the material elements version
-  versionRange="[3.0.1,)"
+  versionRange="[3.1.0,)"
   ordering="NONE"
   side="BOTH"

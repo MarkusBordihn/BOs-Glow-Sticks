@@ -125,7 +125,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.18.1-39.1.2'
 
     // Required: Bo's Material Elements (dev dependency)
-    implementation fg.deobf("curse.maven:material_elements-541620:${material_elements_version}")
+    implementation fg.deobf("curse.maven:material_elements-541620:3749470")
 
     // Additional helpful Mods for development (runtime depenedency)
     runtimeOnly fg.deobf("curse.maven:jei-238222:3550020")
