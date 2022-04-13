@@ -112,6 +112,8 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
         new ItemStack(getItem())));
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
   public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
       CollisionContext collisionContext) {
@@ -170,12 +172,16 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
         context.getHorizontalDirection().getOpposite());
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
   public FluidState getFluidState(BlockState blockState) {
     return Boolean.TRUE.equals(blockState.getValue(WATERLOGGED)) ? Fluids.WATER.getSource(false)
         : Fluids.EMPTY.defaultFluidState();
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
   public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos,
       Random random) {

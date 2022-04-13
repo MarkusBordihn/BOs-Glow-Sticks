@@ -41,13 +41,15 @@ public class GlowStickLightWaterBlock extends GlowStickLightBlock implements Liq
   }
 
   @Override
-  public boolean placeLiquid(LevelAccessor p_154520_, BlockPos p_154521_, BlockState p_154522_,
-      FluidState p_154523_) {
+  public boolean placeLiquid(LevelAccessor levelAccessor, BlockPos blockPos, BlockState blockState,
+      FluidState fluidState) {
     return false;
   }
 
+  /** @deprecated */
+  @Deprecated
   @Override
-  public FluidState getFluidState(BlockState p_154537_) {
+  public FluidState getFluidState(BlockState blockState) {
     return Fluids.WATER.getSource(false);
   }
 
