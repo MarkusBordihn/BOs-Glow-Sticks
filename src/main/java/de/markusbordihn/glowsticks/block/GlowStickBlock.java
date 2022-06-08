@@ -19,8 +19,6 @@
 
 package de.markusbordihn.glowsticks.block;
 
-import java.util.Random;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -179,7 +178,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos,
-      Random random) {
+      RandomSource random) {
     int age = blockState.getValue(AGE);
     if (age >= 15) {
       serverLevel.destroyBlock(blockPos, true);
