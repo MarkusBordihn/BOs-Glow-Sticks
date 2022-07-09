@@ -23,8 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +36,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
@@ -52,7 +49,6 @@ public class ClientSetup {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     event.enqueueWork(() -> {
-
       ResourceLocation animationStep =
           new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_STEP);
 
@@ -89,45 +85,6 @@ public class ClientSetup {
           ClientSetup::getStepFromTag);
       ItemProperties.register(ModItems.GLOW_STICK_BLACK.get(), animationStep,
           ClientSetup::getStepFromTag);
-
-      // Glow Stick Blocks (translucent)
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_WHITE.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_ORANGE.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_MAGENTA.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_LIGHT_BLUE.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_YELLOW.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_LIME.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_PINK.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_GRAY.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_LIGHT_GRAY.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_CYAN.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_PURPLE.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_BLUE.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_BROWN.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_GREEN.get(),
-          RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_RED.get(), RenderType.translucent());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_BLACK.get(),
-          RenderType.translucent());
-
-      // Glow Stick Light Blocks (cutout mip)
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_LIGHT.get(),
-          RenderType.cutoutMipped());
-      ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STICK_LIGHT_WATER.get(),
-          RenderType.cutoutMipped());
     });
   }
 

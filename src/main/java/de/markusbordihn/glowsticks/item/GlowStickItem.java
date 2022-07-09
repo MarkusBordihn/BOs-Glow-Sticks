@@ -58,19 +58,14 @@ public class GlowStickItem extends Item {
 
   // Config
   public static final CommonConfig.Config COMMON = CommonConfig.COMMON;
-  private static boolean glowStickDespawning = COMMON.glowStickDespawning.get();
-  private static int glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
 
   private RegistryObject<Block> defaultBlock = null;
 
   @SubscribeEvent
   public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
-    glowStickDespawning = COMMON.glowStickDespawning.get();
-    glowStickDespawningTick = COMMON.glowStickDespawningTicks.get();
-
-    if (glowStickDespawning) {
+    if (Boolean.TRUE.equals(COMMON.glowStickDespawning.get())) {
       log.info("\u25BA Glow Sticks age will be decreased every {} random ticks ...",
-          glowStickDespawningTick);
+          COMMON.glowStickDespawningTicks.get());
     } else {
       log.info("\u25A0 Glow Sticks will not despawn !");
     }
@@ -162,7 +157,8 @@ public class GlowStickItem extends Item {
   @Override
   public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int tick) {
     // Add animation steps to the use animation
-    if (!level.isClientSide && glowStickDespawning && tick % glowStickDespawningTick == 0) {
+    if (Boolean.TRUE.equals(!level.isClientSide && COMMON.glowStickDespawning.get())
+        && tick % COMMON.glowStickDespawningTicks.get() == 0) {
       int currentStep = increaseStep(itemStack);
       // Play sound after breaking the glow stick
       if (currentStep == 4) {

@@ -168,6 +168,9 @@ public class GlowStick extends ThrowableItemProjectile {
             blockState.setValue(GlowStickBlock.FACING, defaultDirection)
                 .setValue(GlowStickBlock.WATERLOGGED, isWaterBlock)
                 .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 4)));
+      } else {
+        // Drop block if we don't have any possible placement.
+        dropDefaultItem(this.level, blockPos);
       }
     }
   }

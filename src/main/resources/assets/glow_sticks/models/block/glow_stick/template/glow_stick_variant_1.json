@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench by Markus Bordihn",
+  "render_type": "translucent",
 	"textures": {
 		"particle": "glow_sticks:item/glow_stick/green_25pc",
 		"shell": "glow_sticks:item/glow_stick/green_25pc",
