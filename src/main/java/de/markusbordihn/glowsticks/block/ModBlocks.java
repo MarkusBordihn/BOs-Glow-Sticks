@@ -21,7 +21,6 @@ package de.markusbordihn.glowsticks.block;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
@@ -89,8 +88,5 @@ public class ModBlocks {
   public static final RegistryObject<Block> GLOW_STICK_LIGHT_WATER =
       BLOCKS.register("glow_stick_light_water", () -> new GlowStickLightWaterBlock(
           BlockBehaviour.Properties.of(Material.AIR).noCollission().lightLevel(blockState -> 15)));
-
-  public static final DeferredRegister<BlockEntityType<?>> ENTITIES =
-      DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, Constants.MOD_ID);
 
 }

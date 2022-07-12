@@ -34,11 +34,11 @@ public class ModEntity {
 
   protected ModEntity() {}
 
-  public static final DeferredRegister<EntityType<?>> ENTITIES =
-      DeferredRegister.create(ForgeRegistries.ENTITIES, Constants.MOD_ID);
+  public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
+      DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
 
   public static final RegistryObject<EntityType<GlowStick>> GLOW_STICK =
-      ENTITIES.register("glow_stick",
+      ENTITY_TYPES.register("glow_stick",
           () -> EntityType.Builder.<GlowStick>of(GlowStick::new, MobCategory.MISC)
               .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10)
               .build(new ResourceLocation(Constants.MOD_ID, "glow_stick").toString()));
