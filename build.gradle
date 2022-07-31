@@ -1,23 +1,18 @@
 buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        jcenter()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+  repositories {
+    maven { url = 'https://maven.minecraftforge.net' }
+    jcenter()
+    mavenCentral()
+  }
 }
 
 plugins {
   id 'com.matthewprenger.cursegradle' version '1.4.0'
+  id 'eclipse'
+  id 'maven-publish'
+  id 'net.minecraftforge.gradle' version '5.1.+'
   id 'nu.studer.credentials' version '1.0.7'
 }
-
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version = "${version_major}.${version_minor}.${version_patch}"
 archivesBaseName = "${mod_id}_${mc_version}"
@@ -27,124 +22,124 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.19'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+  // The mappings can be changed at any time, and must be in the following format.
+  // snapshot_YYYYMMDD   Snapshot are built nightly.
+  // stable_#            Stables are built at the discretion of the MCP team.
+  // Use non-default mappings at your own risk. they may not always work.
+  // Simply re-run your setup task after changing the mappings to update your workspace.
+  mappings channel: 'official', version: '1.19.1'
+  // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+  // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    runs {
-        client {
-            workingDirectory project.file('run')
+  // Default run configurations.
+  // These can be tweaked, removed, or duplicated as needed.
+  runs {
+    client {
+      workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            // The markers can be changed as needed.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
-            property 'forge.logging.markers', 'REGISTRIES'
+      // Recommended logging data for a userdev environment
+      // The markers can be changed as needed.
+      // "SCAN": For mods scan.
+      // "REGISTRIES": For firing of registry events.
+      // "REGISTRYDUMP": For getting the contents of all registries.
+      property 'forge.logging.markers', 'REGISTRIES'
 
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
+      // Recommended logging level for the console
+      property 'forge.logging.console.level', 'debug'
 
-            mods {
-                glow_sticks {
-                    source sourceSets.main
-                }
-            }
+      mods {
+        glow_sticks {
+          source sourceSets.main
         }
-
-        server {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            // The markers can be changed as needed.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                glow_sticks {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            // The markers can be changed as needed.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
-            property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', 'glow_sticks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                glow_sticks {
-                    source sourceSets.main
-                }
-            }
-        }
+      }
     }
+
+    server {
+      workingDirectory project.file('run')
+
+      // Recommended logging data for a userdev environment
+      // The markers can be changed as needed.
+      // "SCAN": For mods scan.
+      // "REGISTRIES": For firing of registry events.
+      // "REGISTRYDUMP": For getting the contents of all registries.
+      property 'forge.logging.markers', 'REGISTRIES'
+
+      // Recommended logging level for the console
+      property 'forge.logging.console.level', 'debug'
+
+      mods {
+        glow_sticks {
+          source sourceSets.main
+        }
+      }
+    }
+
+    data {
+      workingDirectory project.file('run')
+
+      // Recommended logging data for a userdev environment
+      // The markers can be changed as needed.
+      // "SCAN": For mods scan.
+      // "REGISTRIES": For firing of registry events.
+      // "REGISTRYDUMP": For getting the contents of all registries.
+      property 'forge.logging.markers', 'REGISTRIES'
+
+      // Recommended logging level for the console
+      property 'forge.logging.console.level', 'debug'
+
+      // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+      args '--mod', 'glow_sticks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+      mods {
+        glow_sticks {
+          source sourceSets.main
+        }
+      }
+    }
+  }
 }
 
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        // Curse Maven Plugin
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
+  maven {
+    // Curse Maven Plugin
+    url "https://www.cursemaven.com"
+    content {
+      includeGroup "curse.maven"
     }
+  }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.19-41.0.98'
+  // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+  // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+  // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+  minecraft 'net.minecraftforge:forge:1.19.1-42.0.1'
 
-    // Required: Bo's Material Elements (dev dependency)
-    implementation fg.deobf("curse.maven:material_elements-541620:3872294")
+  // Required: Bo's Material Elements (dev dependency)
+  implementation fg.deobf("curse.maven:material_elements-541620:3906075")
 
-    // Additional helpful Mods for development (runtime depenedency)
-    // runtimeOnly fg.deobf("curse.maven:jei-238222:3670018")
-    // runtimeOnly fg.deobf("curse.maven:item_zoom-261725:3485445")
+  // Additional helpful Mods for development (runtime depenedency)
+  // runtimeOnly fg.deobf("curse.maven:jei-238222:3670018")
+  // runtimeOnly fg.deobf("curse.maven:item_zoom-261725:3485445")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
-    manifest {
-        attributes([
-            "Specification-Title": "${mod_name}",
-            "Specification-Vendor": "${vendor_name}",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"${mod_id}",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
+  manifest {
+    attributes([
+      "Specification-Title": "${mod_name}",
+      "Specification-Vendor": "${vendor_name}",
+      "Specification-Version": "1", // We are version 1 of ourselves
+      "Implementation-Title": project.name,
+      "Implementation-Version": "${version}",
+      "Implementation-Vendor" :"${mod_id}",
+      "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+    ])
+  }
 }
 
 // Example configuration to allow publishing using the maven-publish task
@@ -154,16 +149,16 @@ jar.finalizedBy('reobfJar')
 //publish.dependsOn('reobfJar')
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
+  publications {
+    mavenJava(MavenPublication) {
+        artifact jar
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
+  }
+  repositories {
+    maven {
+        url "file:///${project.projectDir}/mcmodsrepo"
     }
+  }
 }
 
 curseforge {
@@ -172,7 +167,7 @@ curseforge {
     id = "${curseforge_project_id}"
     changelog = 'See https://github.com/MarkusBordihn/glow_sticks/commits/main'
     releaseType = 'release'
-    addGameVersion("1.19")
+    addGameVersion("1.19.1")
     addGameVersion("Forge")
     mainArtifact(jar) {
       relations {
@@ -180,4 +175,8 @@ curseforge {
       }
     }
   }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
