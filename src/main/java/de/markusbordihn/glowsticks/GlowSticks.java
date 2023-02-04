@@ -22,12 +22,16 @@ package de.markusbordihn.glowsticks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
+import de.markusbordihn.glowsticks.tabs.GlowStickTab;
 
 @Mod(Constants.MOD_ID)
 public class GlowSticks {
@@ -35,16 +39,21 @@ public class GlowSticks {
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   public GlowSticks() {
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::new);
+    final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
     log.info("{} Entities Types ...", Constants.LOG_REGISTER_PREFIX);
-    ModEntity.ENTITY_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModEntity.ENTITY_TYPES.register(modEventBus);
 
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
-    ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModItems.ITEMS.register(modEventBus);
 
     log.info("{} Blocks ...", Constants.LOG_REGISTER_PREFIX);
-    ModBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModBlocks.BLOCKS.register(modEventBus);
+
+    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+      modEventBus.addListener(ClientSetup::new);
+      modEventBus.addListener(GlowStickTab::handleCreativeModeTabRegister);
+    });
   }
 
 }

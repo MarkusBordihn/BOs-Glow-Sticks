@@ -27,7 +27,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import de.markusbordihn.glowsticks.tabs.GlowStickTab;
 
 public class ModItems {
 
@@ -38,53 +37,37 @@ public class ModItems {
 
   // Glow Sticks
   public static final RegistryObject<Item> GLOW_STICK_WHITE = ITEMS.register("glow_stick_white",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_WHITE));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_WHITE));
   public static final RegistryObject<Item> GLOW_STICK_ORANGE = ITEMS.register("glow_stick_orange",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_ORANGE));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_ORANGE));
   public static final RegistryObject<Item> GLOW_STICK_MAGENTA = ITEMS.register("glow_stick_magenta",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_MAGENTA));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_MAGENTA));
   public static final RegistryObject<Item> GLOW_STICK_LIGHT_BLUE =
       ITEMS.register("glow_stick_light_blue",
-          () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-              ModBlocks.GLOW_STICK_LIGHT_BLUE));
+          () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_LIGHT_BLUE));
   public static final RegistryObject<Item> GLOW_STICK_YELLOW = ITEMS.register("glow_stick_yellow",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_YELLOW));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_YELLOW));
   public static final RegistryObject<Item> GLOW_STICK_LIME = ITEMS.register("glow_stick_lime",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_LIME));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_LIME));
   public static final RegistryObject<Item> GLOW_STICK_PINK = ITEMS.register("glow_stick_pink",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_PINK));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_PINK));
   public static final RegistryObject<Item> GLOW_STICK_GRAY = ITEMS.register("glow_stick_gray",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_GRAY));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_GRAY));
   public static final RegistryObject<Item> GLOW_STICK_LIGHT_GRAY =
       ITEMS.register("glow_stick_light_gray",
-          () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-              ModBlocks.GLOW_STICK_LIGHT_GRAY));
+          () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_LIGHT_GRAY));
   public static final RegistryObject<Item> GLOW_STICK_CYAN = ITEMS.register("glow_stick_cyan",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_CYAN));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_CYAN));
   public static final RegistryObject<Item> GLOW_STICK_PURPLE = ITEMS.register("glow_stick_purple",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_PURPLE));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_PURPLE));
   public static final RegistryObject<Item> GLOW_STICK_BLUE = ITEMS.register("glow_stick_blue",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_BLUE));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_BLUE));
   public static final RegistryObject<Item> GLOW_STICK_BROWN = ITEMS.register("glow_stick_brown",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_BROWN));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_BROWN));
   public static final RegistryObject<Item> GLOW_STICK_GREEN = ITEMS.register("glow_stick_green",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_GREEN));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_GREEN));
   public static final RegistryObject<Item> GLOW_STICK_RED = ITEMS.register("glow_stick_red",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_RED));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_RED));
   public static final RegistryObject<Item> GLOW_STICK_BLACK = ITEMS.register("glow_stick_black",
-      () -> new GlowStickItem(new Item.Properties().tab(GlowStickTab.GLOW_STICKS),
-          ModBlocks.GLOW_STICK_BLACK));
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_BLACK));
 }
