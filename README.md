@@ -1,7 +1,7 @@
+# Glow Sticks (1.18.2)
+
 [![Glow Sticks Downloads](http://cf.way2muchnoise.eu/full_glow-sticks_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
 [![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_glow-sticks_all.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
-
-# Glow Sticks
 
 ![Glow Sticks][logo]
 
