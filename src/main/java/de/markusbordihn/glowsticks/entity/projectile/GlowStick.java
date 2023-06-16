@@ -115,7 +115,7 @@ public class GlowStick extends ThrowableItemProjectile {
     // Drop item if we hit an entity like the player or so.
     super.onHitEntity(result);
     if (!this.level.isClientSide) {
-      dropDefaultItem(this.level, new BlockPos(result.getLocation()));
+      dropDefaultItem(this.level, BlockPos.containing(result.getLocation()));
     }
   }
 
