@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": ["glow_sticks:glow_stick"]
+  },
+  "criteria": {
+    "has_glow_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "glow_sticks:glow_item"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "glow_sticks:glow_stick"
+      }
+    }
+  },
+  "requirements": [["has_glow_item", "has_the_recipe"]]
+}

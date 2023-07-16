@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["|#|", "|+|", "|#|"],
+  "key": {
+    "#": {
+      "item": "minecraft:gray_stained_glass"
+    },
+    "|": {
+      "item": "minecraft:glass_pane"
+    },
+    "+": {
+      "tag": "glow_sticks:glow_item"
+    }
+  },
+  "result": {
+    "item": "glow_sticks:glow_stick_gray",
+    "count": 8
+  }
+}
