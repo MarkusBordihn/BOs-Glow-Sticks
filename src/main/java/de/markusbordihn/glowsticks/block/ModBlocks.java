@@ -22,8 +22,7 @@ package de.markusbordihn.glowsticks.block;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
-
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,9 +41,10 @@ public class ModBlocks {
 
   // Glow Stick Block
   private static final BlockBehaviour.Properties glowStickBlockProperties() {
-    return BlockBehaviour.Properties.of(Material.GLASS).sound(SoundType.SCAFFOLDING).noOcclusion()
-        .lightLevel(GlowStickBlock::getLightLevel).randomTicks();
+    return BlockBehaviour.Properties.of().mapColor(MapColor.NONE).sound(SoundType.SCAFFOLDING)
+        .noOcclusion().lightLevel(GlowStickBlock::getLightLevel).randomTicks();
   }
+
   public static final RegistryObject<Block> GLOW_STICK_WHITE = BLOCKS.register("glow_stick_white",
       () -> new GlowStickBlock(glowStickBlockProperties(), ModItems.GLOW_STICK_WHITE));
   public static final RegistryObject<Block> GLOW_STICK_ORANGE = BLOCKS.register("glow_stick_orange",
@@ -83,10 +83,10 @@ public class ModBlocks {
 
   // Light Block
   public static final RegistryObject<Block> GLOW_STICK_LIGHT =
-      BLOCKS.register("glow_stick_light", () -> new GlowStickLightBlock(
-          BlockBehaviour.Properties.of(Material.AIR).noCollission().lightLevel(blockState -> 15)));
-  public static final RegistryObject<Block> GLOW_STICK_LIGHT_WATER =
-      BLOCKS.register("glow_stick_light_water", () -> new GlowStickLightWaterBlock(
-          BlockBehaviour.Properties.of(Material.AIR).noCollission().lightLevel(blockState -> 15)));
+      BLOCKS.register("glow_stick_light", () -> new GlowStickLightBlock(BlockBehaviour.Properties
+          .of().mapColor(MapColor.NONE).noCollission().lightLevel(blockState -> 15)));
+  public static final RegistryObject<Block> GLOW_STICK_LIGHT_WATER = BLOCKS.register(
+      "glow_stick_light_water", () -> new GlowStickLightWaterBlock(BlockBehaviour.Properties.of()
+          .mapColor(MapColor.NONE).noCollission().lightLevel(blockState -> 15)));
 
 }

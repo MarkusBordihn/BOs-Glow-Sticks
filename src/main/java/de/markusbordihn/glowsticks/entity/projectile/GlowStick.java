@@ -36,7 +36,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -88,11 +87,10 @@ public class GlowStick extends ThrowableItemProjectile {
   }
 
   private boolean canPlaceBlock(BlockState blockState) {
-    Material material = blockState.getMaterial();
     return blockState.isAir() || blockState.is(Blocks.WATER) || blockState.is(Blocks.GRASS)
         || blockState.is(Blocks.TALL_GRASS) || blockState.is(Blocks.POPPY)
         || blockState.is(Blocks.KELP) || blockState.is(Blocks.SEAGRASS)
-        || blockState.is(Blocks.TALL_SEAGRASS) || material.isLiquid() || material.isReplaceable()
+        || blockState.is(Blocks.TALL_SEAGRASS) || blockState.liquid()
         || blockState.getBlock() instanceof GlowStickBlock;
   }
 
@@ -104,8 +102,9 @@ public class GlowStick extends ThrowableItemProjectile {
   @Override
   protected void onHit(HitResult result) {
     super.onHit(result);
-    if (!this.level.isClientSide) {
-      this.level.broadcastEntityEvent(this, (byte) 3);
+    Level level = this.level();
+    if (!level.isClientSide) {
+      level.broadcastEntityEvent(this, (byte) 3);
       this.discard();
     }
   }
@@ -114,8 +113,9 @@ public class GlowStick extends ThrowableItemProjectile {
   protected void onHitEntity(EntityHitResult result) {
     // Drop item if we hit an entity like the player or so.
     super.onHitEntity(result);
-    if (!this.level.isClientSide) {
-      dropDefaultItem(this.level, BlockPos.containing(result.getLocation()));
+    Level level = this.level();
+    if (!level.isClientSide) {
+      dropDefaultItem(level, BlockPos.containing(result.getLocation()));
     }
   }
 
@@ -123,54 +123,54 @@ public class GlowStick extends ThrowableItemProjectile {
   protected void onHitBlock(BlockHitResult result) {
     // Perform some checks to decide if we drop the item or place the item block instead.
     super.onHitBlock(result);
-    if (!this.level.isClientSide && defaultBlock != null) {
+    Level level = this.level();
+    if (!level.isClientSide && defaultBlock != null) {
       BlockPos blockPos = result.getBlockPos();
       BlockPos possibleBlockPosition = null;
       Direction direction = result.getDirection();
       BlockState blockState = defaultBlock.get().defaultBlockState();
 
       // Check for possible direction to place the glow stick
-      if (direction == Direction.UP && canPlaceBlock(this.level.getBlockState(blockPos.above()))) {
+      if (direction == Direction.UP && canPlaceBlock(level.getBlockState(blockPos.above()))) {
         possibleBlockPosition = blockPos.above();
       } else if (direction == Direction.NORTH
-          && canPlaceBlock(this.level.getBlockState(blockPos.north()))) {
+          && canPlaceBlock(level.getBlockState(blockPos.north()))) {
         possibleBlockPosition = blockPos.north();
       } else if (direction == Direction.EAST
-          && canPlaceBlock(this.level.getBlockState(blockPos.east()))) {
+          && canPlaceBlock(level.getBlockState(blockPos.east()))) {
         possibleBlockPosition = blockPos.east();
       } else if (direction == Direction.SOUTH
-          && canPlaceBlock(this.level.getBlockState(blockPos.south()))) {
+          && canPlaceBlock(level.getBlockState(blockPos.south()))) {
         possibleBlockPosition = blockPos.south();
       } else if (direction == Direction.WEST
-          && canPlaceBlock(this.level.getBlockState(blockPos.west()))) {
+          && canPlaceBlock(level.getBlockState(blockPos.west()))) {
         possibleBlockPosition = blockPos.west();
       } else if (direction == Direction.DOWN
-          && canPlaceBlock(this.level.getBlockState(blockPos.below()))) {
+          && canPlaceBlock(level.getBlockState(blockPos.below()))) {
         possibleBlockPosition = blockPos.below();
       }
 
       // Check if we could place the block or if we are hitting any edge case.
-      if (possibleBlockPosition != null && (this.level.getBlockState(possibleBlockPosition.below())
+      if (possibleBlockPosition != null && (level.getBlockState(possibleBlockPosition.below())
           .getBlock() instanceof GlowStickBlock
-          || this.level.getBlockState(possibleBlockPosition)
-              .getBlock() instanceof GlowStickBlock)) {
+          || level.getBlockState(possibleBlockPosition).getBlock() instanceof GlowStickBlock)) {
         // Skip existing glow stick block below or at place to avoid floating sticks
-        dropDefaultItem(this.level, possibleBlockPosition);
+        dropDefaultItem(level, possibleBlockPosition);
       } else if (possibleBlockPosition != null) {
         // Check if placing position is full (>=8) water block to avoid jumping animations.
-        BlockState blockStatePossiblePosition = this.level.getBlockState(possibleBlockPosition);
+        BlockState blockStatePossiblePosition = level.getBlockState(possibleBlockPosition);
         boolean isWaterBlock = blockStatePossiblePosition.is(Blocks.WATER)
             && blockStatePossiblePosition.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
 
         // Place and update block facing to the current facing direction and use a random number for
         // the variants between 1 and 3.
-        this.level.setBlockAndUpdate(possibleBlockPosition,
+        level.setBlockAndUpdate(possibleBlockPosition,
             blockState.setValue(GlowStickBlock.FACING, defaultDirection)
                 .setValue(GlowStickBlock.WATERLOGGED, isWaterBlock)
                 .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 4)));
       } else {
         // Drop block if we don't have any possible placement.
-        dropDefaultItem(this.level, blockPos);
+        dropDefaultItem(level, blockPos);
       }
     }
   }
@@ -182,13 +182,14 @@ public class GlowStick extends ThrowableItemProjectile {
     }
     super.tick();
 
-    if (this.level.isClientSide && !this.isInWater() && ticks % random.nextInt(10, 15) == 0) {
+    Level level = this.level();
+    if (level.isClientSide && !this.isInWater() && ticks % random.nextInt(10, 15) == 0) {
       // Add basic particle effect for every 10 to 15 ticks
       Vec3 vec3 = this.getDeltaMovement();
       double d2 = this.getX() + vec3.x;
       double d0 = this.getY() + vec3.y;
       double d1 = this.getZ() + vec3.z;
-      this.level.addParticle(ParticleTypes.END_ROD, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D,
+      level.addParticle(ParticleTypes.END_ROD, d2 - vec3.x * 0.25D, d0 - vec3.y * 0.25D,
           d1 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
     } else {
       // Place light blocks which are following the projectile
@@ -196,7 +197,7 @@ public class GlowStick extends ThrowableItemProjectile {
       if (blockPos != null) {
 
         BlockPos blockPosAbove = blockPos.above();
-        BlockState blockState = this.level.getBlockState(blockPosAbove);
+        BlockState blockState = level.getBlockState(blockPosAbove);
 
         // Make sure we are not destroying anything and only place the block for air and water.
         if (blockState.isAir() || blockState.is(Blocks.WATER)) {
@@ -204,8 +205,8 @@ public class GlowStick extends ThrowableItemProjectile {
           BlockState newBlockState = blockState.is(Blocks.WATER)
               ? ModBlocks.GLOW_STICK_LIGHT_WATER.get().defaultBlockState()
               : ModBlocks.GLOW_STICK_LIGHT.get().defaultBlockState();
-          this.level.setBlockAndUpdate(blockPosAbove, newBlockState);
-          if (this.level.getBlockState(blockPosAbove)
+          level.setBlockAndUpdate(blockPosAbove, newBlockState);
+          if (level.getBlockState(blockPosAbove)
               .getBlock() instanceof GlowStickLightBlock glowStickLightBlock) {
             glowStickLightBlock.scheduleTick(level, blockPosAbove);
           }

@@ -31,6 +31,7 @@ public class GlowStickItems implements DisplayItemsGenerator {
   @Override
   public void accept(ItemDisplayParameters itemDisplayParameters, Output output) {
     // Glow Sticks
+    output.accept(ModItems.GLOW_STICK.get());
     output.accept(ModItems.GLOW_STICK_WHITE.get());
     output.accept(ModItems.GLOW_STICK_ORANGE.get());
     output.accept(ModItems.GLOW_STICK_MAGENTA.get());

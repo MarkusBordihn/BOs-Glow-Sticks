@@ -21,8 +21,7 @@ package de.markusbordihn.glowsticks;
 
 public final class Constants {
 
-  protected Constants() {
-  }
+  protected Constants() {}
 
   // General Mod definitions
   public static final String ISSUE_REPORT = "https://github.com/MarkusBordihn/glow_sticks/issues/";
@@ -31,6 +30,7 @@ public final class Constants {
   public static final String MOD_COMMAND = "glowsticks";
   public static final String MOD_ID = "glow_sticks";
   public static final String MOD_NAME = "Glow Sticks";
+  public static final String MOD_URL = "https://www.curseforge.com/minecraft/mc-mods/glow-sticks";
 
   // Item definitions
   public static final String GLOW_STICK_NAME = "glow_stick";

@@ -32,6 +32,7 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
 import de.markusbordihn.glowsticks.tabs.GlowStickTab;
+import de.markusbordihn.glowsticks.utils.StopModReposts;
 
 @Mod(Constants.MOD_ID)
 public class GlowSticks {
@@ -40,6 +41,8 @@ public class GlowSticks {
 
   public GlowSticks() {
     final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+    StopModReposts.checkStopModReposts();
 
     log.info("{} Entities Types ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITY_TYPES.register(modEventBus);
@@ -52,7 +55,7 @@ public class GlowSticks {
 
     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
       modEventBus.addListener(ClientSetup::new);
-      modEventBus.addListener(GlowStickTab::handleCreativeModeTabRegister);
+      GlowStickTab.CREATIVE_TABS.register(modEventBus);
     });
   }
 

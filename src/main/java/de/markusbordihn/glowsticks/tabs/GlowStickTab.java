@@ -22,12 +22,12 @@ package de.markusbordihn.glowsticks.tabs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.item.ModItems;
@@ -38,17 +38,13 @@ public class GlowStickTab {
 
   protected GlowStickTab() {}
 
-  protected static CreativeModeTab GLOW_STICKS;
+  public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS =
+      DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
-  public static void handleCreativeModeTabRegister(CreativeModeTabEvent.Register event) {
-
-    log.info("{} creative mod tabs ...", Constants.LOG_REGISTER_PREFIX);
-
-    GLOW_STICKS = event
-        .registerCreativeModeTab(new ResourceLocation(Constants.MOD_ID, "glow_sticks"), builder -> {
-          builder.icon(() -> new ItemStack(ModItems.GLOW_STICK_GREEN.get()))
+  public static final RegistryObject<CreativeModeTab> GLOW_STICKS =
+      CREATIVE_TABS.register("glow_sticks",
+          () -> CreativeModeTab.builder()
+              .icon(() -> ModItems.GLOW_STICK_GREEN.get().getDefaultInstance())
               .displayItems(new GlowStickItems())
-              .title(Component.translatable("itemGroup.glow_sticks")).build();
-        });
-  }
+              .title(Component.translatable("itemGroup.glow_sticks")).build());
 }
