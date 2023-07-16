@@ -117,10 +117,7 @@ dependencies {
   // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
   // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
   // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-  minecraft 'net.minecraftforge:forge:1.19.2-43.2.4'
-
-  // Required: Bo's Material Elements (dev dependency)
-  implementation fg.deobf("curse.maven:material_elements-541620:3931517")
+  minecraft 'net.minecraftforge:forge:1.19.2-43.2.19'
 
   // Additional helpful Mods for development (runtime depenedency)
   // runtimeOnly fg.deobf("curse.maven:jei-238222:3670018")
@@ -169,11 +166,6 @@ curseforge {
     releaseType = 'release'
     addGameVersion("1.19.2")
     addGameVersion("Forge")
-    mainArtifact(jar) {
-      relations {
-        requiredDependency 'material-elements'
-      }
-    }
   }
 }
 

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:recipes/root",
   "rewards": {
-    "recipes": ["glow_sticks:glow_stick_lime_from_test_tube_lime"]
+    "recipes": ["glow_sticks:glow_stick_lime_from_stained_glass_lime"]
   },
   "criteria": {
     "has_dye": {
@@ -14,12 +14,12 @@
         ]
       }
     },
-    "has_test_tube_glow": {
+    "has_glow_item": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["material_elements:test_tube_glow"]
+            "tag": "glow_sticks:glow_item"
           }
         ]
       }
@@ -27,9 +27,9 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:glow_stick_lime_from_test_tube_lime"
+        "recipe": "glow_sticks:glow_stick_lime_from_stained_glass_lime"
       }
     }
   },
-  "requirements": [["has_dye", "has_test_tube_glow", "has_the_recipe"]]
+  "requirements": [["has_dye", "has_glow_item", "has_the_recipe"]]
 }
