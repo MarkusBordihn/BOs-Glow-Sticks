@@ -1,0 +1,35 @@
+{
+  "parent": "glow_sticks:crafting/craft_glow_stick",
+  "display": {
+    "icon": {
+      "item": "glow_sticks:glow_stick_yellow"
+    },
+    "title": {
+      "translate": "advancements.glow_sticks.interaction.share_glow_stick.title"
+    },
+    "description": {
+      "translate": "advancements.glow_sticks.interaction.share_glow_stick.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "rewards": {
+    "experience": 10
+  },
+  "criteria": {
+    "share_glow_stick": {
+      "trigger": "minecraft:thrown_item_picked_up_by_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:player"
+        },
+        "item": {
+          "tag": "glow_sticks:glow_sticks"
+        }
+      }
+    }
+  },
+  "requirements": [["share_glow_stick"]]
+}

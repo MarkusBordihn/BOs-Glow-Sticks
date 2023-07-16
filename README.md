@@ -11,27 +11,15 @@ This Minecraft mod adds glow sticks in different colors which can be lit up in t
 
 ## 🧪 Features
 
-- Relative easy to craft.
+- Easy to craft with glowing element (e.g. glowstone dust, glowing ink, ...), glass and glass pane.
 - Available in different colors.
 - Server and eco-friendly (disappearing automatically after a certain time).
 - Works on land and in water.
 - Use NO custom renderer or any other core modifications.
+- Config file to change the duration of the glow.
 - Translation Support: English, German
 
-## Requires
-
-- [Bo's Material and Elements][material-elements]
-
-## Version Status Overview 🛠️
-
-| Version        | Status                |
-| -------------- | --------------------- |
-| Fabric Version | ❌ Not planned        |
-| Forge 1.16.5   | ⚠️ Maintenance only   |
-| Forge 1.17.1   | ⚠️ Maintenance only   |
-| Forge 1.18.1   | ⚠️ Maintenance only   |
-| Forge 1.18.2   | ⚠️ Maintenance only   |
-| Forge 1.19     | ✔️ Active development |
+Since version 6.x this mod no longer requires [Material Elements][material-elements] as dependency.
 
 ## Note
 
