@@ -36,6 +36,8 @@ public class ModItems {
       DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
 
   // Glow Sticks
+  public static final RegistryObject<Item> GLOW_STICK = ITEMS.register("glow_stick",
+      () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_WHITE));
   public static final RegistryObject<Item> GLOW_STICK_WHITE = ITEMS.register("glow_stick_white",
       () -> new GlowStickItem(new Item.Properties(), ModBlocks.GLOW_STICK_WHITE));
   public static final RegistryObject<Item> GLOW_STICK_ORANGE = ITEMS.register("glow_stick_orange",
