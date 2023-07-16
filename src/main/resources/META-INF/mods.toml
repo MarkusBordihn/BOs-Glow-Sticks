@@ -49,11 +49,3 @@ license="MIT"
   versionRange="[1.18.2,1.19)"
   ordering="NONE"
   side="BOTH"
-
-[[dependencies.glow_sticks]]
-  modId="material_elements"
-  mandatory=true
-  # This version range declares a minimum of the material elements version
-  versionRange="[2.6.0,)"
-  ordering="NONE"
-  side="BOTH"
