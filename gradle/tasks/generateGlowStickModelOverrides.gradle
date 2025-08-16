@@ -1,0 +1,83 @@
+import groovy.json.JsonOutput
+
+// Configuration
+ext {
+  glowStickColors = [
+      "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+      "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+  ]
+  stepCount = 6
+  baseItemPath = "$projectDir/../Common/src/main/resources/assets/glow_sticks/models/item"
+  templateModel = "glow_sticks:item/glow_stick/glow_stick"
+}
+
+tasks.register("generateGlowStickModelOverrides") {
+  group = "build"
+  description = "Generates glow stick item models with override references."
+
+  doLast {
+    glowStickColors.each { color ->
+
+      // Create step models and activated model for this color
+      def colorModelDir = new File(baseItemPath, "glow_stick/${color}")
+      if (!colorModelDir.exists()) {
+        colorModelDir.mkdirs()
+      }
+
+      (1..stepCount).each { step ->
+        def modelFile = new File(colorModelDir, "glow_stick_step_${step}.json")
+        def modelJson = [
+            parent  : "glow_sticks:item/glow_stick/glow_stick_step_${step}",
+            textures: [
+                particle: "glow_sticks:item/glow_stick/${color}_25pc",
+                shell   : "glow_sticks:item/glow_stick/${color}_25pc",
+                core    : "glow_sticks:item/glow_stick/${color}_75pc"
+            ]
+        ]
+        modelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(modelJson))
+      }
+
+      def activatedModelFile = new File(colorModelDir, "glow_stick_activated.json")
+      def activatedModelJson = [
+          parent  : "glow_sticks:item/glow_stick/glow_stick_activated",
+          textures: [
+              particle: "glow_sticks:item/glow_stick/${color}_25pc",
+              shell   : "glow_sticks:item/glow_stick/${color}_25pc",
+              core    : "glow_sticks:item/glow_stick/${color}_75pc"
+          ]
+      ]
+      activatedModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(activatedModelJson))
+
+      // Generate main item model under models/item/glow_stick_{color}.json
+      def itemModelFile = new File(baseItemPath, "glow_stick_${color}.json")
+      def overrides = []
+
+      // Activated override
+      overrides << [
+          predicate: ["glow_sticks:activated": 1],
+          model    : "glow_sticks:item/glow_stick/${color}/glow_stick_activated"
+      ]
+
+      // Step overrides
+      (1..stepCount).each { step ->
+        overrides << [
+            predicate: ["glow_sticks:step": step],
+            model    : "glow_sticks:item/glow_stick/${color}/glow_stick_step_${step}"
+        ]
+      }
+
+      def mainModelJson = [
+          parent   : templateModel,
+          textures : [
+              particle: "glow_sticks:item/glow_stick/${color}_25pc",
+              shell   : "glow_sticks:item/glow_stick/${color}_25pc",
+              core    : "glow_sticks:item/glow_stick/${color}_75pc"
+          ],
+          overrides: overrides
+      ]
+
+      itemModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(mainModelJson))
+      println "✔ Generated models for ${color}"
+    }
+  }
+}
