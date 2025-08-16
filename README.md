@@ -1,33 +1,73 @@
-# Glow Sticks (1.20.1)
+# 🧪 Glow Sticks (1.20.1)
 
-[![Glow Sticks Downloads](http://cf.way2muchnoise.eu/full_528389_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
-[![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_528389_all.svg)](https://www.curseforge.com/minecraft/mc-mods/glow-sticks)
+![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_528389_all.svg)
+
+[![Download on CurseForge](http://cf.way2muchnoise.eu/title/528389.svg)][mod_page]
+[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_528389_downloads.svg)][mod_page]
+
+[![Download on Modrinth](https://img.shields.io/badge/dynamic/json?labelColor=black&color=grey&label=&query=title&url=https://api.modrinth.com/v2/project/pr7UDXB2&style=flat&logo=modrinth)][modrinth_page]
+[![Modrinth Downloads](https://img.shields.io/badge/dynamic/json?labelColor=black&color=grey&label=&suffix=%20downloads&query=downloads&url=https://api.modrinth.com/v2/project/pr7UDXB2&style=flat&logo=modrinth)][modrinth_page]
+
+[![Report an Issue](https://img.shields.io/badge/Report%20Issue%20%2F%20Bug%20%2F%20Crash%20%2F%20Feature%20Request-grey?style=flat&logo=github)][issues]
+[![Open Issues](https://img.shields.io/github/issues/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github&color=red)][issues_open]
+[![Closed Issues](https://img.shields.io/github/issues-closed/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github)][issues_closed]
+
+[![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=1.18.2)][ci]
+
+[![Support me on Ko-fi](https://img.shields.io/badge/Support_me_on_Ko--fi-!?labelColor=black&style=flat&logo=ko-fi)][ko-fi]
 
 ![Glow Sticks][logo]
 
-This Minecraft mod adds glow sticks in different colors which can be lit up in the world / underwater for a limited time for better exploring and/or rpg.
+This mod adds **glow sticks in all dye colors** which can be thrown and placed on land or
+underwater.  
+They shine for a limited time, making them perfect for exploring caves, diving, or RPG adventures.
 
 [![Watch the video](https://img.youtube.com/vi/so-65YewqYw/maxresdefault.jpg)](https://youtu.be/so-65YewqYw)
 
-## 🧪 Features
+## ✨ Features
 
-- Easy to craft with glowing element (e.g. glowstone dust, glowing ink, ...), glass and glass pane.
-- Available in different colors.
-- Server and eco-friendly (disappearing automatically after a certain time).
-- Works on land and in water.
-- Config file to change the duration of the glow.
-- Use NO custom renderer or any other core modifications.
-- Translation Support: English, German
+- **Craftable** using glowing items (e.g., glowstone dust, glowing ink sac), glass and glass panes.
+- **All 16 dye colors** available as glowing sticks.
+- **Server & eco-friendly**: glow sticks despawn automatically after a set time.
+- **Works on land and underwater** – no special handling needed.
+- **Lightweight**: no custom renderer or core modifications used.
+- **Configurable**: adjust glow stick lifespan in the config file.
 
-Since version 6.x this mod no longer requires [Material Elements][material-elements] as dependency.
+## ℹ️ More Information
 
-## Note
+- [CurseForge Mod Page][mod_page]
+- [Modrinth Mod Page][modrinth_page]
+- [GitHub Issues & Bug Reports][issues]
 
-Please only download the mod from the official CurseForge page or with the official CurseForge launcher like:
-🧪 [Bo's Glow Sticks][mod_page]
+## 🐛 Report Issues, Bugs, Crashes or Feature Requests
 
-If you are downloading this mod from other sources we could not make sure that it works as expected or does not includes any unwanted modification (e.g. adware, malware, ...).
+Please report issues through the [issues link][issues].  
+Providing logs and reproduction steps helps me to fix bugs faster.
 
-[logo]: src/main/resources/logo.png
-[material-elements]: https://www.curseforge.com/minecraft/mc-mods/material-elements
+## 🫶 Support me
+
+If you enjoy using my creations, consider supporting my development! ☕  
+Donations via [Ko-fi][ko-fi] are appreciated, but never required.  
+Every bit helps me to continue creating free, open-source mods and cover software, service, and
+hardware costs.
+
+## ⚖️ License
+
+The [MIT LICENSE](LICENSE.md) applies only to the code in this repository.  
+Images, models, and other assets are explicitly excluded.
+
+[logo]: Common/src/main/resources/logo.png
+
 [mod_page]: https://www.curseforge.com/minecraft/mc-mods/glow-sticks
+
+[modrinth_page]: https://modrinth.com/mod/glow-sticks
+
+[issues]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues
+
+[issues_open]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues?q=is%3Aopen+%21label%3Aenhancement
+
+[issues_closed]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues?q=is%3Aclosed
+
+[ci]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml
+
+[ko-fi]: https://ko-fi.com/Kaworru  

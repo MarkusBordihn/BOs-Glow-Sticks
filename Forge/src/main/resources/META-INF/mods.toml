@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/MarkusBordihn/Glow-Sticks/issues"
+
+[[mods]]
+modId = "glow_sticks"
+version = "${file.jarVersion}"
+displayName = "Glow Sticks"
+displayURL = "https://curseforge.com/minecraft/mc-mods/glow_sticks"
+logoFile = "logo.png"
+credits = ""
+authors = "Markus Bordihn"
+description = '''Adds colorful glow sticks that can be thrown or placed in the world, including underwater, to provide temporary light. Perfect for exploration, ambiance, and enhancing RPG immersion!'''
+
+[[dependencies.glow_sticks]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.glow_sticks]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.21)"
+ordering = "NONE"
+side = "BOTH"
