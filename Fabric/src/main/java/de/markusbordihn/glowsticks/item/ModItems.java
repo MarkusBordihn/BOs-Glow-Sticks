@@ -41,7 +41,7 @@ public class ModItems {
       GLOW_STICK_ITEMS.put(dyeColor, glowStickItem);
       Registry.register(
           BuiltInRegistries.ITEM,
-          new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName),
+          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName),
           glowStickItem);
     }
   }

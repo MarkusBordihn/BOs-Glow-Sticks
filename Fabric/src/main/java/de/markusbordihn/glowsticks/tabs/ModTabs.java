@@ -53,7 +53,7 @@ public class ModTabs {
     log.info("{} Glow Sticks Tabs ...", Constants.LOG_SUB_REGISTER_PREFIX);
     Registry.register(
         BuiltInRegistries.CREATIVE_MODE_TAB,
-        new ResourceLocation(Constants.MOD_ID, "tab"),
+        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "tab"),
         GLOW_STICKS_TAB);
   }
 }

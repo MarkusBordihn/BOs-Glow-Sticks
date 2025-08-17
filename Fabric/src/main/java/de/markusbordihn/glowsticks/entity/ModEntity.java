@@ -59,7 +59,7 @@ public class ModEntity {
       GLOW_STICK_ENTITIES.put(dyeColor, glowStickEntity);
       Registry.register(
           BuiltInRegistries.ENTITY_TYPE,
-          new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName),
+          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName),
           glowStickEntity);
     }
   }

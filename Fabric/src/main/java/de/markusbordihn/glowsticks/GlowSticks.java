@@ -1,6 +1,7 @@
 package de.markusbordihn.glowsticks;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
+import de.markusbordihn.glowsticks.component.DataComponents;
 import de.markusbordihn.glowsticks.config.Config;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
@@ -25,6 +26,9 @@ public class GlowSticks implements ModInitializer {
 
     log.info("{} Config ...", Constants.LOG_REGISTER_PREFIX);
     Config.register();
+
+    log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
+    DataComponents.registerGlowStickData();
 
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
     ModItems.registerItems();

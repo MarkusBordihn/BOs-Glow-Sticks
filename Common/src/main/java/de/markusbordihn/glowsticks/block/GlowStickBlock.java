@@ -19,6 +19,7 @@
 
 package de.markusbordihn.glowsticks.block;
 
+import com.mojang.serialization.MapCodec;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.utils.GlowStickPlacementHelper;
@@ -50,11 +51,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlock {
 
+  public static final MapCodec<GlowStickBlock> CODEC =
+      simpleCodec(properties -> new GlowStickBlock(properties, () -> null));
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
   public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
   public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 1, 3);
-
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);
 
   private final Supplier<Item> glowStickItemSupplier;
@@ -65,7 +67,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     this.registerDefaultState(createInitialBlockState());
   }
 
-  public static int getLightLevel(BlockState blockState) {
+  public static int getLightLevel(final BlockState blockState) {
     int ageValue = blockState.getValue(AGE);
     return (int) Math.round(15 - (ageValue < 10 ? ageValue * 0.25 : ageValue * 0.75));
   }
@@ -155,10 +157,14 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
       return;
     }
 
-    // Use a simple probability check based on despawn tick rate
     if (random.nextInt(getDespawnTickRate()) == 0) {
       advanceGlowStickAge(blockState, serverLevel, blockPos);
     }
+  }
+
+  @Override
+  protected MapCodec<? extends FallingBlock> codec() {
+    return CODEC;
   }
 
   private BlockState createInitialBlockState() {
@@ -171,24 +177,24 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   }
 
   private void handleLavaDestruction(
-      Level level, BlockPos lavaPos, FallingBlockEntity fallingBlockEntity) {
+      final Level level, final BlockPos lavaPos, final FallingBlockEntity fallingBlockEntity) {
     GlowStickPlacementHelper.handleLavaDestruction(level, lavaPos);
     fallingBlockEntity.discard();
   }
 
   private void handleNormalLanding(
-      Level level,
-      BlockPos blockPos,
-      BlockState glowStickState,
-      BlockState surfaceState,
-      FallingBlockEntity fallingBlockEntity) {
+      final Level level,
+      final BlockPos blockPos,
+      final BlockState glowStickState,
+      final BlockState surfaceState,
+      final FallingBlockEntity fallingBlockEntity) {
     GlowStickPlacementHelper.playPlacementSound(level, blockPos, surfaceState, level.random);
     level.setBlock(blockPos, glowStickState, 3);
     fallingBlockEntity.discard();
   }
 
   private void advanceGlowStickAge(
-      BlockState blockState, ServerLevel serverLevel, BlockPos blockPos) {
+      final BlockState blockState, final ServerLevel serverLevel, final BlockPos blockPos) {
     int currentAge = blockState.getValue(AGE);
     int newAge = currentAge + 1;
 

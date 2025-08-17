@@ -52,13 +52,13 @@ tasks.register("generateGlowStickModelOverrides") {
       def itemModelFile = new File(baseItemPath, "glow_stick_${color}.json")
       def overrides = []
 
-      // Activated override
+      // Activated override - first priority
       overrides << [
           predicate: ["glow_sticks:activated": 1],
           model    : "glow_sticks:item/glow_stick/${color}/glow_stick_activated"
       ]
 
-      // Step overrides
+      // Step overrides - for animation during activation
       (1..stepCount).each { step ->
         overrides << [
             predicate: ["glow_sticks:step": step],

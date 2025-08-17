@@ -1,6 +1,7 @@
 package de.markusbordihn.glowsticks;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
+import de.markusbordihn.glowsticks.component.ModDataComponents;
 import de.markusbordihn.glowsticks.config.Config;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
@@ -33,6 +34,9 @@ public class GlowSticks {
 
     log.info("{} Config ...", Constants.LOG_REGISTER_PREFIX);
     Config.register();
+
+    log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
+    ModDataComponents.DATA_COMPONENTS.register(modEventBus);
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());

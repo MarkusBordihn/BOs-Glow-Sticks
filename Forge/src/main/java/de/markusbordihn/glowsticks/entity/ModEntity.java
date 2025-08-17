@@ -41,8 +41,6 @@ public class ModEntity {
 
   protected static final Map<DyeColor, RegistryObject<EntityType<GlowStickProjectile>>>
       GLOW_STICK_ENTITIES = new EnumMap<>(DyeColor.class);
-  public static final RegistryObject<EntityType<GlowStickProjectile>> GLOW_STICK =
-      GLOW_STICK_ENTITIES.get(DyeColor.WHITE);
 
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
@@ -60,7 +58,8 @@ public class ModEntity {
                       .clientTrackingRange(4)
                       .updateInterval(10)
                       .build(
-                          new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName)
+                          ResourceLocation.fromNamespaceAndPath(
+                                  Constants.MOD_ID, "glow_stick_" + colorName)
                               .toString())));
     }
   }

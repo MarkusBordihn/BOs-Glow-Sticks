@@ -20,13 +20,14 @@
 package de.markusbordihn.glowsticks.item;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.component.DataComponents;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import de.markusbordihn.glowsticks.data.GlowStickData;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
 import de.markusbordihn.glowsticks.utils.ToolTips;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -46,8 +47,6 @@ import net.minecraft.world.level.block.Block;
 public class GlowStickItem extends Item {
 
   public static final String NAME = "glow_stick";
-  public static final String TAG_ACTIVATED = "activated";
-  public static final String TAG_STEP = "step";
   public static final int ANIMATION_STEPS = 6;
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
 
@@ -79,26 +78,57 @@ public class GlowStickItem extends Item {
   }
 
   public static boolean isActivated(final ItemStack stack) {
-    CompoundTag tag = stack.getTag();
-    return tag != null && tag.getBoolean(TAG_ACTIVATED);
+    GlowStickData glowStickData =
+        stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+    return glowStickData.activated();
   }
 
   public static void setActivated(final ItemStack stack, final boolean activated) {
-    stack.getOrCreateTag().putBoolean(TAG_ACTIVATED, activated);
+    GlowStickData currentData =
+        stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+    stack.set(DataComponents.GLOW_STICK_DATA, currentData.withActivated(activated));
   }
 
   public static int getStep(final ItemStack itemStack) {
-    CompoundTag tag = itemStack.getTag();
-    return tag != null ? tag.getInt(TAG_STEP) : 0;
+    GlowStickData glowStickData =
+        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+    return glowStickData.step();
   }
 
   public static int setStep(final ItemStack itemStack, final int step) {
-    itemStack.getOrCreateTag().putInt(TAG_STEP, step);
+    GlowStickData currentData =
+        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+    itemStack.set(DataComponents.GLOW_STICK_DATA, currentData.withStep(step));
     return step;
   }
 
   public static int increaseStep(final ItemStack itemStack) {
-    return setStep(itemStack, getStep(itemStack) + 1);
+    GlowStickData currentData =
+        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+    GlowStickData newData = currentData.withIncrementedStep();
+    itemStack.set(DataComponents.GLOW_STICK_DATA, newData);
+    return newData.step();
+  }
+
+  // ItemProperty predicate functions - can be shared across all platforms
+  public static float getStepFromDataComponent(
+      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
+      GlowStickData glowStickData =
+          itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+      return glowStickData.step();
+    }
+    return 0.0F;
+  }
+
+  public static float getActivatedFromDataComponent(
+      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
+      GlowStickData glowStickData =
+          itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.DEFAULT);
+      return glowStickData.activated() ? 1.0F : 0.0F;
+    }
+    return 0.0F;
   }
 
   public GlowStickProjectile getGlowStickEntity(final Level level, final LivingEntity entity) {
@@ -118,7 +148,7 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public int getUseDuration(ItemStack itemStack) {
+  public int getUseDuration(ItemStack itemStack, LivingEntity livingEntity) {
     return DURATION_TICKS;
   }
 
@@ -137,7 +167,9 @@ public class GlowStickItem extends Item {
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
         level.addFreshEntity(entity);
         player.getCooldowns().addCooldown(this, DURATION_TICKS);
-        itemStack.shrink(1);
+        if (!player.getAbilities().instabuild) {
+          itemStack.shrink(1);
+        }
       }
       setActivated(itemStack, false);
       setStep(itemStack, 0);
@@ -187,7 +219,10 @@ public class GlowStickItem extends Item {
 
   @Override
   public void appendHoverText(
-      ItemStack itemStack, Level level, List<Component> tooltipList, TooltipFlag tooltipFlag) {
+      ItemStack itemStack,
+      Item.TooltipContext tooltipContext,
+      List<Component> tooltipList,
+      TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipList,
         Component.translatable(Constants.TEXT_PREFIX + NAME + "_" + dyeColor + "_description")

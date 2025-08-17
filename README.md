@@ -1,4 +1,4 @@
-# 🧪 Glow Sticks (1.20.1)
+# 🧪 Glow Sticks (1.21.1)
 
 ![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_528389_all.svg)
 

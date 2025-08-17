@@ -1,9 +1,14 @@
 import org.gradle.tooling.GradleConnector
 
+plugins {
+  id 'idea'
+  id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.8"
+}
+
 tasks.register('runAllGameTests') {
   group = 'verification'
   description = 'Runs both Fabric and Forge game tests.'
-  dependsOn ':Fabric:runGameTest', ':Forge:runGameTestServer'
+  dependsOn ':Fabric:runGameTest', ':Forge:runGameTestServer', ':NeoForge:runGameTestServer'
 }
 
 // Create a publish task to clean, build and publish sequentially
@@ -14,7 +19,13 @@ tasks.register('publish') {
   doLast {
     // First ensure clean runs, then build, then publishing tasks for all subprojects
     def buildTasks = ['clean', 'build']
-    def publishingTasks = [':Fabric:modrinth', ':Forge:modrinth', ':Fabric:curseforge', ':Forge:curseforge']
+    def publishingTasks = [
+        ':Fabric:modrinth',
+        ':Forge:modrinth',
+        ':NeoForge:modrinth',
+        ':Fabric:curseforge',
+        ':Forge:curseforge',
+        ':NeoForge:curseforge']
     def allTasks = buildTasks + publishingTasks
 
     // Process each task sequentially to guarantee order
@@ -58,7 +69,7 @@ subprojects {
 
   apply plugin: 'java'
 
-  java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+  java.toolchain.languageVersion = JavaLanguageVersion.of(21)
   java.withSourcesJar()
   java.withJavadocJar()
 
@@ -72,8 +83,16 @@ subprojects {
     }
   }
 
+  dependencies {
+    configurations.configureEach {
+      resolutionStrategy.force 'org.ow2.asm:asm-analysis:9.7'
+      resolutionStrategy.force 'org.ow2.asm:asm-util:9.7'
+    }
+  }
+
   tasks.register('wrapper', Wrapper) {
-    gradleVersion = '8.13'
+    gradleVersion = '8.14.3'
+    distributionType = Wrapper.DistributionType.BIN
   }
 
   tasks.withType(JavaCompile).configureEach {
@@ -89,4 +108,11 @@ subprojects {
   }
 
   tasks.register("prepareKotlinBuildScriptModel") {}
+
+  idea {
+    module {
+      downloadSources = true
+      downloadJavadoc = true
+    }
+  }
 }

@@ -39,11 +39,11 @@ public final class GlowStickPlacementHelper {
 
   private GlowStickPlacementHelper() {}
 
-  public static boolean isLavaBlock(BlockState blockState) {
+  public static boolean isLavaBlock(final BlockState blockState) {
     return blockState.is(Blocks.LAVA) || blockState.getFluidState().is(Fluids.LAVA);
   }
 
-  public static void createLavaExplosionEffect(Level level, BlockPos position) {
+  public static void createLavaExplosionEffect(final Level level, final BlockPos position) {
     level.explode(
         null,
         position.getX() + 0.5,
@@ -54,59 +54,67 @@ public final class GlowStickPlacementHelper {
         Level.ExplosionInteraction.NONE);
   }
 
-  public static void playLavaInteractionSounds(Level level, BlockPos position) {
+  public static void playLavaInteractionSounds(final Level level, final BlockPos position) {
     level.playSound(null, position, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
     level.playSound(null, position, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.18F, 0.8F);
   }
 
-  public static void handleLavaDestruction(Level level, BlockPos lavaPosition) {
+  public static void handleLavaDestruction(final Level level, final BlockPos lavaPosition) {
     createLavaExplosionEffect(level, lavaPosition);
     playLavaInteractionSounds(level, lavaPosition);
-    // No glow stick placement - the item is destroyed in lava
   }
 
-  private static float calculatePitchWithVariation(RandomSource random) {
+  private static float calculatePitchWithVariation(final RandomSource random) {
     return 1.0F + (random.nextFloat() - 0.5F) * PITCH_VARIATION_FACTOR;
   }
 
   private static void playSound(
-      Level level, BlockPos position, SoundEvent soundEvent, float pitch, float volume) {
+      final Level level,
+      final BlockPos position,
+      final SoundEvent soundEvent,
+      final float pitch,
+      final float volume) {
     level.playSound(null, position, soundEvent, SoundSource.BLOCKS, volume, pitch);
   }
 
-  private static boolean isStoneLikeSurface(Block surfaceBlock, BlockState surfaceState) {
+  private static boolean isStoneLikeSurface(
+      final Block surfaceBlock, final BlockState surfaceState) {
     return surfaceBlock == Blocks.STONE
         || surfaceBlock == Blocks.COBBLESTONE
         || surfaceBlock == Blocks.DEEPSLATE
         || surfaceState.is(BlockTags.STONE_BRICKS);
   }
 
-  private static boolean isDirtLikeSurface(Block surfaceBlock, BlockState surfaceState) {
+  private static boolean isDirtLikeSurface(
+      final Block surfaceBlock, final BlockState surfaceState) {
     return surfaceBlock == Blocks.GRASS_BLOCK
         || surfaceBlock == Blocks.DIRT
         || surfaceState.is(BlockTags.DIRT);
   }
 
-  private static boolean isWoodLikeSurface(BlockState surfaceState) {
+  private static boolean isWoodLikeSurface(final BlockState surfaceState) {
     return surfaceState.is(BlockTags.LOGS) || surfaceState.is(BlockTags.PLANKS);
   }
 
-  private static boolean isSandLikeSurface(Block surfaceBlock) {
+  private static boolean isSandLikeSurface(final Block surfaceBlock) {
     return surfaceBlock == Blocks.SAND
         || surfaceBlock == Blocks.RED_SAND
         || surfaceBlock == Blocks.GRAVEL;
   }
 
-  private static boolean isLeafSurface(BlockState surfaceState) {
+  private static boolean isLeafSurface(final BlockState surfaceState) {
     return surfaceState.is(BlockTags.LEAVES);
   }
 
-  private static boolean isWaterSurface(Block surfaceBlock, BlockState surfaceState) {
+  private static boolean isWaterSurface(final Block surfaceBlock, final BlockState surfaceState) {
     return surfaceBlock == Blocks.WATER || surfaceState.getFluidState().is(Fluids.WATER);
   }
 
   public static void playPlacementSound(
-      Level level, BlockPos position, BlockState surfaceState, RandomSource random) {
+      final Level level,
+      final BlockPos position,
+      final BlockState surfaceState,
+      final RandomSource random) {
     if (level.isClientSide) {
       return;
     }
