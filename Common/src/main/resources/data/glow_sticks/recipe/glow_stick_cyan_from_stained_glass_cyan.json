@@ -1,16 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": ["|#|", "|+|", "|#|"],
   "key": {
-    "#": {
-      "item": "minecraft:cyan_stained_glass"
-    },
-    "|": {
-      "tag": "glow_sticks:glass_panes"
-    },
-    "+": {
-      "tag": "glow_sticks:glow_item"
-    }
+    "#": "minecraft:cyan_stained_glass",
+    "|": "#glow_sticks:glass_panes",
+    "+": "#glow_sticks:glow_item"
   },
   "result": {
     "id": "glow_sticks:glow_stick_cyan",

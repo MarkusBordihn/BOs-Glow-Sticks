@@ -17,6 +17,9 @@ minecraft {
   reobf = false
   copyIdeResources = true
 
+  // Access Transformer
+  accessTransformer = file("src/main/resources/META-INF/accesstransformer.cfg")
+
   // Run configurations
   runs {
     client {

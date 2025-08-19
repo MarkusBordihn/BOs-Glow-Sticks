@@ -1,0 +1,64 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "glow_sticks:activated",
+    "on_false": {
+      "type": "minecraft:range_dispatch",
+      "fallback": {
+        "type": "minecraft:model",
+        "model": "glow_sticks:item/glow_stick/red/glow_stick_default"
+      },
+      "property": "glow_sticks:step",
+      "index": 1,
+      "scale": 1.0,
+      "entries": [
+        {
+          "threshold": 1,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_1"
+          }
+        },
+        {
+          "threshold": 2,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_2"
+          }
+        },
+        {
+          "threshold": 3,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_3"
+          }
+        },
+        {
+          "threshold": 4,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_4"
+          }
+        },
+        {
+          "threshold": 5,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_5"
+          }
+        },
+        {
+          "threshold": 6,
+          "model": {
+            "type": "minecraft:model",
+            "model": "glow_sticks:item/glow_stick/red/glow_stick_step_6"
+          }
+        }
+      ]
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "glow_sticks:item/glow_stick/red/glow_stick_activated"
+    }
+  }
+}

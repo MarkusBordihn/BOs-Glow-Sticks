@@ -36,12 +36,15 @@ public class ModBlocks {
   public static final RegistryObject<Block> GLOW_STICK_LIGHT =
       BLOCKS.register(
           "glow_stick_light",
-          () -> new GlowStickLightBlock(GlowStickBlockProperties.createLightBlockProperties()));
+          () ->
+              new GlowStickLightBlock(
+                  GlowStickBlockProperties.createLightBlockProperties("glow_stick_light")));
   public static final RegistryObject<Block> GLOW_STICK_LIGHT_WATER =
       BLOCKS.register(
           "glow_stick_light_water",
           () ->
-              new GlowStickLightWaterBlock(GlowStickBlockProperties.createLightBlockProperties()));
+              new GlowStickLightWaterBlock(
+                  GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water")));
   protected static final Map<DyeColor, RegistryObject<Block>> GLOW_STICK_BLOCKS =
       new EnumMap<>(DyeColor.class);
 
@@ -49,13 +52,14 @@ public class ModBlocks {
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
+      String blockId = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
           dyeColor,
           BLOCKS.register(
-              "glow_stick_" + colorName,
+              blockId,
               () ->
                   new GlowStickBlock(
-                      GlowStickBlockProperties.createGlowStickBlockProperties(),
+                      GlowStickBlockProperties.createGlowStickBlockProperties(blockId),
                       ModItems.getGlowStickItem(dyeColor))));
     }
   }

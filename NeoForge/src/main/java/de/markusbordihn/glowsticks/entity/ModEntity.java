@@ -26,6 +26,8 @@ import de.markusbordihn.glowsticks.item.ModItems;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -46,6 +48,10 @@ public class ModEntity {
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
+      ResourceLocation entityId =
+          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName);
+      ResourceKey<EntityType<?>> entityKey = ResourceKey.create(Registries.ENTITY_TYPE, entityId);
+
       GLOW_STICK_ENTITIES.put(
           dyeColor,
           ENTITIES.register(
@@ -58,10 +64,7 @@ public class ModEntity {
                       .sized(0.25F, 0.25F)
                       .clientTrackingRange(4)
                       .updateInterval(10)
-                      .build(
-                          ResourceLocation.fromNamespaceAndPath(
-                                  Constants.MOD_ID, "glow_stick_" + colorName)
-                              .toString())));
+                      .build(entityKey)));
     }
   }
 

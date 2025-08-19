@@ -1,6 +1,7 @@
 package de.markusbordihn.glowsticks;
 
 import de.markusbordihn.glowsticks.client.renderer.ClientRenderer;
+import de.markusbordihn.glowsticks.client.renderer.item.properties.ModItemProperties;
 import de.markusbordihn.glowsticks.tabs.ModTabs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -17,7 +18,11 @@ public class GlowSticksClient {
   public GlowSticksClient(IEventBus modEventBus) {
     log.info("Initializing {} (NeoForge-Client) ...", Constants.MOD_NAME);
 
+    log.info("{} Registering client event handlers ...", Constants.LOG_REGISTER_PREFIX);
     modEventBus.addListener(ClientRenderer::registerItemRenderer);
     ModTabs.CREATIVE_MODE_TABS.register(modEventBus);
+
+    log.info("{} Item Properties ...", Constants.LOG_REGISTER_PREFIX);
+    ModItemProperties.registerItemProperties();
   }
 }

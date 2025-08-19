@@ -33,7 +33,7 @@ public record GlowStickData(boolean activated, int step) {
   public static final String STEP_TAG = "step";
   public static final String ACTIVATED_TAG = "activated";
 
-  public static final GlowStickData DEFAULT = new GlowStickData(false, 0);
+  public static final GlowStickData EMPTY = new GlowStickData(false, 0);
   public static final ResourceLocation STEP_PREDICATE =
       ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, STEP_TAG);
   public static final ResourceLocation ACTIVATED_PREDICATE =

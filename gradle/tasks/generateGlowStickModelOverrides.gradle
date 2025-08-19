@@ -8,76 +8,175 @@ ext {
   ]
   stepCount = 6
   baseItemPath = "$projectDir/../Common/src/main/resources/assets/glow_sticks/models/item"
+  baseItemsPath = "$projectDir/../Common/src/main/resources/assets/glow_sticks/items"
   templateModel = "glow_sticks:item/glow_stick/glow_stick"
+}
+
+def getTextureTransparencyForPhase(String phase) {
+  switch (phase) {
+    case "default":
+      return [particle: "25pc", shell: "25pc", core: "50pc"]
+    case "step_1":
+      return [particle: "25pc", shell: "25pc", core: "50pc"]
+    case "step_2":
+      return [particle: "25pc", shell: "25pc", core: "50pc"]
+    case "step_3":
+      return [particle: "25pc", shell: "25pc", core: "50pc"]
+    case "step_4":
+      return [particle: "25pc", shell: "25pc", core: "75pc"]
+    case "step_5":
+      return [particle: "50pc", shell: "25pc", core: "100pc"]
+    case "step_6":
+      return [particle: "50pc", shell: "50pc", core: "100pc"]
+    case "activated":
+      return [particle: "50pc", shell: "50pc", core: "100pc"]
+    default:
+      return [particle: "25pc", shell: "25pc", core: "50pc"]
+  }
+}
+
+def createTextureConfiguration(String color, Map transparencyConfig) {
+  return [
+      particle: "glow_sticks:item/glow_stick/${color}_${transparencyConfig.particle}",
+      shell   : "glow_sticks:item/glow_stick/${color}_${transparencyConfig.shell}",
+      core    : "glow_sticks:item/glow_stick/${color}_${transparencyConfig.core}"
+  ]
+}
+
+def createDefaultModelJson(String color) {
+  def transparencyConfig = getTextureTransparencyForPhase("default")
+  return [
+      parent  : "glow_sticks:item/glow_stick/glow_stick",
+      textures: createTextureConfiguration(color, transparencyConfig)
+  ]
+}
+
+def createStepModelJson(String color, int step) {
+  def transparencyConfig = getTextureTransparencyForPhase("step_${step}")
+  return [
+      parent  : "glow_sticks:item/glow_stick/glow_stick_step_${step}",
+      textures: createTextureConfiguration(color, transparencyConfig)
+  ]
+}
+
+def createActivatedModelJson(String color) {
+  def transparencyConfig = getTextureTransparencyForPhase("activated")
+  return [
+      parent  : "glow_sticks:item/glow_stick/glow_stick_activated",
+      textures: createTextureConfiguration(color, transparencyConfig)
+  ]
+}
+
+def createMainItemModelJson(String color, int stepCount) {
+  // Build step models array for range_dispatch entries
+  def stepEntries = []
+  (1..stepCount).each { step ->
+    stepEntries << [
+        threshold: step,
+        model    : [
+            type : "minecraft:model",
+            model: "glow_sticks:item/glow_stick/${color}/glow_stick_step_${step}"
+        ]
+    ]
+  }
+
+  return [
+      model: [
+          type    : "minecraft:condition",
+          property: "glow_sticks:activated",
+          on_false: [
+              type    : "minecraft:range_dispatch",
+              fallback: [
+                  type : "minecraft:model",
+                  model: "glow_sticks:item/glow_stick/${color}/glow_stick_default"
+              ],
+              property: "glow_sticks:step",
+              index   : 1,
+              scale   : 1.0,
+              entries : stepEntries
+          ],
+          on_true : [
+              type : "minecraft:model",
+              model: "glow_sticks:item/glow_stick/${color}/glow_stick_activated"
+          ]
+      ]
+  ]
+}
+
+def generateDefaultModelFile(String color, File colorModelDir) {
+  def defaultModelFile = new File(colorModelDir, "glow_stick_default.json")
+  def defaultModelJson = createDefaultModelJson(color)
+  defaultModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(defaultModelJson))
+
+  def transparencyConfig = getTextureTransparencyForPhase("default")
+  println "  ✔ Generated default model for ${color} (particle: ${transparencyConfig.particle}, shell: ${transparencyConfig.shell}, core: ${transparencyConfig.core})"
+}
+
+def generateStepModelFiles(String color, File colorModelDir, int stepCount) {
+  (1..stepCount).each { step ->
+    def modelFile = new File(colorModelDir, "glow_stick_step_${step}.json")
+    def modelJson = createStepModelJson(color, step)
+    modelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(modelJson))
+
+    def transparencyConfig = getTextureTransparencyForPhase("step_${step}")
+    println "  ✔ Generated step ${step} model for ${color} (particle: ${transparencyConfig.particle}, shell: ${transparencyConfig.shell}, core: ${transparencyConfig.core})"
+  }
+}
+
+def generateActivatedModelFile(String color, File colorModelDir) {
+  def activatedModelFile = new File(colorModelDir, "glow_stick_activated.json")
+  def activatedModelJson = createActivatedModelJson(color)
+  activatedModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(activatedModelJson))
+
+  def transparencyConfig = getTextureTransparencyForPhase("activated")
+  println "  ✔ Generated activated model for ${color} (particle: ${transparencyConfig.particle}, shell: ${transparencyConfig.shell}, core: ${transparencyConfig.core})"
+}
+
+def generateMainItemModelFile(String color, File itemsDir, int stepCount) {
+  def itemModelFile = new File(itemsDir, "glow_stick_${color}.json")
+  def mainModelJson = createMainItemModelJson(color, stepCount)
+  itemModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(mainModelJson))
+  println "  ✔ Generated main item model for ${color}"
+}
+
+def ensureDirectoryExists(File directory) {
+  if (!directory.exists()) {
+    directory.mkdirs()
+  }
 }
 
 tasks.register("generateGlowStickModelOverrides") {
   group = "build"
-  description = "Generates glow stick item models with override references."
+  description = "Generates glow stick item models with progressive transparency animation."
 
   doLast {
+    println "Starting generation of glow stick models with progressive transparency for ${glowStickColors.size()} colors..."
+    println "Animation sequence:"
+    println "  Default/Steps 1-3: particle=25%, shell=25%, core=50%"
+    println "  Step 4 (crack sound): particle=25%, shell=25%, core=75%"
+    println "  Step 5: particle=50%, shell=25%, core=100%"
+    println "  Step 6/Activated: particle=50%, shell=50%, core=100%"
+    println ""
+
     glowStickColors.each { color ->
+      println "Generating models for ${color}..."
 
-      // Create step models and activated model for this color
+      // Ensure color model directory exists
       def colorModelDir = new File(baseItemPath, "glow_stick/${color}")
-      if (!colorModelDir.exists()) {
-        colorModelDir.mkdirs()
-      }
+      ensureDirectoryExists(colorModelDir)
 
-      (1..stepCount).each { step ->
-        def modelFile = new File(colorModelDir, "glow_stick_step_${step}.json")
-        def modelJson = [
-            parent  : "glow_sticks:item/glow_stick/glow_stick_step_${step}",
-            textures: [
-                particle: "glow_sticks:item/glow_stick/${color}_25pc",
-                shell   : "glow_sticks:item/glow_stick/${color}_25pc",
-                core    : "glow_sticks:item/glow_stick/${color}_75pc"
-            ]
-        ]
-        modelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(modelJson))
-      }
+      // Ensure items directory exists
+      def itemsDir = new File(baseItemsPath)
+      ensureDirectoryExists(itemsDir)
 
-      def activatedModelFile = new File(colorModelDir, "glow_stick_activated.json")
-      def activatedModelJson = [
-          parent  : "glow_sticks:item/glow_stick/glow_stick_activated",
-          textures: [
-              particle: "glow_sticks:item/glow_stick/${color}_25pc",
-              shell   : "glow_sticks:item/glow_stick/${color}_25pc",
-              core    : "glow_sticks:item/glow_stick/${color}_75pc"
-          ]
-      ]
-      activatedModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(activatedModelJson))
-
-      // Generate main item model under models/item/glow_stick_{color}.json
-      def itemModelFile = new File(baseItemPath, "glow_stick_${color}.json")
-      def overrides = []
-
-      // Activated override - first priority
-      overrides << [
-          predicate: ["glow_sticks:activated": 1],
-          model    : "glow_sticks:item/glow_stick/${color}/glow_stick_activated"
-      ]
-
-      // Step overrides - for animation during activation
-      (1..stepCount).each { step ->
-        overrides << [
-            predicate: ["glow_sticks:step": step],
-            model    : "glow_sticks:item/glow_stick/${color}/glow_stick_step_${step}"
-        ]
-      }
-
-      def mainModelJson = [
-          parent   : templateModel,
-          textures : [
-              particle: "glow_sticks:item/glow_stick/${color}_25pc",
-              shell   : "glow_sticks:item/glow_stick/${color}_25pc",
-              core    : "glow_sticks:item/glow_stick/${color}_75pc"
-          ],
-          overrides: overrides
-      ]
-
-      itemModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(mainModelJson))
-      println "✔ Generated models for ${color}"
+      // Generate all model files for this color
+      generateDefaultModelFile(color, colorModelDir)
+      generateStepModelFiles(color, colorModelDir, stepCount)
+      generateActivatedModelFile(color, colorModelDir)
+      generateMainItemModelFile(color, itemsDir, stepCount)
+      println ""
     }
+
+    println "✅ Successfully generated all glow stick models with progressive transparency animation!"
   }
 }

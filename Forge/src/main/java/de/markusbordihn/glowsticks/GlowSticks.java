@@ -5,7 +5,6 @@ import de.markusbordihn.glowsticks.component.ModDataComponents;
 import de.markusbordihn.glowsticks.config.Config;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
-import de.markusbordihn.glowsticks.tabs.ModTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -22,8 +21,8 @@ public class GlowSticks {
   private static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   @SuppressWarnings({"java:S1118", "java:S2440"})
-  public GlowSticks() {
-    final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+  public GlowSticks(FMLJavaModLoadingContext context) {
+    final IEventBus modEventBus = context.getModEventBus();
 
     log.info("Initializing {} (Forge) ...", Constants.MOD_NAME);
 
@@ -39,16 +38,13 @@ public class GlowSticks {
     ModDataComponents.DATA_COMPONENTS.register(modEventBus);
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
-    ModEntity.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+    ModEntity.ENTITIES.register(modEventBus);
 
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
     ModItems.ITEMS.register(modEventBus);
 
     log.info("{} Blocks ...", Constants.LOG_REGISTER_PREFIX);
-    ModBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-    log.info("{} Creative Mode Tabs ...", Constants.LOG_REGISTER_PREFIX);
-    ModTabs.register(modEventBus);
+    ModBlocks.BLOCKS.register(modEventBus);
 
     // Initialize the client mod initializer
     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new GlowSticksClient(modEventBus));

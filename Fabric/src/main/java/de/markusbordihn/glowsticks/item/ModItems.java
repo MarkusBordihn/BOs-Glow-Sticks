@@ -36,12 +36,15 @@ public class ModItems {
     // Register all glow stick items for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
-      Item glowStickItem = new GlowStickItemWrapper(new Item.Properties(), dyeColor);
+      String itemId = "glow_stick_" + colorName;
+      Item glowStickItem =
+          new GlowStickItemWrapper(
+              GlowStickItemProperties.createGlowStickItemProperties(itemId), dyeColor);
 
       GLOW_STICK_ITEMS.put(dyeColor, glowStickItem);
       Registry.register(
           BuiltInRegistries.ITEM,
-          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName),
+          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, itemId),
           glowStickItem);
     }
   }

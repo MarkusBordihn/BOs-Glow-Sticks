@@ -42,8 +42,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -54,7 +54,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   public static final MapCodec<GlowStickBlock> CODEC =
       simpleCodec(properties -> new GlowStickBlock(properties, () -> null));
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-  public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+  public static final Property<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
   public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
   public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 1, 3);
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);

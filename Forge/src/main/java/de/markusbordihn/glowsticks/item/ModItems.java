@@ -39,11 +39,14 @@ public class ModItems {
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
+      String itemId = "glow_stick_" + colorName;
       GLOW_STICK_ITEMS.put(
           dyeColor,
           ITEMS.register(
-              "glow_stick_" + colorName,
-              () -> new GlowStickItemWrapper(new Item.Properties(), dyeColor)));
+              itemId,
+              () ->
+                  new GlowStickItemWrapper(
+                      GlowStickItemProperties.createGlowStickItemProperties(itemId), dyeColor)));
     }
   }
 
