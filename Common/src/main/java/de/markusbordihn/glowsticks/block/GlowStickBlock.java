@@ -167,6 +167,18 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     return CODEC;
   }
 
+  @Override
+  public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+    try {
+      if (glowStickItemSupplier.get() instanceof GlowStickItem glowStickItem) {
+        return glowStickItem.getDyeColor().getFireworkColor();
+      }
+    } catch (Exception ignored) {
+      // Ignore
+    }
+    return 0xFFFFFF;
+  }
+
   private BlockState createInitialBlockState() {
     return this.stateDefinition
         .any()

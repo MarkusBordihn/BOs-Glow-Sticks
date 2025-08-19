@@ -21,6 +21,7 @@ package de.markusbordihn.glowsticks.utils;
 
 import de.markusbordihn.glowsticks.Constants;
 import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -28,24 +29,21 @@ import net.minecraft.network.chat.Style;
 
 public class ToolTips {
 
-  private static final int MAX_TOOLTIP_WIDTH = 200;
-
   private ToolTips() {}
 
-  public static void addTooltip(final List<Component> tooltip, final Component component) {
+  public static void addTooltip(
+      final Consumer<Component> tooltipConsumer, final Component component) {
     if (Constants.IS_FABRIC && !Constants.HAS_FABRIC_TOOLTIPFIX_MOD) {
-      String componentString = component.getString();
-      Style style = component.getStyle();
       List<FormattedText> lines =
           Minecraft.getInstance()
               .font
               .getSplitter()
-              .splitLines(componentString, MAX_TOOLTIP_WIDTH, Style.EMPTY);
+              .splitLines(component.getString(), 200, Style.EMPTY);
       for (FormattedText line : lines) {
-        tooltip.add(Component.literal(line.getString()).withStyle(style));
+        tooltipConsumer.accept(Component.literal(line.getString()).withStyle(component.getStyle()));
       }
     } else {
-      tooltip.add(component);
+      tooltipConsumer.accept(component);
     }
   }
 }

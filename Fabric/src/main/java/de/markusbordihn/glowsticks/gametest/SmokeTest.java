@@ -1,14 +1,14 @@
 package de.markusbordihn.glowsticks.gametest;
 
 import de.markusbordihn.glowsticks.Constants;
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 @SuppressWarnings("unused")
 public class SmokeTest {
 
-  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  @GameTest(structure = "glow_sticks:gametest.3x3x3")
   public void testModRegistered(GameTestHelper helper) {
     GameTestHelpers.assertTrue(
         helper,

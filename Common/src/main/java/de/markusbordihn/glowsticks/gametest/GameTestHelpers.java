@@ -2,6 +2,7 @@ package de.markusbordihn.glowsticks.gametest;
 
 import de.markusbordihn.glowsticks.Constants;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ public class GameTestHelpers {
     if (condition) {
       helper.succeed();
     } else {
-      helper.fail(message);
+      helper.fail(Component.literal(message));
     }
   }
 
