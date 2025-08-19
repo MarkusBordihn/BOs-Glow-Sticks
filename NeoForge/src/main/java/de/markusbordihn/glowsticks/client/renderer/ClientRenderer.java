@@ -24,14 +24,12 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -39,13 +37,11 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientRenderer {
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
   protected ClientRenderer() {}
 
-  @SubscribeEvent
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
@@ -55,19 +51,19 @@ public class ClientRenderer {
           for (DyeColor dyeColor : DyeColor.values()) {
             DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
             if (glowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(glowStickBlock.get(), RenderType.translucent());
+              ItemBlockRenderTypes.setRenderLayer(
+                  glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
             }
           }
 
           // Glow Stick Light Blocks (cutout mip)
           ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT.get(), RenderType.cutoutMipped());
+              ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
           ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), RenderType.cutoutMipped());
+              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
         });
   }
 
-  @SubscribeEvent
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 

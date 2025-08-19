@@ -20,6 +20,7 @@ public class GlowSticksClient {
 
     log.info("{} Registering client event handlers ...", Constants.LOG_REGISTER_PREFIX);
     modEventBus.addListener(ClientRenderer::registerItemRenderer);
+    modEventBus.addListener(ClientRenderer::registerRenderers);
     ModTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
     log.info("{} Item Properties ...", Constants.LOG_REGISTER_PREFIX);

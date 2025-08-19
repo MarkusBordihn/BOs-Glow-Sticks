@@ -1,15 +1,16 @@
 package de.markusbordihn.glowsticks;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
+import de.markusbordihn.glowsticks.client.renderer.item.properties.ModItemProperties;
 import de.markusbordihn.glowsticks.component.ModDataComponents;
 import de.markusbordihn.glowsticks.config.Config;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
+import de.markusbordihn.glowsticks.tabs.ModTabs;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +23,7 @@ public class GlowSticks {
 
   @SuppressWarnings({"java:S1118", "java:S2440"})
   public GlowSticks(FMLJavaModLoadingContext context) {
-    final IEventBus modEventBus = context.getModEventBus();
+    final BusGroup modBusGroup = context.getModBusGroup();
 
     log.info("Initializing {} (Forge) ...", Constants.MOD_NAME);
 
@@ -35,18 +36,22 @@ public class GlowSticks {
     Config.register();
 
     log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
-    ModDataComponents.DATA_COMPONENTS.register(modEventBus);
+    ModDataComponents.DATA_COMPONENTS.register(modBusGroup);
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
-    ModEntity.ENTITIES.register(modEventBus);
+    ModEntity.ENTITIES.register(modBusGroup);
 
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
-    ModItems.ITEMS.register(modEventBus);
+    ModItems.ITEMS.register(modBusGroup);
 
     log.info("{} Blocks ...", Constants.LOG_REGISTER_PREFIX);
-    ModBlocks.BLOCKS.register(modEventBus);
+    ModBlocks.BLOCKS.register(modBusGroup);
 
-    // Initialize the client mod initializer
-    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new GlowSticksClient(modEventBus));
+    log.info("{} Creative Tabs ...", Constants.LOG_REGISTER_PREFIX);
+    ModTabs.CREATIVE_MODE_TABS.register(modBusGroup);
+
+    if (FMLEnvironment.dist.isClient()) {
+      ModItemProperties.registerItemProperties();
+    }
   }
 }

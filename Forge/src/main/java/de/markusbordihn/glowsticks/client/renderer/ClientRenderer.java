@@ -24,14 +24,14 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.RegistryObject;
@@ -44,6 +44,7 @@ public class ClientRenderer {
 
   protected ClientRenderer() {}
 
+  @SubscribeEvent
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
@@ -53,15 +54,16 @@ public class ClientRenderer {
           for (DyeColor dyeColor : DyeColor.values()) {
             RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
             if (glowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(glowStickBlock.get(), RenderType.translucent());
+              ItemBlockRenderTypes.setRenderLayer(
+                  glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
             }
           }
 
           // Glow Stick Light Blocks (cutout mip)
           ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT.get(), RenderType.cutoutMipped());
+              ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
           ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), RenderType.cutoutMipped());
+              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
         });
   }
 
