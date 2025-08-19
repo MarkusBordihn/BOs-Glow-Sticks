@@ -3,6 +3,6 @@
   "textures": {
     "particle": "glow_sticks:item/glow_stick/light_gray_25pc",
     "shell": "glow_sticks:item/glow_stick/light_gray_25pc",
-    "core": "glow_sticks:item/glow_stick/light_gray_75pc"
+    "core": "glow_sticks:item/glow_stick/light_gray_50pc"
   }
 }

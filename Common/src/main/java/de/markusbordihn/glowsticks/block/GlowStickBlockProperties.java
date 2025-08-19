@@ -19,26 +19,38 @@
 
 package de.markusbordihn.glowsticks.block;
 
+import de.markusbordihn.glowsticks.Constants;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 public class GlowStickBlockProperties {
 
-  public static BlockBehaviour.Properties createGlowStickBlockProperties() {
+  public static BlockBehaviour.Properties createGlowStickBlockProperties(String blockId) {
     return BlockBehaviour.Properties.of()
         .mapColor(MapColor.NONE)
         .sound(SoundType.SCAFFOLDING)
         .noOcclusion()
         .lightLevel(GlowStickBlock::getLightLevel)
-        .randomTicks();
+        .randomTicks()
+        .setId(
+            ResourceKey.create(
+                Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, blockId)));
   }
 
-  public static BlockBehaviour.Properties createLightBlockProperties() {
+  public static BlockBehaviour.Properties createLightBlockProperties(String blockId) {
     return BlockBehaviour.Properties.of()
         .mapColor(MapColor.NONE)
         .noCollission()
         .lightLevel(blockState -> 15)
-        .randomTicks();
+        .randomTicks()
+        .setId(
+            ResourceKey.create(
+                Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, blockId)));
   }
 }

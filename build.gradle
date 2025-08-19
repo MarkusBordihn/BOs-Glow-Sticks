@@ -11,6 +11,58 @@ tasks.register('runAllGameTests') {
   dependsOn ':Fabric:runGameTest', ':Forge:runGameTestServer', ':NeoForge:runGameTestServer'
 }
 
+subprojects {
+
+  apply plugin: 'java'
+
+  java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+  java.withSourcesJar()
+  java.withJavadocJar()
+
+  repositories {
+    mavenCentral()
+    maven {
+      url "https://www.cursemaven.com"
+      content {
+        includeGroup "curse.maven"
+      }
+    }
+  }
+
+  dependencies {
+    configurations.configureEach {
+      resolutionStrategy.force 'org.ow2.asm:asm-analysis:9.7'
+      resolutionStrategy.force 'org.ow2.asm:asm-util:9.7'
+    }
+  }
+
+  tasks.register('wrapper', Wrapper) {
+    gradleVersion = '8.14.3'
+    distributionType = Wrapper.DistributionType.BIN
+  }
+
+  tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+  }
+
+  tasks.withType(GenerateModuleMetadata).configureEach {
+    enabled = false
+  }
+
+  tasks.withType(Javadoc).configureEach {
+    enabled = false
+  }
+
+  tasks.register("prepareKotlinBuildScriptModel") {}
+
+  idea {
+    module {
+      downloadSources = true
+      downloadJavadoc = true
+    }
+  }
+}
+
 // Create a publish task to clean, build and publish sequentially
 tasks.register('publish') {
   description = 'Cleans, builds and publishes to Modrinth and CurseForge sequentially'
@@ -62,57 +114,5 @@ tasks.register('publish') {
     }
 
     println "All tasks completed successfully."
-  }
-}
-
-subprojects {
-
-  apply plugin: 'java'
-
-  java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-  java.withSourcesJar()
-  java.withJavadocJar()
-
-  repositories {
-    mavenCentral()
-    maven {
-      url "https://www.cursemaven.com"
-      content {
-        includeGroup "curse.maven"
-      }
-    }
-  }
-
-  dependencies {
-    configurations.configureEach {
-      resolutionStrategy.force 'org.ow2.asm:asm-analysis:9.7'
-      resolutionStrategy.force 'org.ow2.asm:asm-util:9.7'
-    }
-  }
-
-  tasks.register('wrapper', Wrapper) {
-    gradleVersion = '8.14.3'
-    distributionType = Wrapper.DistributionType.BIN
-  }
-
-  tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-  }
-
-  tasks.withType(GenerateModuleMetadata).configureEach {
-    enabled = false
-  }
-
-  tasks.withType(Javadoc).configureEach {
-    enabled = false
-  }
-
-  tasks.register("prepareKotlinBuildScriptModel") {}
-
-  idea {
-    module {
-      downloadSources = true
-      downloadJavadoc = true
-    }
   }
 }

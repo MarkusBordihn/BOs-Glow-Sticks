@@ -72,6 +72,10 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     this.defaultItem = item;
     this.lightBlock = light;
     this.lightWaterBlock = lightWater;
+    // Set the item for the projectile
+    if (item != null && item.get() != null) {
+      this.setItem(new ItemStack(item.get()));
+    }
   }
 
   public GlowStickProjectile(
@@ -83,7 +87,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       Supplier<Item> item,
       Supplier<Block> light,
       Supplier<Block> lightWater) {
-    super(entityType, thrower, level);
+    super(entityType, thrower, level, new ItemStack(item.get()));
     this.dyeColor = dyeColor;
     this.defaultBlock = block;
     this.defaultDirection = thrower.getDirection().getOpposite();
@@ -103,7 +107,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       Supplier<Item> item,
       Supplier<Block> light,
       Supplier<Block> lightWater) {
-    super(entityType, x, y, z, level);
+    super(entityType, x, y, z, level, new ItemStack(item.get()));
     this.dyeColor = dyeColor;
     this.defaultBlock = block;
     this.defaultItem = item;

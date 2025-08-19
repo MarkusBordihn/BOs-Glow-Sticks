@@ -31,9 +31,7 @@ dependencies {
 
 loom {
   // Access Widener
-  if (file("src/main/resources/${mod_namespace}.accesswidener").exists()) {
-    accessWidenerPath = file("src/main/resources/${mod_namespace}.accesswidener")
-  }
+  accessWidenerPath = file("src/main/resources/${mod_namespace}.accesswidener")
 
   // Run configurations
   runs {

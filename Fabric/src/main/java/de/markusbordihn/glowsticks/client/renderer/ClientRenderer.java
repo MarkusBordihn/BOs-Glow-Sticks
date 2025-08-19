@@ -21,20 +21,14 @@ package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import de.markusbordihn.glowsticks.data.GlowStickData;
 import de.markusbordihn.glowsticks.entity.ModEntity;
-import de.markusbordihn.glowsticks.item.GlowStickItem;
-import de.markusbordihn.glowsticks.item.ModItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,8 +40,6 @@ public class ClientRenderer {
 
   public static void registerItemRenderer() {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
-
-    registerItemProperties(GlowStickData.STEP_PREDICATE, GlowStickData.ACTIVATED_PREDICATE);
     registerBlockRenderLayers();
   }
 
@@ -57,19 +49,6 @@ public class ClientRenderer {
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
           ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
-    }
-  }
-
-  private static void registerItemProperties(
-      ResourceLocation stepPredicate, ResourceLocation activatedPredicate) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      Item glowStickItem = ModItems.getGlowStickItem(dyeColor);
-      if (glowStickItem != null) {
-        ItemProperties.register(
-            glowStickItem, stepPredicate, GlowStickItem::getStepFromDataComponent);
-        ItemProperties.register(
-            glowStickItem, activatedPredicate, GlowStickItem::getActivatedFromDataComponent);
-      }
     }
   }
 

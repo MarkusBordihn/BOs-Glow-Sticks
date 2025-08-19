@@ -28,6 +28,8 @@ import java.util.Map;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -46,6 +48,9 @@ public class ModEntity {
     // Register all glow stick entities for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
+      ResourceLocation entityId =
+          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName);
+      ResourceKey<EntityType<?>> entityKey = ResourceKey.create(Registries.ENTITY_TYPE, entityId);
 
       EntityType<GlowStickProjectile> glowStickEntity =
           FabricEntityTypeBuilder.<GlowStickProjectile>create(
@@ -54,13 +59,10 @@ public class ModEntity {
               .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
               .trackRangeChunks(4)
               .trackedUpdateRate(10)
-              .build();
+              .build(entityKey);
 
       GLOW_STICK_ENTITIES.put(dyeColor, glowStickEntity);
-      Registry.register(
-          BuiltInRegistries.ENTITY_TYPE,
-          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + colorName),
-          glowStickEntity);
+      Registry.register(BuiltInRegistries.ENTITY_TYPE, entityId, glowStickEntity);
     }
   }
 

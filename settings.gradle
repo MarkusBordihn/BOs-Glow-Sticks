@@ -20,5 +20,5 @@ pluginManagement {
   }
 }
 
-rootProject.name = 'Glow Sticks 1.21.1'
+rootProject.name = 'Glow Sticks 1.21.4'
 include("Common", "Fabric", "Forge", "NeoForge")

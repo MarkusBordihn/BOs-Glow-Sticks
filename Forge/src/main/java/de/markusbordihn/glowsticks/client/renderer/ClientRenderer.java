@@ -21,18 +21,13 @@ package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import de.markusbordihn.glowsticks.data.GlowStickData;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
-import de.markusbordihn.glowsticks.item.GlowStickItem;
-import de.markusbordihn.glowsticks.item.ModItems;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -54,21 +49,6 @@ public class ClientRenderer {
 
     event.enqueueWork(
         () -> {
-          // Register animation steps and activated state for all glow stick colors
-          for (DyeColor dyeColor : DyeColor.values()) {
-            RegistryObject<Item> glowStickItem = ModItems.getGlowStickItem(dyeColor);
-            if (glowStickItem != null) {
-              ItemProperties.register(
-                  glowStickItem.get(),
-                  GlowStickData.STEP_PREDICATE,
-                  GlowStickItem::getStepFromDataComponent);
-              ItemProperties.register(
-                  glowStickItem.get(),
-                  GlowStickData.ACTIVATED_PREDICATE,
-                  GlowStickItem::getActivatedFromDataComponent);
-            }
-          }
-
           // Register render layers for all glow stick blocks
           for (DyeColor dyeColor : DyeColor.values()) {
             RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
