@@ -26,12 +26,13 @@ They shine for a limited time, making them perfect for exploring caves, diving, 
 
 ## ✨ Features
 
-- **Craftable** using glowing items (e.g., glowstone dust, glowing ink sac), glass and glass panes.
-- **All 16 dye colors** available as glowing sticks.
-- **Server & eco-friendly**: glow sticks despawn automatically after a set time.
-- **Works on land and underwater** – no special handling needed.
-- **Lightweight**: no custom renderer or core modifications used.
-- **Configurable**: adjust glow stick lifespan in the config file.
+* **Craftable** with glowing items (e.g., glowstone dust, glowing ink sac), glass, and glass panes.
+* **Available in all 16 dye colors**.
+* **Server-friendly**: glow sticks despawn automatically after a set time.
+* **Works on land and underwater** without extra setup.
+* **Waypoint feature**: shows a waypoint to the nearest glow stick when sneaking while holding one.
+* **Lightweight**: no custom renderer or core modifications required.
+* **Configurable**: adjust glow stick lifespan in the config file.
 
 ## ℹ️ More Information
 
