@@ -14,7 +14,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings("unused")
 @Mod(Constants.MOD_ID)
 public class GlowSticks {
 
