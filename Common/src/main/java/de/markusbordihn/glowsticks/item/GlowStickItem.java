@@ -195,7 +195,7 @@ public class GlowStickItem extends Item {
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(Constants.TEXT_PREFIX + NAME + "_use", despawnTickRate * 15)
+        new TranslatableComponent(Constants.TEXT_PREFIX + NAME + "_use", despawnTickRate)
             .withStyle(ChatFormatting.GREEN));
   }
 }
