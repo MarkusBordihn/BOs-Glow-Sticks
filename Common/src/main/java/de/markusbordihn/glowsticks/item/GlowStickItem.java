@@ -60,8 +60,8 @@ public class GlowStickItem extends Item {
         properties,
         blockSupplier,
         dyeColor,
-        GlowSticksConfig.glowStickDespawnEnabled,
-        GlowSticksConfig.glowStickDespawnTicks);
+        GlowSticksConfig.despawnEnabled,
+        GlowSticksConfig.despawnTicks);
   }
 
   public GlowStickItem(

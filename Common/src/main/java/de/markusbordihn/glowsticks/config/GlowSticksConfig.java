@@ -32,18 +32,30 @@ public class GlowSticksConfig extends Config {
   You can enable or disable features and adjust settings as needed.
 
   Glow Stick Despawn:
-  - glowStickDespawnEnabled: Enable or disable the automatic despawn of glow sticks.
-  - glowStickDespawnTicks: Controls the aging probability of glow sticks during random ticks.
+  - despawnEnabled: Enable or disable the automatic despawn of glow sticks.
+  - despawnTicks: Controls the aging probability of glow sticks during random ticks.
     A value of 1 means every random tick has a 100% chance to age the glow stick.
     A value of 2 means every random tick has a 50% chance to age the glow stick.
     A value of 5 means every random tick has a 20% chance to age the glow stick.
     Higher values make glow sticks last longer on average.
     When a glow stick reaches age 15, it will despawn automatically.
 
+  Particle Effects (Client Side Only):
+  - spawnRandomParticles: Enable or disable random glow particles from placed glow sticks.
+  - randomParticleSpawnRate: How often random glow particles spawn (higher = less frequent). Default: 25
+  - spawnWaypointParticles: Enable waypoint particles when sneaking and holding a glow stick to show path to nearest matching glow stick.
+  - waypointSearchRadius: Horizontal radius in blocks to search for nearest glow stick. Default: 32
+  - waypointVerticalSearchRadius: Vertical radius in blocks to search for nearest glow stick. Default: 16
+
 """;
 
-  public static boolean glowStickDespawnEnabled = true;
-  public static int glowStickDespawnTicks = 2;
+  public static boolean despawnEnabled = true;
+  public static int despawnTicks = 2;
+  public static boolean spawnRandomParticles = true;
+  public static int randomParticleSpawnRate = 25;
+  public static boolean spawnWaypointParticles = true;
+  public static int waypointSearchRadius = 32;
+  public static int waypointVerticalSearchRadius = 16;
 
   public static void registerConfig() {
     registerConfigFile(CONFIG_FILE_NAME, CONFIG_FILE_HEADER);
@@ -56,10 +68,18 @@ public class GlowSticksConfig extends Config {
     Properties unmodifiedProperties = (Properties) properties.clone();
 
     // Config entries
-    glowStickDespawnEnabled =
-        parseConfigValue(properties, "glowStickDespawnEnabled", glowStickDespawnEnabled);
-    glowStickDespawnTicks =
-        parseConfigValue(properties, "glowStickDespawnTicks", glowStickDespawnTicks);
+    despawnEnabled = parseConfigValue(properties, "despawnEnabled", despawnEnabled);
+    despawnTicks = parseConfigValue(properties, "despawnTicks", despawnTicks);
+    spawnRandomParticles =
+        parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
+    randomParticleSpawnRate =
+        parseConfigValue(properties, "randomParticleSpawnRate", randomParticleSpawnRate);
+    spawnWaypointParticles =
+        parseConfigValue(properties, "spawnWaypointParticles", spawnWaypointParticles);
+    waypointSearchRadius =
+        parseConfigValue(properties, "waypointSearchRadius", waypointSearchRadius);
+    waypointVerticalSearchRadius =
+        parseConfigValue(properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius);
 
     // Update config file if needed
     updateConfigFileIfChanged(configFile, CONFIG_FILE_HEADER, properties, unmodifiedProperties);
