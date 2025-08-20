@@ -60,8 +60,8 @@ public class GlowStickItem extends Item {
         properties,
         blockSupplier,
         dyeColor,
-        GlowSticksConfig.glowStickDespawnEnabled,
-        GlowSticksConfig.glowStickDespawnTicks);
+        GlowSticksConfig.despawnEnabled,
+        GlowSticksConfig.despawnTicks);
   }
 
   public GlowStickItem(
@@ -183,7 +183,7 @@ public class GlowStickItem extends Item {
 
   @Override
   public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int count) {
-    if (!level.isClientSide && despawnEnabled && count % despawnTickRate == 0) {
+    if (!level.isClientSide && count % despawnTickRate == 0) {
       int step = increaseStep(itemStack);
       if (step == 4) {
         level.playSound(
