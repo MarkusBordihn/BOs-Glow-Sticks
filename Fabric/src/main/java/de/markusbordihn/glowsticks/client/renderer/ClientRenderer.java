@@ -56,6 +56,8 @@ public class ClientRenderer {
     for (DyeColor dyeColor : DyeColor.values()) {
       BlockRenderLayerMap.putBlock(
           ModBlocks.getGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
+      BlockRenderLayerMap.putBlock(
+          ModBlocks.getCreativeGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
     }
 
     BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT, ChunkSectionLayer.CUTOUT_MIPPED);

@@ -29,7 +29,6 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -53,6 +52,12 @@ public class ClientRenderer {
             if (glowStickBlock != null) {
               ItemBlockRenderTypes.setRenderLayer(
                   glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+            }
+            DeferredBlock<Block> creativeGlowStickBlock =
+                ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            if (creativeGlowStickBlock != null) {
+              ItemBlockRenderTypes.setRenderLayer(
+                  creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
             }
           }
 

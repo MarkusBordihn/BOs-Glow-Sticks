@@ -50,30 +50,23 @@ public class GlowStickItem extends Item {
   public static final String NAME = "glow_stick";
   public static final int ANIMATION_STEPS = 6;
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
+  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME;
 
   protected final Supplier<Block> blockSupplier;
-  protected final boolean despawnEnabled;
   protected final int despawnTickRate;
   private final DyeColor dyeColor;
 
   public GlowStickItem(Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
-    this(
-        properties,
-        blockSupplier,
-        dyeColor,
-        GlowSticksConfig.despawnEnabled,
-        GlowSticksConfig.despawnTicks);
+    this(properties, blockSupplier, dyeColor, GlowSticksConfig.despawnTicks);
   }
 
   public GlowStickItem(
       Properties properties,
       Supplier<Block> blockSupplier,
       DyeColor dyeColor,
-      boolean despawnEnabled,
       int despawnTickRate) {
     super(properties);
     this.blockSupplier = blockSupplier;
-    this.despawnEnabled = despawnEnabled;
     this.despawnTickRate = despawnTickRate;
     this.dyeColor = dyeColor;
   }
@@ -96,10 +89,11 @@ public class GlowStickItem extends Item {
     return glowStickData.step();
   }
 
-  public static void setStep(final ItemStack itemStack, final int step) {
+  public static int setStep(final ItemStack itemStack, final int step) {
     GlowStickData currentData =
         itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     itemStack.set(DataComponents.GLOW_STICK_DATA, currentData.withStep(step));
+    return step;
   }
 
   public static int increaseStep(final ItemStack itemStack) {
@@ -110,20 +104,28 @@ public class GlowStickItem extends Item {
     return newData.step();
   }
 
+  public static float getStepFromDataComponent(
+      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
+      return getStep(itemStack);
+    }
+    return 0.0F;
+  }
+
+  public static float getActivatedFromDataComponent(
+      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
+      return isActivated(itemStack) ? 1.0F : 0.0F;
+    }
+    return 0.0F;
+  }
+
   public GlowStickProjectile getGlowStickEntity(final Level level, final LivingEntity entity) {
     throw new UnsupportedOperationException("GlowStickItem.getGlowStickEntity() not implemented!");
   }
 
   public DyeColor getDyeColor() {
     return dyeColor;
-  }
-
-  public boolean isDespawnEnabled() {
-    return despawnEnabled;
-  }
-
-  public int getDespawnTickRate() {
-    return despawnTickRate;
   }
 
   @Override
@@ -137,8 +139,8 @@ public class GlowStickItem extends Item {
   }
 
   @Override
-  public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
-    ItemStack itemStack = player.getItemInHand(interactionHand);
+  public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    ItemStack itemStack = player.getItemInHand(hand);
     if (isActivated(itemStack)) {
       if (!level.isClientSide) {
         GlowStickProjectile entity = getGlowStickEntity(level, player);
@@ -155,7 +157,7 @@ public class GlowStickItem extends Item {
       player.awardStat(Stats.ITEM_USED.get(this));
       return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     } else {
-      player.startUsingItem(interactionHand);
+      player.startUsingItem(hand);
       return InteractionResult.CONSUME;
     }
   }
@@ -206,11 +208,14 @@ public class GlowStickItem extends Item {
       TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipConsumer,
-        Component.translatable(Constants.TEXT_PREFIX + NAME + "_" + dyeColor + "_description")
+        Component.translatable(TOOLTIP_PREFIX + "_" + dyeColor + ".description")
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipConsumer,
-        Component.translatable(Constants.TEXT_PREFIX + NAME + "_use", despawnTickRate)
+        Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
+    ToolTips.addTooltip(
+        tooltipConsumer,
+        Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
             .withStyle(ChatFormatting.GREEN));
   }
 }

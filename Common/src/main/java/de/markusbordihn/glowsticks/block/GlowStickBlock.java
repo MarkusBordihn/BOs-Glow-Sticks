@@ -19,21 +19,24 @@
 
 package de.markusbordihn.glowsticks.block;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import de.markusbordihn.glowsticks.config.GlowSticksConfig;
-import de.markusbordihn.glowsticks.item.GlowStickItem;
-import de.markusbordihn.glowsticks.utils.GlowStickPlacementHelper;
-import java.util.function.Supplier;
-import net.minecraft.client.Minecraft;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
+import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
+import de.markusbordihn.glowsticks.block.glowstick.ParticleEffects;
+import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
+import de.markusbordihn.glowsticks.block.glowstick.WaypointNavigation;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,69 +53,55 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlock {
 
-  public static final MapCodec<GlowStickBlock> CODEC =
-      simpleCodec(properties -> new GlowStickBlock(properties, () -> null));
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final Property<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
   public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
-  public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 1, 3);
-
+  public static final IntegerProperty VARIANT = IntegerProperty.create("variant", 0, 5);
+  public static final BooleanProperty CONTROLLED = BooleanProperty.create("controlled");
+  public static final BooleanProperty POWERED = BooleanProperty.create("powered");
+  public static final MapCodec<GlowStickBlock> CODEC =
+      RecordCodecBuilder.mapCodec(
+          instance ->
+              instance
+                  .group(
+                      propertiesCodec(),
+                      DyeColor.CODEC.fieldOf("dye_color").forGetter(block -> block.dyeColor),
+                      Codec.INT
+                          .fieldOf("despawn_tick_rate")
+                          .forGetter(block -> block.despawnTickRate))
+                  .apply(instance, GlowStickBlock::new));
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);
 
-  private final Supplier<Item> glowStickItemSupplier;
+  private final DyeColor dyeColor;
+  private final int despawnTickRate;
 
-  public GlowStickBlock(Properties properties, Supplier<Item> glowStickItemSupplier) {
+  public GlowStickBlock(Properties properties, DyeColor dyeColor, int despawnTickRate) {
     super(properties);
-    this.glowStickItemSupplier = glowStickItemSupplier;
-    this.registerDefaultState(createInitialBlockState());
+    this.dyeColor = dyeColor;
+    this.despawnTickRate = despawnTickRate;
+    this.registerDefaultState(BlockStateManager.createInitialBlockState(this));
   }
 
-  public static int getLightLevel(final BlockState blockState) {
-    int ageValue = blockState.getValue(AGE);
-    return (int) Math.round(15 - (ageValue < 10 ? ageValue * 0.25 : ageValue * 0.75));
-  }
-
-  public boolean isDespawnEnabled() {
-    try {
-      if (glowStickItemSupplier.get() instanceof GlowStickItem glowStickItem) {
-        return glowStickItem.isDespawnEnabled();
-      }
-    } catch (Exception e) {
-      // Fallback to default despawn configuration
-    }
-    return GlowSticksConfig.despawnEnabled;
-  }
-
-  public int getDespawnTickRate() {
-    try {
-      if (glowStickItemSupplier.get() instanceof GlowStickItem glowStickItem) {
-        return glowStickItem.getDespawnTickRate();
-      }
-    } catch (Exception e) {
-      // Fallback to default despawn tick rate configuration
-    }
-    return GlowSticksConfig.despawnTicks;
+  public static int getLightLevel(BlockState blockState) {
+    return BlockStateManager.calculateLightLevel(blockState);
   }
 
   public DyeColor getGlowStickColor() {
-    try {
-      if (glowStickItemSupplier.get() instanceof GlowStickItem glowStickItem) {
-        return glowStickItem.getDyeColor();
-      }
-    } catch (Exception e) {
-      // Fallback to default color
-    }
-    return DyeColor.WHITE;
+    return this.dyeColor;
   }
 
-  public Item getItem() {
-    return glowStickItemSupplier.get();
+  @Override
+  public Item asItem() {
+    ResourceLocation resourceLocation =
+        ResourceLocation.fromNamespaceAndPath(
+            Constants.MOD_ID, "glow_stick_" + this.dyeColor.getName());
+    return BuiltInRegistries.ITEM.getValue(resourceLocation);
   }
 
   @Override
@@ -122,22 +111,15 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
       BlockState fallingBlockState,
       BlockState surfaceBlockState,
       FallingBlockEntity fallingBlockEntity) {
-
-    if (GlowStickPlacementHelper.isLavaBlock(surfaceBlockState)) {
-      handleLavaDestruction(level, blockPos, fallingBlockEntity);
-    } else {
-      handleNormalLanding(
-          level, blockPos, fallingBlockState, surfaceBlockState, fallingBlockEntity);
+    if (level.isClientSide) {
+      return;
     }
-  }
 
-  @Override
-  public void onBrokenAfterFall(
-      Level level, BlockPos blockPos, FallingBlockEntity fallingBlockEntity) {
-    ItemEntity droppedItem =
-        new ItemEntity(
-            level, blockPos.getX(), blockPos.getY(), blockPos.getZ(), new ItemStack(getItem()));
-    level.addFreshEntity(droppedItem);
+    // Handle lava interaction first
+    if (LavaInteraction.isLavaBlock(surfaceBlockState)) {
+      LavaInteraction.handleLavaDestruction(level, blockPos);
+      fallingBlockEntity.discard();
+    }
   }
 
   @Override
@@ -151,32 +133,31 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-    builder.add(AGE, FACING, VARIANT, WATERLOGGED);
-  }
-
-  @Override
-  public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
-    Direction playerFacingDirection = blockPlaceContext.getHorizontalDirection().getOpposite();
-    return this.defaultBlockState().setValue(FACING, playerFacingDirection);
+    builder.add(AGE, FACING, VARIANT, WATERLOGGED, CONTROLLED, POWERED);
   }
 
   @Override
   public FluidState getFluidState(BlockState blockState) {
-    return blockState.getValue(WATERLOGGED)
-        ? Fluids.WATER.getSource(false)
-        : Fluids.EMPTY.defaultFluidState();
+    return BlockStateManager.getFluidState(blockState);
   }
 
   @Override
   public void randomTick(
       BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
-    if (!isDespawnEnabled()) {
-      return;
-    }
+    BlockStateManager.handleRandomTick(
+        blockState, serverLevel, blockPos, random, this.despawnTickRate);
+  }
 
-    if (random.nextInt(getDespawnTickRate()) == 0) {
-      advanceGlowStickAge(blockState, serverLevel, blockPos);
-    }
+  @Override
+  public void neighborChanged(
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Block neighborBlock,
+      Orientation orientation,
+      boolean isMoving) {
+    super.neighborChanged(blockState, level, blockPos, neighborBlock, orientation, isMoving);
+    RedstoneCapable.handleNeighborChange(blockState, level, blockPos);
   }
 
   @Override
@@ -185,337 +166,70 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   }
 
   @Override
+  public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+    return this.dyeColor.getTextureDiffuseColor();
+  }
+
+  @Override
   public void animateTick(
-      BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
-    super.animateTick(blockState, level, blockPos, randomSource);
+      BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
+    super.animateTick(blockState, level, blockPos, random);
 
     if (!(level instanceof ClientLevel clientLevel)) {
       return;
     }
 
-    // Normal glow particles
-    if (shouldSpawnNormalParticles(blockState, randomSource)) {
-      int currentAge = blockState.getValue(AGE);
-      ParticleProperties particleProperties = calculateParticleProperties(currentAge);
-      int adjustedColor =
-          calculateAdjustedColor(getGlowStickColor(), particleProperties.brightness);
-      spawnMainParticle(
-          clientLevel, blockPos, randomSource, adjustedColor, particleProperties.size);
+    // Handle normal glow particles
+    ParticleEffects.handleParticleAnimation(blockState, level, blockPos, random, this.dyeColor);
 
-      if (shouldSpawnExtraParticle(currentAge, randomSource)) {
-        spawnExtraParticle(
-            clientLevel, blockPos, randomSource, adjustedColor, particleProperties.size);
-      }
-    }
-
-    // Waypoint particles from player to nearest matching glow stick
-    if (shouldSpawnWaypointParticles(clientLevel, blockPos, randomSource)) {
-      spawnWaypointParticles(clientLevel, blockPos, randomSource);
-    }
-  }
-
-  private boolean shouldSpawnNormalParticles(BlockState blockState, RandomSource randomSource) {
-    if (!GlowSticksConfig.spawnRandomParticles) {
-      return false;
-    }
-
-    if (randomSource.nextInt(GlowSticksConfig.randomParticleSpawnRate) != 0) {
-      return false;
-    }
-
-    return blockState.getValue(AGE) < 15;
-  }
-
-  private ParticleProperties calculateParticleProperties(int currentAge) {
-    float ageFactor = Math.max(0.2f, 1.0f - (currentAge / 15.0f));
-    float size = Math.max(0.8f, ageFactor * 1.2f);
-
-    return new ParticleProperties(1, ageFactor, size);
-  }
-
-  private int calculateAdjustedColor(DyeColor dyeColor, float brightness) {
-    int originalColor = dyeColor.getTextureDiffuseColor();
-    int red = (originalColor >> 16) & 0xFF;
-    int green = (originalColor >> 8) & 0xFF;
-    int blue = originalColor & 0xFF;
-
-    int adjustedRed = Math.min(255, (int) (red * brightness));
-    int adjustedGreen = Math.min(255, (int) (green * brightness));
-    int adjustedBlue = Math.min(255, (int) (blue * brightness));
-
-    return (adjustedRed << 16) | (adjustedGreen << 8) | adjustedBlue;
-  }
-
-  private void spawnMainParticle(
-      ClientLevel clientLevel,
-      BlockPos blockPos,
-      RandomSource randomSource,
-      int color,
-      float size) {
-    clientLevel.addParticle(
-        new DustParticleOptions(color, size),
-        blockPos.getX() + 0.5 + (randomSource.nextFloat() - 0.5) * 0.3,
-        blockPos.getY() + 0.1,
-        blockPos.getZ() + 0.5 + (randomSource.nextFloat() - 0.5) * 0.3,
-        0,
-        0.01,
-        0);
-  }
-
-  private boolean shouldSpawnExtraParticle(int currentAge, RandomSource randomSource) {
-    return currentAge <= 5 && randomSource.nextInt(3) == 0;
-  }
-
-  private void spawnExtraParticle(
-      ClientLevel clientLevel,
-      BlockPos blockPos,
-      RandomSource randomSource,
-      int color,
-      float size) {
-    clientLevel.addParticle(
-        new DustParticleOptions(color, size * 0.7f),
-        blockPos.getX() + 0.5 + (randomSource.nextFloat() - 0.5) * 0.4,
-        blockPos.getY() + 0.15,
-        blockPos.getZ() + 0.5 + (randomSource.nextFloat() - 0.5) * 0.4,
-        0,
-        0.005,
-        0);
+    // Handle waypoint particles
+    WaypointNavigation.handleWaypointParticles(clientLevel, blockPos, random, this.dyeColor);
   }
 
   @Override
-  public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-    try {
-      if (glowStickItemSupplier.get() instanceof GlowStickItem glowStickItem) {
-        return glowStickItem.getDyeColor().getFireworkColor();
-      }
-    } catch (Exception ignored) {
-      // Ignore
-    }
-    return 0xFFFFFF;
+  public void setPlacedBy(
+      Level level,
+      BlockPos blockPos,
+      BlockState blockState,
+      LivingEntity placer,
+      ItemStack itemStack) {
+    super.setPlacedBy(level, blockPos, blockState, placer, itemStack);
+    RedstoneCapable.handleBlockPlacement(level, blockPos, blockState);
   }
 
-  private BlockState createInitialBlockState() {
-    return this.stateDefinition
-        .any()
-        .setValue(AGE, 0)
-        .setValue(FACING, Direction.NORTH)
-        .setValue(WATERLOGGED, false)
-        .setValue(VARIANT, 1);
+  @Override
+  public int getSignal(
+      BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
+    return 0;
   }
 
-  private void handleLavaDestruction(
-      final Level level, final BlockPos lavaPos, final FallingBlockEntity fallingBlockEntity) {
-    GlowStickPlacementHelper.handleLavaDestruction(level, lavaPos);
-    fallingBlockEntity.discard();
+  @Override
+  public int getDirectSignal(
+      BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
+    return 0;
   }
 
-  private void handleNormalLanding(
-      final Level level,
-      final BlockPos blockPos,
-      final BlockState glowStickState,
-      final BlockState surfaceState,
-      final FallingBlockEntity fallingBlockEntity) {
-    GlowStickPlacementHelper.playPlacementSound(level, blockPos, surfaceState, level.random);
-    level.setBlock(blockPos, glowStickState, 3);
-    fallingBlockEntity.discard();
+  @Override
+  public boolean isSignalSource(BlockState blockState) {
+    return blockState.getValue(GlowStickBlock.CONTROLLED);
   }
 
-  private void advanceGlowStickAge(
-      final BlockState blockState, final ServerLevel serverLevel, final BlockPos blockPos) {
-    int newAge = blockState.getValue(AGE) + 1;
-    if (newAge >= 15) {
-      serverLevel.destroyBlock(blockPos, true);
-    } else {
-      BlockState updatedState = blockState.setValue(AGE, newAge);
-      serverLevel.setBlockAndUpdate(blockPos, updatedState);
+  @Override
+  public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
+    Level level = blockPlaceContext.getLevel();
+    BlockPos placementPos = blockPlaceContext.getClickedPos();
+    BlockPos belowPos = placementPos.below();
+    BlockState belowState = level.getBlockState(belowPos);
+    if (belowState.getBlock() instanceof GlowStickBlock) {
+      return null;
     }
+
+    // Check if there's already a GlowStickBlock at the placement position (replacement)
+    BlockState existingState = level.getBlockState(placementPos);
+    if (existingState.getBlock() instanceof GlowStickBlock) {
+      return null;
+    }
+
+    return BlockStateManager.getStateForPlacement(this, blockPlaceContext);
   }
-
-  private boolean shouldSpawnWaypointParticles(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource randomSource) {
-    if (!GlowSticksConfig.spawnWaypointParticles) {
-      return false;
-    }
-
-    // Check if player is sneaking.
-    LocalPlayer player = Minecraft.getInstance().player;
-    if (player == null || !player.isShiftKeyDown() || randomSource.nextInt(2) != 0) {
-      return false;
-    }
-
-    // Check if player is holding a glow stick of the correct color.
-    DyeColor heldColor = getHeldGlowStickColor(player);
-    if (heldColor == null || heldColor != getGlowStickColor()) {
-      return false;
-    }
-
-    return isNearestMatchingGlowStick(clientLevel, blockPos, player, heldColor);
-  }
-
-  private DyeColor getHeldGlowStickColor(LocalPlayer player) {
-    if (player.getMainHandItem().getItem() instanceof GlowStickItem glowStickItem) {
-      return glowStickItem.getDyeColor();
-    }
-    if (player.getOffhandItem().getItem() instanceof GlowStickItem glowStickItem) {
-      return glowStickItem.getDyeColor();
-    }
-
-    return DyeColor.WHITE;
-  }
-
-  private boolean isNearestMatchingGlowStick(
-      ClientLevel clientLevel, BlockPos currentBlockPos, LocalPlayer player, DyeColor targetColor) {
-    BlockPos playerPos = player.blockPosition();
-    double currentDistance = playerPos.distSqr(currentBlockPos);
-
-    // Always ignore glow stick if player is standing on or very close to it
-    if (currentDistance < 6.0) {
-      return false;
-    }
-
-    // Search for nearest matching glow stick within the defined radius
-    int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
-    int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
-    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
-      for (int y = -verticalRadius; y <= verticalRadius; y++) {
-        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
-          BlockPos checkPos = playerPos.offset(x, y, z);
-          if (checkPos.equals(currentBlockPos)) {
-            continue;
-          }
-
-          // Check if the block at the position is a glow stick of the target color
-          BlockState checkState = clientLevel.getBlockState(checkPos);
-          if (checkState.getBlock() instanceof GlowStickBlock otherGlowStick
-              && otherGlowStick.getGlowStickColor() == targetColor) {
-            double otherDistance = playerPos.distSqr(checkPos);
-            // Skip glow sticks that are too close (player standing on them)
-            if (otherDistance >= 6.0 && otherDistance < currentDistance) {
-              return false;
-            }
-          }
-        }
-      }
-    }
-
-    return true;
-  }
-
-  private void spawnWaypointParticles(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource randomSource) {
-    // Calculate enhanced color for waypoint particles
-    int colorValue = getGlowStickColor().getTextureDiffuseColor();
-    int red = (colorValue >> 16) & 0xFF;
-    int green = (colorValue >> 8) & 0xFF;
-    int blue = colorValue & 0xFF;
-
-    // Preserve original color ratios while ensuring visibility
-    float maxColorValue = Math.max(red, Math.max(green, blue)) / 255.0f;
-    float colorMultiplier = maxColorValue > 0.3f ? 1.8f : 2.5f;
-
-    int enhancedRed = Math.min(255, (int) (red * colorMultiplier));
-    int enhancedGreen = Math.min(255, (int) (green * colorMultiplier));
-    int enhancedBlue = Math.min(255, (int) (blue * colorMultiplier));
-    int particleColor = (enhancedRed << 16) | (enhancedGreen << 8) | enhancedBlue;
-
-    // Get local player.
-    LocalPlayer player = Minecraft.getInstance().player;
-    if (player == null) {
-      return;
-    }
-
-    // Calculate player position and target position.
-    double playerX = player.getX();
-    double playerY = player.getY() + player.getEyeHeight();
-    double playerZ = player.getZ();
-    double targetX = blockPos.getX() + 0.5;
-    double targetY = blockPos.getY() + 0.5;
-    double targetZ = blockPos.getZ() + 0.5;
-    double deltaX = targetX - playerX;
-    double deltaY = targetY - playerY;
-    double deltaZ = targetZ - playerZ;
-    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-    // If player is too close to the target, skip particle spawning
-    if (distance < 2.0) {
-      return;
-    }
-
-    // Calculate the starting position behind the player
-    float playerYaw = player.getYRot();
-    double behindPlayerOffsetX = -Math.sin(Math.toRadians(playerYaw)) * 1.5;
-    double behindPlayerOffsetZ = Math.cos(Math.toRadians(playerYaw)) * 1.5;
-    double startX = playerX + behindPlayerOffsetX;
-    double startY = playerY - 0.2;
-    double startZ = playerZ + behindPlayerOffsetZ;
-    deltaX = targetX - startX;
-    deltaY = targetY - startY;
-    deltaZ = targetZ - startZ;
-    distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-    int baseWaypoints = Math.max(8, Math.min(40, (int) (distance * 2.2)));
-    int particlesPerWaypoint = distance < 5.0 ? 1 : (distance < 15.0 ? 2 : 3);
-    double waypointStep = 1.0 / (baseWaypoints + 1);
-    double minSpawnDistance = 1.0;
-
-    // Calculate the number of waypoints and spawn particles
-    for (int i = 1; i <= baseWaypoints; i++) {
-      double progress = i * waypointStep;
-      if (progress * distance < minSpawnDistance) {
-        continue;
-      }
-      double waypointX = startX + (deltaX * progress) + (randomSource.nextGaussian() - 0.5) * 0.06;
-      double waypointY = startY + (deltaY * progress) + (randomSource.nextGaussian() - 0.5) * 0.06;
-      double waypointZ = startZ + (deltaZ * progress) + (randomSource.nextGaussian() - 0.5) * 0.06;
-
-      // Spawn particles around the waypoint
-      for (int j = 0; j < particlesPerWaypoint; j++) {
-        float particleSize = (float) Math.min(2.0f, 0.9f + (distance * 0.08f) - (progress * 0.2f));
-
-        clientLevel.addParticle(
-            new DustParticleOptions(particleColor, particleSize),
-            waypointX + (randomSource.nextGaussian() - 0.5) * 0.04,
-            waypointY + (randomSource.nextGaussian() - 0.5) * 0.04,
-            waypointZ + (randomSource.nextGaussian() - 0.5) * 0.04,
-            (randomSource.nextGaussian() - 0.5) * 0.003,
-            0.003 + randomSource.nextGaussian() * 0.001,
-            (randomSource.nextGaussian() - 0.5) * 0.003);
-      }
-    }
-
-    // Spawn additional particles at the target position
-    int targetParticleCount = Math.max(3, Math.min(8, (int) (distance * 0.5)));
-    for (int i = 0; i < targetParticleCount; i++) {
-      clientLevel.addParticle(
-          new DustParticleOptions(particleColor, 1.5f),
-          targetX + (randomSource.nextGaussian() - 0.5) * 0.2,
-          targetY - 0.35 + randomSource.nextFloat() * 0.3,
-          targetZ + (randomSource.nextGaussian() - 0.5) * 0.2,
-          (randomSource.nextGaussian() - 0.5) * 0.004,
-          0.004 + randomSource.nextGaussian() * 0.002,
-          (randomSource.nextGaussian() - 0.5) * 0.004);
-    }
-
-    // Spawn helper particles if the distance is significant
-    if (distance > 12.0) {
-      int helperParticleCount = Math.min(5, baseWaypoints / 8);
-      for (int i = 0; i < helperParticleCount; i++) {
-        double randomProgress = 0.3 + (randomSource.nextDouble() * 0.4);
-        if (randomProgress * distance < minSpawnDistance) {
-          continue;
-        }
-
-        clientLevel.addParticle(
-            new DustParticleOptions(particleColor, 0.8f),
-            startX + (deltaX * randomProgress) + (randomSource.nextGaussian() - 0.5) * 0.12,
-            startY + (deltaY * randomProgress) + (randomSource.nextGaussian() - 0.5) * 0.12,
-            startZ + (deltaZ * randomProgress) + (randomSource.nextGaussian() - 0.5) * 0.12,
-            (randomSource.nextGaussian() - 0.5) * 0.002,
-            0.002,
-            (randomSource.nextGaussian() - 0.5) * 0.002);
-      }
-    }
-  }
-
-  private record ParticleProperties(int spawnRate, float brightness, float size) {}
 }

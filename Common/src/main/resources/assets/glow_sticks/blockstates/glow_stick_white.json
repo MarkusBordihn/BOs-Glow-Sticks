@@ -1,5 +1,17 @@
 {
   "variants": {
+    "facing=north,variant=0": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_0", "y": 270
+    },
+    "facing=east,variant=0": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_0", "y": 0
+    },
+    "facing=south,variant=0": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_0", "y": 90
+    },
+    "facing=west,variant=0": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_0", "y": 180
+    },
     "facing=north,variant=1": {
       "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_1", "y": 270
     },
@@ -35,6 +47,30 @@
     },
     "facing=west,variant=3": {
       "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_3", "y": 180
+    },
+    "facing=north,variant=4": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_4", "y": 270
+    },
+    "facing=east,variant=4": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_4", "y": 0
+    },
+    "facing=south,variant=4": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_4", "y": 90
+    },
+    "facing=west,variant=4": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_4", "y": 180
+    },
+    "facing=north,variant=5": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_5", "y": 270
+    },
+    "facing=east,variant=5": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_5", "y": 0
+    },
+    "facing=south,variant=5": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_5", "y": 90
+    },
+    "facing=west,variant=5": {
+      "model": "glow_sticks:block/glow_stick/white/glow_stick_variant_5", "y": 180
     }
   }
 }
