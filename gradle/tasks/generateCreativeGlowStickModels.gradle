@@ -1,0 +1,45 @@
+import groovy.json.JsonOutput
+
+// Configuration
+ext {
+  creativeGlowStickColors = [
+      "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+      "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+  ]
+  baseItemPath = "$projectDir/../Common/src/main/resources/assets/glow_sticks/models/item"
+  templateModel = "glow_sticks:item/glow_stick/glow_stick"
+}
+
+tasks.register("generateCreativeGlowStickModels") {
+  group = "build"
+  description = "Generates creative glow stick item models that reference existing glow stick models."
+
+  doLast {
+    creativeGlowStickColors.each { color ->
+      // Generate main item model under models/item/creative_glow_stick_{color}.json
+      def itemModelFile = new File(baseItemPath, "creative_glow_stick_${color}.json")
+      def overrides = []
+
+      // Only add activated override since creative glow sticks don't have step animations
+      overrides << [
+          predicate: ["glow_sticks:activated": 1],
+          model    : "glow_sticks:item/glow_stick/${color}/glow_stick_activated"
+      ]
+
+      def mainModelJson = [
+          parent   : templateModel,
+          textures : [
+              particle: "glow_sticks:item/glow_stick/${color}_25pc",
+              shell   : "glow_sticks:item/glow_stick/${color}_25pc",
+              core    : "glow_sticks:item/glow_stick/${color}_75pc"
+          ],
+          overrides: overrides
+      ]
+
+      itemModelFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(mainModelJson))
+      println "✔ Generated creative glow stick model for ${color}"
+    }
+
+    println "✔ All creative glow stick models generated successfully!"
+  }
+}

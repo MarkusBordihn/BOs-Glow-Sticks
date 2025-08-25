@@ -51,30 +51,23 @@ public class GlowStickItem extends Item {
   public static final String TAG_STEP = "step";
   public static final int ANIMATION_STEPS = 6;
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
+  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME + "_";
 
   protected final Supplier<Block> blockSupplier;
-  protected final boolean despawnEnabled;
   protected final int despawnTickRate;
   private final DyeColor dyeColor;
 
   public GlowStickItem(Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
-    this(
-        properties,
-        blockSupplier,
-        dyeColor,
-        GlowSticksConfig.despawnEnabled,
-        GlowSticksConfig.despawnTicks);
+    this(properties, blockSupplier, dyeColor, GlowSticksConfig.despawnTicks);
   }
 
   public GlowStickItem(
       Properties properties,
       Supplier<Block> blockSupplier,
       DyeColor dyeColor,
-      boolean despawnEnabled,
       int despawnTickRate) {
     super(properties);
     this.blockSupplier = blockSupplier;
-    this.despawnEnabled = despawnEnabled;
     this.despawnTickRate = despawnTickRate;
     this.dyeColor = dyeColor;
   }
@@ -108,14 +101,6 @@ public class GlowStickItem extends Item {
 
   public DyeColor getDyeColor() {
     return dyeColor;
-  }
-
-  public boolean isDespawnEnabled() {
-    return despawnEnabled;
-  }
-
-  public int getDespawnTickRate() {
-    return despawnTickRate;
   }
 
   @Override
@@ -152,7 +137,7 @@ public class GlowStickItem extends Item {
 
   @Override
   public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int count) {
-    if (!level.isClientSide && count % despawnTickRate == 0) {
+    if (!level.isClientSide && count % 2 == 0) {
       int step = increaseStep(itemStack);
       if (step == 4) {
         level.playSound(
@@ -191,11 +176,14 @@ public class GlowStickItem extends Item {
       ItemStack itemStack, Level level, List<Component> tooltipList, TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(Constants.TEXT_PREFIX + NAME + "_" + dyeColor + "_description")
+        new TranslatableComponent(TOOLTIP_PREFIX + dyeColor + "_description")
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(Constants.TEXT_PREFIX + NAME + "_use", despawnTickRate)
+        new TranslatableComponent(TOOLTIP_PREFIX + "usage").withStyle(ChatFormatting.YELLOW));
+    ToolTips.addTooltip(
+        tooltipList,
+        new TranslatableComponent(TOOLTIP_PREFIX + "use", despawnTickRate)
             .withStyle(ChatFormatting.GREEN));
   }
 }
