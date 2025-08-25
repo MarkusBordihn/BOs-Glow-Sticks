@@ -34,13 +34,5 @@
         "down": {"uv": [6, 0, 9, 16], "texture": "#core"}
       }
     }
-  ],
-  "groups": [
-    {
-      "name": "GlowStick",
-      "origin": [0, 0, 0],
-      "color": 0,
-      "children": [0, 1]
-    }
   ]
 }

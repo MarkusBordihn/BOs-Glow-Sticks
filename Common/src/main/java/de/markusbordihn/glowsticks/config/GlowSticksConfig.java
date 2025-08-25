@@ -32,8 +32,8 @@ public class GlowSticksConfig extends Config {
   You can enable or disable features and adjust settings as needed.
 
   Glow Stick Despawn:
-  - despawnEnabled: Enable or disable the automatic despawn of glow sticks.
   - despawnTicks: Controls the aging probability of glow sticks during random ticks.
+    A value 0 means glow sticks will never age automatically.
     A value of 1 means every random tick has a 100% chance to age the glow stick.
     A value of 2 means every random tick has a 50% chance to age the glow stick.
     A value of 5 means every random tick has a 20% chance to age the glow stick.
@@ -49,7 +49,6 @@ public class GlowSticksConfig extends Config {
 
 """;
 
-  public static boolean despawnEnabled = true;
   public static int despawnTicks = 2;
   public static boolean spawnRandomParticles = true;
   public static int randomParticleSpawnRate = 25;
@@ -68,7 +67,6 @@ public class GlowSticksConfig extends Config {
     Properties unmodifiedProperties = (Properties) properties.clone();
 
     // Config entries
-    despawnEnabled = parseConfigValue(properties, "despawnEnabled", despawnEnabled);
     despawnTicks = parseConfigValue(properties, "despawnTicks", despawnTicks);
     spawnRandomParticles =
         parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
