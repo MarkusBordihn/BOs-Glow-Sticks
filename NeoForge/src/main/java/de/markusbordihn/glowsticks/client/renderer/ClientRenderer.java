@@ -53,6 +53,12 @@ public class ClientRenderer {
               ItemBlockRenderTypes.setRenderLayer(
                   glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
             }
+            DeferredBlock<Block> creativeGlowStickBlock =
+                ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            if (creativeGlowStickBlock != null) {
+              ItemBlockRenderTypes.setRenderLayer(
+                  creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+            }
           }
 
           // Glow Stick Light Blocks (cutout mip)

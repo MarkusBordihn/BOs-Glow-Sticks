@@ -1,0 +1,43 @@
+import groovy.json.JsonOutput
+
+tasks.register("generateCreativeGlowStickModels") {
+  description = 'Generates creative glow stick item models in the new format'
+  group = "build"
+
+  doLast {
+    def glowStickColors = [
+        'white', 'orange', 'magenta', 'light_blue', 'yellow', 'lime', 'pink',
+        'gray', 'light_gray', 'cyan', 'purple', 'blue', 'brown', 'green', 'red', 'black'
+    ]
+
+    def itemsDirectory = file("${project.projectDir}/../Common/src/main/resources/assets/glow_sticks/items")
+
+    // Ensure the items directory exists
+    if (!itemsDirectory.exists()) {
+      itemsDirectory.mkdirs()
+    }
+
+    println "Starting generation of creative glow stick item models for ${glowStickColors.size()} colors..."
+    println ""
+
+    glowStickColors.each { color ->
+      def itemFileName = "creative_glow_stick_${color}.json"
+      def itemFile = new File(itemsDirectory, itemFileName)
+
+      def itemContent = [
+          model: [
+              type : "minecraft:model",
+              model: "glow_sticks:item/glow_stick/${color}/glow_stick_step_6"
+          ]
+      ]
+
+      // Write the JSON content to file using JsonOutput for consistency
+      itemFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(itemContent))
+
+      println "  ✔ Generated creative glow stick item model: ${itemFileName}"
+    }
+
+    println ""
+    println "✅ Successfully generated ${glowStickColors.size()} creative glow stick item models!"
+  }
+}

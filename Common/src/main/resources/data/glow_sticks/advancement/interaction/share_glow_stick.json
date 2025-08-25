@@ -23,7 +23,8 @@
       "trigger": "minecraft:thrown_item_picked_up_by_entity",
       "conditions": {
         "entity": {
-          "type": "minecraft:player"
+          "type": "minecraft:player",
+          "distance": {"absolute": {"min": 0.1}}
         },
         "item": {
           "tag": "glow_sticks:glow_sticks"
