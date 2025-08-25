@@ -22,7 +22,9 @@ This mod adds **glow sticks in all dye colors** which can be thrown and placed o
 underwater.  
 They shine for a limited time, making them perfect for exploring caves, diving, or RPG adventures.
 
-[![Watch the video](https://img.youtube.com/vi/so-65YewqYw/maxresdefault.jpg)](https://youtu.be/so-65YewqYw)
+## Introduction & Overview Video (English)
+
+[![Watch the video](https://img.youtube.com/vi/9NV4Ja-vreg/maxresdefault.jpg)](https://youtu.be/9NV4Ja-vreg)
 
 ## ✨ Features
 

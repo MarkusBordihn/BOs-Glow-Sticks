@@ -13,6 +13,7 @@ dependencies {
 }
 
 apply from: "$projectDir/../gradle/tasks/generateGlowStickModelOverrides.gradle"
+apply from: "$projectDir/../gradle/tasks/generateCreativeGlowStickModels.gradle"
 
 processResources {
   def buildProps = project.properties.clone()

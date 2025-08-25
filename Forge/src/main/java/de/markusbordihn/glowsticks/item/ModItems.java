@@ -36,21 +36,41 @@ public class ModItems {
   protected static final Map<DyeColor, RegistryObject<Item>> GLOW_STICK_ITEMS =
       new EnumMap<>(DyeColor.class);
 
+  protected static final Map<DyeColor, RegistryObject<Item>> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(DyeColor.class);
+
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
-      String itemId = "glow_stick_" + colorName;
+
+      // Normal glow stick items
+      String itemName = "glow_stick_" + colorName;
       GLOW_STICK_ITEMS.put(
           dyeColor,
           ITEMS.register(
-              itemId,
+              itemName,
               () ->
                   new GlowStickItemWrapper(
-                      GlowStickItemProperties.createGlowStickItemProperties(itemId), dyeColor)));
+                      GlowStickItemProperties.createGlowStickItemProperties(itemName), dyeColor)));
+
+      // Creative glow stick items
+      String creativeItemName = "creative_glow_stick_" + colorName;
+      CREATIVE_GLOW_STICK_ITEMS.put(
+          dyeColor,
+          ITEMS.register(
+              creativeItemName,
+              () ->
+                  new CreativeGlowStickItemWrapper(
+                      GlowStickItemProperties.createGlowStickItemProperties(creativeItemName),
+                      dyeColor)));
     }
   }
 
   public static RegistryObject<Item> getGlowStickItem(final DyeColor dyeColor) {
     return GLOW_STICK_ITEMS.get(dyeColor);
+  }
+
+  public static RegistryObject<Item> getCreativeGlowStickItem(final DyeColor dyeColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
   }
 }
