@@ -32,21 +32,37 @@ public class ModItems {
 
   protected static final Map<DyeColor, Item> GLOW_STICK_ITEMS = new EnumMap<>(DyeColor.class);
 
+  protected static final Map<DyeColor, Item> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(DyeColor.class);
+
   public static void registerItems() {
     // Register all glow stick items for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
       Item glowStickItem = new GlowStickItemWrapper(new Item.Properties(), dyeColor);
+      Item creativeGlowStickItem =
+          new CreativeGlowStickItemWrapper(new Item.Properties(), dyeColor);
 
       GLOW_STICK_ITEMS.put(dyeColor, glowStickItem);
+      CREATIVE_GLOW_STICK_ITEMS.put(dyeColor, creativeGlowStickItem);
+
       Registry.register(
           BuiltInRegistries.ITEM,
           new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName),
           glowStickItem);
+
+      Registry.register(
+          BuiltInRegistries.ITEM,
+          new ResourceLocation(Constants.MOD_ID, "creative_glow_stick_" + colorName),
+          creativeGlowStickItem);
     }
   }
 
   public static Item getGlowStickItem(final DyeColor dyeColor) {
     return GLOW_STICK_ITEMS.get(dyeColor);
+  }
+
+  public static Item getCreativeGlowStickItem(final DyeColor dyeColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
   }
 }

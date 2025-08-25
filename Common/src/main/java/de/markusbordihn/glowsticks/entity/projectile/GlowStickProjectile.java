@@ -21,7 +21,9 @@ package de.markusbordihn.glowsticks.entity.projectile;
 
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickLightBlock;
-import de.markusbordihn.glowsticks.utils.GlowStickPlacementHelper;
+import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
+import de.markusbordihn.glowsticks.block.glowstick.PlacementSounds;
+import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
 import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -34,6 +36,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -52,7 +55,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   protected final DyeColor dyeColor;
   protected final Supplier<Item> defaultItem;
   protected final Supplier<Block> lightBlock;
-  protected Supplier<Block> defaultBlock = null;
+  protected Supplier<Block> defaultBlock;
   protected Direction defaultDirection = Direction.NORTH;
   private int ticks;
 
@@ -115,7 +118,10 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
 
   @Override
   protected Item getDefaultItem() {
-    return this.defaultItem != null ? this.defaultItem.get() : null;
+    if (this.defaultItem != null) {
+      return this.defaultItem.get();
+    }
+    return Items.STICK;
   }
 
   private boolean canPlaceBlock(final BlockState blockState) {
@@ -148,13 +154,18 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   }
 
   private void dropDefaultItem(final Level level, final BlockPos blockPos) {
-    level.addFreshEntity(
+    ItemEntity droppedItem =
         new ItemEntity(
             level,
-            blockPos.getX(),
-            blockPos.getY(),
-            blockPos.getZ(),
-            new ItemStack(getDefaultItem())));
+            blockPos.getX() + 0.5,
+            blockPos.getY() + 0.5,
+            blockPos.getZ() + 0.5,
+            new ItemStack(getDefaultItem()));
+
+    droppedItem.setDeltaMovement(
+        (level.random.nextFloat() - 0.5F) * 0.3F, 0.25F, (level.random.nextFloat() - 0.5F) * 0.3F);
+
+    level.addFreshEntity(droppedItem);
   }
 
   @Override
@@ -174,8 +185,6 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       dropDefaultItem(
           this.level(), new BlockPos((int) location.x, (int) location.y, (int) location.z));
     }
-
-    // Remove projectile after hitting an entity
     this.discard();
   }
 
@@ -185,51 +194,57 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     if (!this.level().isClientSide && defaultBlock != null) {
       BlockPos blockPos = blockHitResult.getBlockPos();
       BlockPos placePos = blockPos.relative(blockHitResult.getDirection());
-
-      BlockState newGlowStickState = defaultBlock.get().defaultBlockState();
       BlockState targetState = this.level().getBlockState(placePos);
+      BlockPos belowPos = placePos.below();
+      BlockState belowState = this.level().getBlockState(belowPos);
 
-      if (canPlaceBlock(targetState)) {
-        handleGlowStickPlacement(placePos, newGlowStickState, targetState);
+      // Check if there's a GlowStickBlock at placement position or below
+      if (targetState.getBlock() instanceof GlowStickBlock
+          || belowState.getBlock() instanceof GlowStickBlock) {
+        dropDefaultItem(this.level(), placePos);
+      } else if (canPlaceBlock(targetState)) {
+        handleGlowStickPlacement(placePos, targetState);
       } else {
         dropDefaultItem(this.level(), placePos);
       }
     }
-
     this.discard();
   }
 
-  private void handleGlowStickPlacement(
-      BlockPos placePos, BlockState glowStickState, BlockState targetState) {
-    if (GlowStickPlacementHelper.isLavaBlock(targetState)) {
+  private void handleGlowStickPlacement(BlockPos placePos, BlockState targetState) {
+    if (LavaInteraction.isLavaBlock(targetState)) {
       handleLavaDestruction(placePos);
     } else {
-      handleNormalPlacement(placePos, glowStickState, targetState);
+      handleNormalPlacement(placePos, targetState);
     }
   }
 
   private void handleLavaDestruction(BlockPos lavaPos) {
-    GlowStickPlacementHelper.handleLavaDestruction(this.level(), lavaPos);
+    LavaInteraction.handleLavaDestruction(this.level(), lavaPos);
   }
 
-  private void handleNormalPlacement(
-      BlockPos placePos, BlockState glowStickState, BlockState targetState) {
-    GlowStickPlacementHelper.playPlacementSound(this.level(), placePos, targetState, this.random);
-    placeGlowStickNormally(placePos, glowStickState, targetState);
+  private void handleNormalPlacement(BlockPos placePos, BlockState targetState) {
+    PlacementSounds.playPlacementSound(this.level(), placePos, targetState, this.random);
+    placeGlowStickNormally(placePos, targetState);
   }
 
-  private void placeGlowStickNormally(
-      BlockPos placePos, BlockState glowStickState, BlockState targetState) {
+  private void placeGlowStickNormally(BlockPos placePos, BlockState targetState) {
     boolean isWater =
         targetState.is(Blocks.WATER)
             && targetState.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
 
-    BlockState finalState =
-        glowStickState
-            .setValue(HorizontalDirectionalBlock.FACING, defaultDirection)
-            .setValue(GlowStickBlock.WATERLOGGED, isWater)
-            .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 4));
+    BlockState finalState = createProjectileGlowStickState(targetState, isWater);
     this.level().setBlockAndUpdate(placePos, finalState);
+    RedstoneCapable.handleBlockPlacement(this.level(), placePos, finalState);
+  }
+
+  private BlockState createProjectileGlowStickState(BlockState targetState, boolean isWater) {
+    return defaultBlock
+        .get()
+        .defaultBlockState()
+        .setValue(HorizontalDirectionalBlock.FACING, defaultDirection)
+        .setValue(GlowStickBlock.WATERLOGGED, isWater)
+        .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 6));
   }
 
   @Override
