@@ -48,9 +48,6 @@ public class ModDataComponents {
 
   @SubscribeEvent
   public static void onCommonSetup(FMLCommonSetupEvent event) {
-    event.enqueueWork(
-        () -> {
-          DataComponents.registerGlowStickData(GLOW_STICK_DATA);
-        });
+    event.enqueueWork(() -> DataComponents.registerGlowStickData(GLOW_STICK_DATA));
   }
 }

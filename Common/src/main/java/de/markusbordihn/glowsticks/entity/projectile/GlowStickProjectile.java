@@ -21,7 +21,9 @@ package de.markusbordihn.glowsticks.entity.projectile;
 
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickLightBlock;
-import de.markusbordihn.glowsticks.utils.GlowStickPlacementHelper;
+import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
+import de.markusbordihn.glowsticks.block.glowstick.PlacementSounds;
+import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
 import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -34,6 +36,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -47,14 +50,12 @@ import net.minecraft.world.phys.Vec3;
 
 public class GlowStickProjectile extends ThrowableItemProjectile {
 
-  private static final int PROJECTILE_TIME_TO_LIVE_TICKS = 650;
-  private static final int PARTICLE_EFFECT_INTERVAL = 12;
-
+  private static final int TICK_TTL = 650;
   protected final Supplier<Block> lightWaterBlock;
   protected final DyeColor dyeColor;
   protected final Supplier<Item> defaultItem;
   protected final Supplier<Block> lightBlock;
-  protected Supplier<Block> defaultBlock = null;
+  protected final Supplier<Block> defaultBlock;
   protected Direction defaultDirection = Direction.NORTH;
   private int ticks;
 
@@ -117,25 +118,33 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
 
   @Override
   protected Item getDefaultItem() {
-    if (this.defaultItem != null && this.defaultItem.get() != null) {
+    if (this.defaultItem != null) {
       return this.defaultItem.get();
     }
-    return net.minecraft.world.item.Items.SNOWBALL;
+    return Items.STICK;
   }
 
   private boolean canPlaceBlock(final BlockState blockState) {
-    if (blockState.isAir() || blockState.is(Blocks.WATER) || blockState.canBeReplaced()) {
+    if (blockState.isAir() || blockState.is(Blocks.WATER)) {
       return true;
     }
 
+    // Check if block is replaceable using the modern method
+    if (blockState.canBeReplaced()) {
+      return true;
+    }
+
+    // Check for snow layers and powder snow (but NOT ice blocks themselves)
     if (blockState.is(Blocks.SNOW) || blockState.is(Blocks.POWDER_SNOW)) {
       return true;
     }
 
+    // Check if block can be destroyed by player without tools (covers most vegetation)
     if (blockState.getDestroySpeed(this.level(), BlockPos.ZERO) == 0.0f) {
       return true;
     }
 
+    // Additional check for liquid blocks
     if (!blockState.getFluidState().isEmpty()) {
       return true;
     }
@@ -144,13 +153,18 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   }
 
   private void dropDefaultItem(final Level level, final BlockPos blockPos) {
-    level.addFreshEntity(
+    ItemEntity droppedItem =
         new ItemEntity(
             level,
-            blockPos.getX(),
-            blockPos.getY(),
-            blockPos.getZ(),
-            new ItemStack(getDefaultItem())));
+            blockPos.getX() + 0.5,
+            blockPos.getY() + 0.5,
+            blockPos.getZ() + 0.5,
+            new ItemStack(getDefaultItem()));
+
+    droppedItem.setDeltaMovement(
+        (level.random.nextFloat() - 0.5F) * 0.3F, 0.25F, (level.random.nextFloat() - 0.5F) * 0.3F);
+
+    level.addFreshEntity(droppedItem);
   }
 
   @Override
@@ -170,7 +184,6 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       dropDefaultItem(
           this.level(), new BlockPos((int) location.x, (int) location.y, (int) location.z));
     }
-
     this.discard();
   }
 
@@ -180,12 +193,16 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     if (!this.level().isClientSide && defaultBlock != null) {
       BlockPos blockPos = blockHitResult.getBlockPos();
       BlockPos placePos = blockPos.relative(blockHitResult.getDirection());
-
-      BlockState newGlowStickState = defaultBlock.get().defaultBlockState();
       BlockState targetState = this.level().getBlockState(placePos);
+      BlockPos belowPos = placePos.below();
+      BlockState belowState = this.level().getBlockState(belowPos);
 
-      if (canPlaceBlock(targetState)) {
-        handleGlowStickPlacement(placePos, newGlowStickState, targetState);
+      // Check if there's a GlowStickBlock at placement position or below
+      if (targetState.getBlock() instanceof GlowStickBlock
+          || belowState.getBlock() instanceof GlowStickBlock) {
+        dropDefaultItem(this.level(), placePos);
+      } else if (canPlaceBlock(targetState)) {
+        handleGlowStickPlacement(placePos, targetState);
       } else {
         dropDefaultItem(this.level(), placePos);
       }
@@ -194,37 +211,40 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     this.discard();
   }
 
-  private void handleGlowStickPlacement(
-      final BlockPos blockPos, final BlockState glowStickState, final BlockState targetState) {
-    if (GlowStickPlacementHelper.isLavaBlock(targetState)) {
-      handleLavaDestruction(blockPos);
+  private void handleGlowStickPlacement(BlockPos placePos, BlockState targetState) {
+    if (LavaInteraction.isLavaBlock(targetState)) {
+      handleLavaDestruction(placePos);
     } else {
-      handleNormalPlacement(blockPos, glowStickState, targetState);
+      handleNormalPlacement(placePos, targetState);
     }
   }
 
-  private void handleLavaDestruction(final BlockPos blockPos) {
-    GlowStickPlacementHelper.handleLavaDestruction(this.level(), blockPos);
+  private void handleLavaDestruction(BlockPos lavaPos) {
+    LavaInteraction.handleLavaDestruction(this.level(), lavaPos);
   }
 
-  private void handleNormalPlacement(
-      final BlockPos blockPos, final BlockState glowStickState, final BlockState targetState) {
-    GlowStickPlacementHelper.playPlacementSound(this.level(), blockPos, targetState, this.random);
-    placeGlowStickNormally(blockPos, glowStickState, targetState);
+  private void handleNormalPlacement(BlockPos placePos, BlockState targetState) {
+    PlacementSounds.playPlacementSound(this.level(), placePos, targetState, this.random);
+    placeGlowStickNormally(placePos, targetState);
   }
 
-  private void placeGlowStickNormally(
-      final BlockPos blockPos, final BlockState glowStickState, final BlockState targetState) {
+  private void placeGlowStickNormally(BlockPos placePos, BlockState targetState) {
     boolean isWater =
         targetState.is(Blocks.WATER)
             && targetState.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
 
-    BlockState finalState =
-        glowStickState
-            .setValue(HorizontalDirectionalBlock.FACING, defaultDirection)
-            .setValue(GlowStickBlock.WATERLOGGED, isWater)
-            .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 4));
-    this.level().setBlockAndUpdate(blockPos, finalState);
+    BlockState finalState = createProjectileGlowStickState(targetState, isWater);
+    this.level().setBlockAndUpdate(placePos, finalState);
+    RedstoneCapable.handleBlockPlacement(this.level(), placePos, finalState);
+  }
+
+  private BlockState createProjectileGlowStickState(BlockState targetState, boolean isWater) {
+    return defaultBlock
+        .get()
+        .defaultBlockState()
+        .setValue(HorizontalDirectionalBlock.FACING, defaultDirection)
+        .setValue(GlowStickBlock.WATERLOGGED, isWater)
+        .setValue(GlowStickBlock.VARIANT, random.nextInt(1, 6));
   }
 
   @Override
@@ -234,31 +254,29 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     }
     super.tick();
 
-    if (++ticks > PROJECTILE_TIME_TO_LIVE_TICKS) {
+    // Remove projectile after TTL expires - check this BEFORE doing any expensive operations
+    if (++ticks > TICK_TTL) {
       this.remove(RemovalReason.DISCARDED);
       return;
     }
 
-    handleParticleEffects();
-    handleLightBlockPlacement();
-  }
-
-  private void handleParticleEffects() {
-    if (this.level().isClientSide && !this.isInWater() && ticks % PARTICLE_EFFECT_INTERVAL == 0) {
-      Vec3 deltaMovement = this.getDeltaMovement();
-      this.level()
-          .addParticle(
-              ParticleTypes.END_ROD,
-              this.getX() + deltaMovement.x * 0.75,
-              this.getY() + deltaMovement.y * 0.75,
-              this.getZ() + deltaMovement.z * 0.75,
-              deltaMovement.x,
-              deltaMovement.y,
-              deltaMovement.z);
+    // Client-side particle effects - only if projectile will continue to exist
+    if (this.level().isClientSide && !this.isInWater()) {
+      if (ticks % 12 == 0) { // Average of previous range (10-15)
+        Vec3 deltaMovement = this.getDeltaMovement();
+        this.level()
+            .addParticle(
+                ParticleTypes.END_ROD,
+                this.getX() + deltaMovement.x * 0.75,
+                this.getY() + deltaMovement.y * 0.75,
+                this.getZ() + deltaMovement.z * 0.75,
+                deltaMovement.x,
+                deltaMovement.y,
+                deltaMovement.z);
+      }
     }
-  }
 
-  private void handleLightBlockPlacement() {
+    // Server-side light block placement - only if projectile will continue to exist
     if (!this.level().isClientSide) {
       BlockPos lightBlockPosition = this.blockPosition().above();
       BlockState currentBlockState = this.level().getBlockState(lightBlockPosition);
@@ -271,6 +289,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
 
         this.level().setBlockAndUpdate(lightBlockPosition, newLightBlockState);
 
+        // Schedule tick for the light block if it's a GlowStickLightBlock
         Block placedBlock = this.level().getBlockState(lightBlockPosition).getBlock();
         if (placedBlock instanceof GlowStickLightBlock glowStickLightBlock) {
           glowStickLightBlock.scheduleTick(this.level(), lightBlockPosition);

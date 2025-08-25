@@ -34,6 +34,9 @@ public class ModItems {
   protected static final Map<DyeColor, DeferredItem<Item>> GLOW_STICK_ITEMS =
       new EnumMap<>(DyeColor.class);
 
+  protected static final Map<DyeColor, DeferredItem<Item>> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(DyeColor.class);
+
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
@@ -42,10 +45,20 @@ public class ModItems {
           ITEMS.register(
               "glow_stick_" + colorName,
               () -> new GlowStickItemWrapper(new Item.Properties(), dyeColor)));
+
+      CREATIVE_GLOW_STICK_ITEMS.put(
+          dyeColor,
+          ITEMS.register(
+              "creative_glow_stick_" + colorName,
+              () -> new CreativeGlowStickItemWrapper(new Item.Properties(), dyeColor)));
     }
   }
 
   public static DeferredItem<Item> getGlowStickItem(final DyeColor dyeColor) {
     return GLOW_STICK_ITEMS.get(dyeColor);
+  }
+
+  public static DeferredItem<Item> getCreativeGlowStickItem(final DyeColor dyeColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
   }
 }

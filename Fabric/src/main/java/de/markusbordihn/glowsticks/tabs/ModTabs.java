@@ -42,6 +42,7 @@ public class ModTabs {
               (displayContext, entries) -> {
                 for (DyeColor dyeColor : DyeColor.values()) {
                   entries.accept(ModItems.getGlowStickItem(dyeColor));
+                  entries.accept(ModItems.getCreativeGlowStickItem(dyeColor));
                 }
               })
           .build();

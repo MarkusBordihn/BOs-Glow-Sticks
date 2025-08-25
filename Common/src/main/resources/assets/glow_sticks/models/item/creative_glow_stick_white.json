@@ -1,0 +1,16 @@
+{
+  "parent": "glow_sticks:item/glow_stick/glow_stick",
+  "textures": {
+    "particle": "glow_sticks:item/glow_stick/white_25pc",
+    "shell": "glow_sticks:item/glow_stick/white_25pc",
+    "core": "glow_sticks:item/glow_stick/white_75pc"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "glow_sticks:activated": 1
+      },
+      "model": "glow_sticks:item/glow_stick/white/glow_stick_activated"
+    }
+  ]
+}
