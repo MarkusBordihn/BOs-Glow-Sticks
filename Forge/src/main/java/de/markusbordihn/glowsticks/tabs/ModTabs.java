@@ -37,6 +37,7 @@ public class ModTabs {
         public void fillItemList(NonNullList<ItemStack> items) {
           for (DyeColor dyeColor : DyeColor.values()) {
             items.add(new ItemStack(ModItems.getGlowStickItem(dyeColor).get()));
+            items.add(new ItemStack(ModItems.getCreativeGlowStickItem(dyeColor).get()));
           }
         }
       };
