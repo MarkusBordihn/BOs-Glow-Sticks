@@ -12,6 +12,7 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - Refactored code for better readability and maintenance.
 - Fixed #2 by adding distance requirement.
 - Fixed onUseTick method to prevent crashes.
+- Added japanese translation, thanks to `@PExPE3`.
 - Added creative versions of the Glow Sticks which do not despawn.
 - Added powered versions of the Glow Sticks which reactivate when powered by Redstone.
 - Added additional 3 variants for normal and creative Glow Sticks.

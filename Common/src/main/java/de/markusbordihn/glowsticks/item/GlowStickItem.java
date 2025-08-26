@@ -51,7 +51,7 @@ public class GlowStickItem extends Item {
   public static final String TAG_STEP = "step";
   public static final int ANIMATION_STEPS = 6;
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
-  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME + "_";
+  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME;
 
   protected final Supplier<Block> blockSupplier;
   protected final int despawnTickRate;
@@ -176,14 +176,14 @@ public class GlowStickItem extends Item {
       ItemStack itemStack, Level level, List<Component> tooltipList, TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + dyeColor + "_description")
+        new TranslatableComponent(TOOLTIP_PREFIX + "_" + dyeColor + ".description")
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + "usage").withStyle(ChatFormatting.YELLOW));
+        new TranslatableComponent(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + "use", despawnTickRate)
+        new TranslatableComponent(TOOLTIP_PREFIX + ".use", despawnTickRate)
             .withStyle(ChatFormatting.GREEN));
   }
 }

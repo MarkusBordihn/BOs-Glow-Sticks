@@ -46,7 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CreativeGlowStickItem extends Item {
 
   public static final String NAME = "creative_glow_stick";
-  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME + "_";
+  public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME;
 
   private final Supplier<Block> blockSupplier;
   private final DyeColor dyeColor;
@@ -237,16 +237,17 @@ public class CreativeGlowStickItem extends Item {
       ItemStack itemStack, Level level, List<Component> tooltipList, TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(GlowStickItem.TOOLTIP_PREFIX + this.dyeColor + "_description")
+        new TranslatableComponent(
+                GlowStickItem.TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + "usage").withStyle(ChatFormatting.YELLOW));
+        new TranslatableComponent(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + "use").withStyle(ChatFormatting.GREEN));
+        new TranslatableComponent(TOOLTIP_PREFIX + ".use").withStyle(ChatFormatting.GREEN));
     ToolTips.addTooltip(
         tooltipList,
-        new TranslatableComponent(TOOLTIP_PREFIX + "permanent").withStyle(ChatFormatting.GOLD));
+        new TranslatableComponent(TOOLTIP_PREFIX + ".permanent").withStyle(ChatFormatting.GOLD));
   }
 }
