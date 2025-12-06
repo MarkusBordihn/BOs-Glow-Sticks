@@ -24,7 +24,6 @@ import de.markusbordihn.glowsticks.block.GlowStickLightBlock;
 import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
 import de.markusbordihn.glowsticks.block.glowstick.PlacementSounds;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
-import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -128,7 +127,8 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     return Items.STICK;
   }
 
-  private boolean canPlaceBlock(final BlockState blockState) {
+  private boolean canPlaceBlock(final BlockState blockState, final BlockPos blockPos) {
+    // Check if block is air or water first for performance
     if (blockState.isAir() || blockState.is(Blocks.WATER)) {
       return true;
     }
@@ -143,8 +143,8 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       return true;
     }
 
-    // Check if block can be destroyed by player without tools (covers most vegetation)
-    if (blockState.getDestroySpeed(this.level(), BlockPos.ZERO) == 0.0f) {
+    // Check if block can be destroyed instantly (covers vegetation, torches, etc.)
+    if (blockState.getDestroySpeed(this.level(), blockPos) == 0.0f) {
       return true;
     }
 
@@ -205,13 +205,12 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       if (targetState.getBlock() instanceof GlowStickBlock
           || belowState.getBlock() instanceof GlowStickBlock) {
         dropDefaultItem(this.level(), placePos);
-      } else if (canPlaceBlock(targetState)) {
+      } else if (canPlaceBlock(targetState, placePos)) {
         handleGlowStickPlacement(placePos, targetState);
       } else {
         dropDefaultItem(this.level(), placePos);
       }
     }
-
     this.discard();
   }
 
@@ -280,11 +279,12 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
       }
     }
 
-    // Server-side light block placement - only if projectile will continue to exist
-    if (!this.level().isClientSide) {
+    // Server-side light block placement - only every 5 ticks for performance
+    if (!this.level().isClientSide && ticks % 5 == 0) {
       BlockPos lightBlockPosition = this.blockPosition().above();
       BlockState currentBlockState = this.level().getBlockState(lightBlockPosition);
 
+      // Place new light block if position is air or water
       if (currentBlockState.isAir() || currentBlockState.is(Blocks.WATER)) {
         BlockState newLightBlockState =
             currentBlockState.is(Blocks.WATER)
@@ -299,34 +299,10 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
           glowStickLightBlock.scheduleTick(this.level(), lightBlockPosition);
         }
       }
+      // Update existing light block to refresh its despawn timer
+      else if (currentBlockState.getBlock() instanceof GlowStickLightBlock glowStickLightBlock) {
+        glowStickLightBlock.scheduleTick(this.level(), lightBlockPosition);
+      }
     }
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) return true;
-    if (!(obj instanceof GlowStickProjectile other)) return false;
-    if (!super.equals(obj)) return false;
-
-    return ticks == other.ticks
-        && dyeColor == other.dyeColor
-        && defaultDirection == other.defaultDirection
-        && Objects.equals(defaultBlock, other.defaultBlock)
-        && Objects.equals(defaultItem, other.defaultItem)
-        && Objects.equals(lightBlock, other.lightBlock)
-        && Objects.equals(lightWaterBlock, other.lightWaterBlock);
-  }
-
-  @Override
-  public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + ticks;
-    result = 31 * result + (dyeColor != null ? dyeColor.hashCode() : 0);
-    result = 31 * result + (defaultDirection != null ? defaultDirection.hashCode() : 0);
-    result = 31 * result + (defaultBlock != null ? defaultBlock.hashCode() : 0);
-    result = 31 * result + (defaultItem != null ? defaultItem.hashCode() : 0);
-    result = 31 * result + (lightBlock != null ? lightBlock.hashCode() : 0);
-    result = 31 * result + (lightWaterBlock != null ? lightWaterBlock.hashCode() : 0);
-    return result;
   }
 }
