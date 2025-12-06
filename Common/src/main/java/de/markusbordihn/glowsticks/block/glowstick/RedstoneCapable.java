@@ -49,12 +49,18 @@ public class RedstoneCapable {
 
       int directSignal = level.getSignal(neighborPos, direction);
       maxSignal = Math.max(maxSignal, directSignal);
+      if (maxSignal >= 15) {
+        return 15;
+      }
 
       int indirectSignal = level.getDirectSignal(neighborPos, direction);
       maxSignal = Math.max(maxSignal, indirectSignal);
+      if (maxSignal >= 15) {
+        return 15;
+      }
     }
 
-    return Math.min(maxSignal, 15);
+    return maxSignal;
   }
 
   public static void handleNeighborChange(BlockState blockState, Level level, BlockPos blockPos) {

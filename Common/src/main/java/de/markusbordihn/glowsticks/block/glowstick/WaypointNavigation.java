@@ -33,12 +33,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class WaypointNavigation {
 
-  private static final double MIN_DISTANCE_THRESHOLD = 6.0;
-  private static final double MIN_SPAWN_DISTANCE = 1.0;
-  private static final double MIN_TRAIL_DISTANCE = 2.0;
-  private static final double LARGE_DISTANCE_THRESHOLD = 12.0;
-  private static final double WAYPOINT_DISTANCE_MULTIPLIER = 2.2;
-  private static final double PARTICLE_COUNT_MULTIPLIER = 0.5;
+  private static final int SEARCH_INTERVAL_TICKS = 10;
+  private static long lastSearchTick = 0;
+  private static DyeColor cachedSearchColor = null;
+  private static BlockPos cachedNearestGlowStick = null;
 
   public static void handleWaypointParticles(
       ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
@@ -54,7 +52,7 @@ public class WaypointNavigation {
     }
 
     LocalPlayer player = Minecraft.getInstance().player;
-    if (player == null || !player.isShiftKeyDown() || random.nextInt(2) != 0) {
+    if (player == null || !player.isShiftKeyDown()) {
       return false;
     }
 
@@ -63,7 +61,45 @@ public class WaypointNavigation {
       return false;
     }
 
-    return isNearestMatchingGlowStick(clientLevel, blockPos, player, heldColor);
+    long currentTick = clientLevel.getGameTime();
+    if (cachedSearchColor != heldColor || currentTick - lastSearchTick >= SEARCH_INTERVAL_TICKS) {
+      lastSearchTick = currentTick;
+      cachedSearchColor = heldColor;
+      cachedNearestGlowStick = findNearestGlowStick(clientLevel, player, heldColor);
+    }
+
+    return blockPos.equals(cachedNearestGlowStick);
+  }
+
+  private static BlockPos findNearestGlowStick(
+      ClientLevel clientLevel, LocalPlayer player, DyeColor targetColor) {
+    BlockPos playerPos = player.blockPosition();
+    int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
+    int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
+
+    BlockPos nearest = null;
+    double nearestDistSqr = Double.MAX_VALUE;
+
+    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
+      for (int y = -verticalRadius; y <= verticalRadius; y++) {
+        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
+          BlockPos checkPos = playerPos.offset(x, y, z);
+          BlockState checkState = clientLevel.getBlockState(checkPos);
+
+          if (checkState.getBlock() instanceof GlowStickBlock glowStick
+              && glowStick.getGlowStickColor() == targetColor) {
+            double distSqr = playerPos.distSqr(checkPos);
+
+            if (distSqr >= 6.0 && distSqr < nearestDistSqr) {
+              nearestDistSqr = distSqr;
+              nearest = checkPos;
+            }
+          }
+        }
+      }
+    }
+
+    return nearest;
   }
 
   private static DyeColor getHeldGlowStickColor(LocalPlayer player) {
@@ -73,65 +109,7 @@ public class WaypointNavigation {
     if (player.getOffhandItem().getItem() instanceof GlowStickItem offHandGlowStick) {
       return offHandGlowStick.getDyeColor();
     }
-
     return DyeColor.WHITE;
-  }
-
-  private static boolean isNearestMatchingGlowStick(
-      ClientLevel clientLevel, BlockPos currentBlockPos, LocalPlayer player, DyeColor targetColor) {
-    BlockPos playerPos = player.blockPosition();
-    double currentDistance = playerPos.distSqr(currentBlockPos);
-
-    if (currentDistance < MIN_DISTANCE_THRESHOLD) {
-      return false;
-    }
-
-    return findNearestGlowStick(
-        clientLevel, playerPos, currentBlockPos, targetColor, currentDistance);
-  }
-
-  private static boolean findNearestGlowStick(
-      ClientLevel clientLevel,
-      BlockPos playerPos,
-      BlockPos currentBlockPos,
-      DyeColor targetColor,
-      double currentDistance) {
-
-    int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
-    int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
-
-    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
-      for (int y = -verticalRadius; y <= verticalRadius; y++) {
-        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
-          BlockPos checkPos = playerPos.offset(x, y, z);
-          if (checkPos.equals(currentBlockPos)) {
-            continue;
-          }
-
-          if (isMatchingGlowStickCloser(
-              clientLevel, checkPos, targetColor, playerPos, currentDistance)) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
-
-  private static boolean isMatchingGlowStickCloser(
-      ClientLevel clientLevel,
-      BlockPos checkPos,
-      DyeColor targetColor,
-      BlockPos playerPos,
-      double currentDistance) {
-
-    BlockState checkState = clientLevel.getBlockState(checkPos);
-    if (checkState.getBlock() instanceof GlowStickBlock otherGlowStick
-        && otherGlowStick.getGlowStickColor() == targetColor) {
-      double otherDistance = playerPos.distSqr(checkPos);
-      return otherDistance >= MIN_DISTANCE_THRESHOLD && otherDistance < currentDistance;
-    }
-    return false;
   }
 
   private static void spawnWaypointParticles(
@@ -144,7 +122,7 @@ public class WaypointNavigation {
     }
 
     TrailParameters trailParams = calculateTrailParameters(player, blockPos);
-    if (trailParams.distance < MIN_TRAIL_DISTANCE) {
+    if (trailParams.distance < 2.0) {
       return;
     }
 
@@ -190,10 +168,10 @@ public class WaypointNavigation {
   private static void spawnWaypointTrail(
       ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
 
-    int baseWaypoints = Math.clamp((int) (params.distance * WAYPOINT_DISTANCE_MULTIPLIER), 8, 40);
+    int baseWaypoints = Math.max(8, Math.min(40, (int) (params.distance * 2.2)));
     int particlesPerWaypoint = calculateParticlesPerWaypoint(params.distance);
     double waypointStep = 1.0 / (baseWaypoints + 1);
-    double minSpawnDistance = MIN_SPAWN_DISTANCE;
+    double minSpawnDistance = 1.0;
 
     spawnMainTrail(
         clientLevel,
@@ -257,7 +235,7 @@ public class WaypointNavigation {
   private static void spawnTargetParticles(
       ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
 
-    int targetParticleCount = Math.clamp((int) (params.distance * PARTICLE_COUNT_MULTIPLIER), 3, 8);
+    int targetParticleCount = Math.clamp((int) (params.distance * 0.5), 3, 8);
     for (int i = 0; i < targetParticleCount; i++) {
       clientLevel.addParticle(
           new DustParticleOptions(particleColor, 1.5f),
@@ -278,7 +256,7 @@ public class WaypointNavigation {
       int baseWaypoints,
       double minSpawnDistance) {
 
-    if (params.distance > LARGE_DISTANCE_THRESHOLD) {
+    if (params.distance > 12.0) {
       int helperParticleCount = Math.min(5, baseWaypoints / 8);
       for (int i = 0; i < helperParticleCount; i++) {
         double randomProgress = 0.3 + (random.nextDouble() * 0.4);
