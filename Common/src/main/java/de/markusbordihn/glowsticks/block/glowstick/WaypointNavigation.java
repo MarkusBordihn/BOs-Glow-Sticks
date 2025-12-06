@@ -34,6 +34,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class WaypointNavigation {
 
+  private static final int SEARCH_INTERVAL_TICKS = 10;
+  private static long lastSearchTick = 0;
+  private static DyeColor cachedSearchColor = null;
+  private static BlockPos cachedNearestGlowStick = null;
+
   public static void handleWaypointParticles(
       ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
     if (shouldSpawnWaypointParticles(clientLevel, blockPos, random, glowStickColor)) {
@@ -48,7 +53,7 @@ public class WaypointNavigation {
     }
 
     LocalPlayer player = Minecraft.getInstance().player;
-    if (player == null || !player.isShiftKeyDown() || random.nextInt(2) != 0) {
+    if (player == null || !player.isShiftKeyDown()) {
       return false;
     }
 
@@ -57,7 +62,45 @@ public class WaypointNavigation {
       return false;
     }
 
-    return isNearestMatchingGlowStick(clientLevel, blockPos, player, heldColor);
+    long currentTick = clientLevel.getGameTime();
+    if (cachedSearchColor != heldColor || currentTick - lastSearchTick >= SEARCH_INTERVAL_TICKS) {
+      lastSearchTick = currentTick;
+      cachedSearchColor = heldColor;
+      cachedNearestGlowStick = findNearestGlowStick(clientLevel, player, heldColor);
+    }
+
+    return blockPos.equals(cachedNearestGlowStick);
+  }
+
+  private static BlockPos findNearestGlowStick(
+      ClientLevel clientLevel, LocalPlayer player, DyeColor targetColor) {
+    BlockPos playerPos = player.blockPosition();
+    int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
+    int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
+
+    BlockPos nearest = null;
+    double nearestDistSqr = Double.MAX_VALUE;
+
+    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
+      for (int y = -verticalRadius; y <= verticalRadius; y++) {
+        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
+          BlockPos checkPos = playerPos.offset(x, y, z);
+          BlockState checkState = clientLevel.getBlockState(checkPos);
+
+          if (checkState.getBlock() instanceof GlowStickBlock glowStick
+              && glowStick.getGlowStickColor() == targetColor) {
+            double distSqr = playerPos.distSqr(checkPos);
+
+            if (distSqr >= 6.0 && distSqr < nearestDistSqr) {
+              nearestDistSqr = distSqr;
+              nearest = checkPos;
+            }
+          }
+        }
+      }
+    }
+
+    return nearest;
   }
 
   private static DyeColor getHeldGlowStickColor(LocalPlayer player) {
@@ -67,65 +110,7 @@ public class WaypointNavigation {
     if (player.getOffhandItem().getItem() instanceof GlowStickItem offHandGlowStick) {
       return offHandGlowStick.getDyeColor();
     }
-
     return DyeColor.WHITE;
-  }
-
-  private static boolean isNearestMatchingGlowStick(
-      ClientLevel clientLevel, BlockPos currentBlockPos, LocalPlayer player, DyeColor targetColor) {
-    BlockPos playerPos = player.blockPosition();
-    double currentDistance = playerPos.distSqr(currentBlockPos);
-
-    if (currentDistance < 6.0) {
-      return false;
-    }
-
-    return findNearestGlowStick(
-        clientLevel, playerPos, currentBlockPos, targetColor, currentDistance);
-  }
-
-  private static boolean findNearestGlowStick(
-      ClientLevel clientLevel,
-      BlockPos playerPos,
-      BlockPos currentBlockPos,
-      DyeColor targetColor,
-      double currentDistance) {
-
-    int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
-    int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
-
-    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
-      for (int y = -verticalRadius; y <= verticalRadius; y++) {
-        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
-          BlockPos checkPos = playerPos.offset(x, y, z);
-          if (checkPos.equals(currentBlockPos)) {
-            continue;
-          }
-
-          if (isMatchingGlowStickCloser(
-              clientLevel, checkPos, targetColor, playerPos, currentDistance)) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
-
-  private static boolean isMatchingGlowStickCloser(
-      ClientLevel clientLevel,
-      BlockPos checkPos,
-      DyeColor targetColor,
-      BlockPos playerPos,
-      double currentDistance) {
-
-    BlockState checkState = clientLevel.getBlockState(checkPos);
-    if (checkState.getBlock() instanceof GlowStickBlock otherGlowStick
-        && otherGlowStick.getGlowStickColor() == targetColor) {
-      double otherDistance = playerPos.distSqr(checkPos);
-      return otherDistance >= 6.0 && otherDistance < currentDistance;
-    }
-    return false;
   }
 
   private static void spawnWaypointParticles(

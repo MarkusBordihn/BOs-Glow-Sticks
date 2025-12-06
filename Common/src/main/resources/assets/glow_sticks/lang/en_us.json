@@ -23,7 +23,6 @@
   "item.glow_sticks.creative_glow_stick_red": "Creative Glow Stick (red)",
   "item.glow_sticks.creative_glow_stick_white": "Creative Glow Stick (white)",
   "item.glow_sticks.creative_glow_stick_yellow": "Creative Glow Stick (yellow)",
-  "item.glow_sticks.glow_stick": "Glow Stick",
   "item.glow_sticks.glow_stick_black": "Glow Stick (black)",
   "item.glow_sticks.glow_stick_blue": "Glow Stick (blue)",
   "item.glow_sticks.glow_stick_brown": "Glow Stick (brown)",
@@ -58,8 +57,8 @@
   "text.glow_sticks.glow_stick_pink.description": "As pink as a pig but much harder to eat.",
   "text.glow_sticks.glow_stick_purple.description": "Mysterious like an End portal and much easier to carry.",
   "text.glow_sticks.glow_stick_red.description": "Red like redstone but without the shock.",
-  "text.glow_sticks.glow_stick.usage": "Use to activate, then it will be thrown automatically.",
-  "text.glow_sticks.glow_stick.use": "Has a 1 in %s chance to age each random tick until it fades away.",
   "text.glow_sticks.glow_stick_white.description": "Glows brighter than a skeleton in sunlight.",
-  "text.glow_sticks.glow_stick_yellow.description": "Shines like the sun but without the sunburn."
+  "text.glow_sticks.glow_stick_yellow.description": "Shines like the sun but without the sunburn.",
+  "text.glow_sticks.glow_stick.usage": "Use to activate, then it will be thrown automatically.",
+  "text.glow_sticks.glow_stick.use": "Has a 1 in %s chance to age each random tick until it fades away."
 }

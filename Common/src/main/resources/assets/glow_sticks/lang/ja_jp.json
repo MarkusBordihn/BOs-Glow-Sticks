@@ -23,7 +23,6 @@
   "item.glow_sticks.creative_glow_stick_red": "クリエイティブ用グロウスティック（赤色）",
   "item.glow_sticks.creative_glow_stick_white": "クリエイティブ用グロウスティック（白色）",
   "item.glow_sticks.creative_glow_stick_yellow": "クリエイティブ用グロウスティック（黄色）",
-  "item.glow_sticks.glow_stick": "グロウスティック",
   "item.glow_sticks.glow_stick_black": "グロウスティック（黒色）",
   "item.glow_sticks.glow_stick_blue": "グロウスティック（青色）",
   "item.glow_sticks.glow_stick_brown": "グロウスティック（茶色）",
@@ -58,8 +57,8 @@
   "text.glow_sticks.glow_stick_pink.description": "ブタのようにピンクだが、食べるのはずっと難しい",
   "text.glow_sticks.glow_stick_purple.description": "エンドポータルのように神秘的で、持ち運びやすい",
   "text.glow_sticks.glow_stick_red.description": "レッドストーンのように赤いが、感電はしない",
-  "text.glow_sticks.glow_stick.usage": "使用すると起動し、その後自動的に投げられます。",
-  "text.glow_sticks.glow_stick.use": "ランダムティックごとに %s 分の1 の確率で劣化してやがて消滅する",
   "text.glow_sticks.glow_stick_white.description": "日光に照らされたスケルトンよりも明るく輝く",
-  "text.glow_sticks.glow_stick_yellow.description": "太陽のように輝くが、日焼けはしない"
+  "text.glow_sticks.glow_stick_yellow.description": "太陽のように輝くが、日焼けはしない",
+  "text.glow_sticks.glow_stick.usage": "使用すると起動し、その後自動的に投げられます。",
+  "text.glow_sticks.glow_stick.use": "ランダムティックごとに %s 分の1 の確率で劣化してやがて消滅する"
 }
