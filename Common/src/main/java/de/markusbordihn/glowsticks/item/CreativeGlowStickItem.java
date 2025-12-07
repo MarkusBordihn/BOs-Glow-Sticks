@@ -68,7 +68,7 @@ public class CreativeGlowStickItem extends Item {
     Player player = context.getPlayer();
     ItemStack itemStack = context.getItemInHand();
 
-    if (level.isClientSide || player == null) {
+    if (level.isClientSide() || player == null) {
       return InteractionResult.SUCCESS;
     }
 

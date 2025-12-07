@@ -16,13 +16,13 @@ description = '''Adds colorful glow sticks that can be thrown or placed in the w
 [[dependencies.glow_sticks]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.8.0,)"
+versionRange = "[21.10.0,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.glow_sticks]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.8,1.22)"
+versionRange = "[1.21.10,1.22)"
 ordering = "NONE"
 side = "BOTH"

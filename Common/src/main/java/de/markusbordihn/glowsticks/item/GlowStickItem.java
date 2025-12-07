@@ -142,7 +142,7 @@ public class GlowStickItem extends Item {
   public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack itemStack = player.getItemInHand(hand);
     if (isActivated(itemStack)) {
-      if (!level.isClientSide) {
+      if (!level.isClientSide()) {
         GlowStickProjectile entity = getGlowStickEntity(level, player);
         entity.setItem(itemStack);
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
@@ -155,7 +155,7 @@ public class GlowStickItem extends Item {
       setActivated(itemStack, false);
       setStep(itemStack, 0);
       player.awardStat(Stats.ITEM_USED.get(this));
-      return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+      return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     } else {
       player.startUsingItem(hand);
       return InteractionResult.CONSUME;
@@ -164,7 +164,7 @@ public class GlowStickItem extends Item {
 
   @Override
   public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int count) {
-    if (!level.isClientSide && count % 2 == 0) {
+    if (!level.isClientSide() && count % 2 == 0) {
       int step = increaseStep(itemStack);
       if (step == 4) {
         level.playSound(
@@ -193,7 +193,7 @@ public class GlowStickItem extends Item {
 
   @Override
   public ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity entity) {
-    if (!level.isClientSide && !isActivated(itemStack)) {
+    if (!level.isClientSide() && !isActivated(itemStack)) {
       setActivated(itemStack, true);
     }
     return itemStack;

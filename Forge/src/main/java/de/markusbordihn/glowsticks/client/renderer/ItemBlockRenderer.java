@@ -1,0 +1,70 @@
+/*
+ * Copyright 2021 Markus Bordihn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package de.markusbordihn.glowsticks.client.renderer;
+
+import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.block.ModBlocks;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.RegistryObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ItemBlockRenderer {
+  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+
+  protected ItemBlockRenderer() {}
+
+  @SubscribeEvent
+  public static void registerItemRenderer(final FMLClientSetupEvent event) {
+    log.info("{} Item Block Renderer Setup ...", Constants.LOG_REGISTER_PREFIX);
+
+    event.enqueueWork(
+        () -> {
+          // Register render layers for all glow stick blocks
+          for (DyeColor dyeColor : DyeColor.values()) {
+            RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+            if (glowStickBlock != null) {
+              ItemBlockRenderTypes.setRenderLayer(
+                  glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+            }
+            RegistryObject<Block> creativeGlowStickBlock =
+                ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            if (creativeGlowStickBlock != null) {
+              ItemBlockRenderTypes.setRenderLayer(
+                  creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+            }
+          }
+
+          // Glow Stick Light Blocks (cutout mip)
+          ItemBlockRenderTypes.setRenderLayer(
+              ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+          ItemBlockRenderTypes.setRenderLayer(
+              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+        });
+  }
+}

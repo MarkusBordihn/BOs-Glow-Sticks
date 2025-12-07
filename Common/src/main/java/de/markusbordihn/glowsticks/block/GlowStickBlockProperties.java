@@ -45,7 +45,7 @@ public class GlowStickBlockProperties {
   public static BlockBehaviour.Properties createLightBlockProperties(String blockId) {
     return BlockBehaviour.Properties.of()
         .mapColor(MapColor.NONE)
-        .noCollission()
+        .noCollision()
         .lightLevel(blockState -> 15)
         .randomTicks()
         .setId(

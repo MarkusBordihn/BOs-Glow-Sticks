@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.item.properties.conditional.ConditionalItem
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public class GlowStickActivated implements ConditionalItemModelProperty {
   public static final MapCodec<GlowStickActivated> MAP_CODEC =
@@ -35,8 +34,8 @@ public class GlowStickActivated implements ConditionalItemModelProperty {
   @Override
   public boolean get(
       ItemStack itemStack,
-      @Nullable ClientLevel clientLevel,
-      @Nullable LivingEntity livingEntity,
+      ClientLevel clientLevel,
+      LivingEntity livingEntity,
       int i,
       ItemDisplayContext itemDisplayContext) {
     return GlowStickItem.isActivated(itemStack);

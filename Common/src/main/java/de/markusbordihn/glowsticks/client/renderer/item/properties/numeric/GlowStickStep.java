@@ -23,21 +23,16 @@ import com.mojang.serialization.MapCodec;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 public class GlowStickStep implements RangeSelectItemModelProperty {
 
   public static final MapCodec<GlowStickStep> MAP_CODEC = MapCodec.unit(new GlowStickStep());
 
   @Override
-  public float get(
-      ItemStack itemStack,
-      @Nullable ClientLevel clientLevel,
-      @Nullable LivingEntity livingEntity,
-      int i) {
-    if (livingEntity == null || GlowStickItem.isActivated(itemStack)) {
+  public float get(ItemStack itemStack, ClientLevel clientLevel, ItemOwner itemOwner, int i) {
+    if (itemOwner == null || GlowStickItem.isActivated(itemStack)) {
       return 0.0F;
     }
     return GlowStickItem.getStep(itemStack);

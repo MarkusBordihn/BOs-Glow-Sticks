@@ -174,7 +174,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   @Override
   protected void onHit(HitResult hitResult) {
     super.onHit(hitResult);
-    if (!this.level().isClientSide) {
+    if (!this.level().isClientSide()) {
       this.level().broadcastEntityEvent(this, (byte) 3);
       this.discard();
     }
@@ -183,7 +183,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   @Override
   protected void onHitEntity(EntityHitResult entityHitResult) {
     super.onHitEntity(entityHitResult);
-    if (!this.level().isClientSide) {
+    if (!this.level().isClientSide()) {
       Vec3 location = entityHitResult.getLocation();
       dropDefaultItem(
           this.level(), new BlockPos((int) location.x, (int) location.y, (int) location.z));
@@ -194,7 +194,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   @Override
   protected void onHitBlock(BlockHitResult blockHitResult) {
     super.onHitBlock(blockHitResult);
-    if (!this.level().isClientSide && defaultBlock != null) {
+    if (!this.level().isClientSide() && defaultBlock != null) {
       BlockPos blockPos = blockHitResult.getBlockPos();
       BlockPos placePos = blockPos.relative(blockHitResult.getDirection());
       BlockState targetState = this.level().getBlockState(placePos);
@@ -264,7 +264,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     }
 
     // Client-side particle effects - only if projectile will continue to exist
-    if (this.level().isClientSide && !this.isInWater()) {
+    if (this.level().isClientSide() && !this.isInWater()) {
       if (ticks % 12 == 0) { // Average of previous range (10-15)
         Vec3 deltaMovement = this.getDeltaMovement();
         this.level()
@@ -280,7 +280,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     }
 
     // Server-side light block placement - only every 5 ticks for performance
-    if (!this.level().isClientSide && ticks % 5 == 0) {
+    if (!this.level().isClientSide() && ticks % 5 == 0) {
       BlockPos lightBlockPosition = this.blockPosition().above();
       BlockState currentBlockState = this.level().getBlockState(lightBlockPosition);
 

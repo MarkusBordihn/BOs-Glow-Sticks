@@ -74,7 +74,7 @@ public class GlowStickLightBlock extends Block {
   public void tick(
       BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
     Block block = blockState.getBlock();
-    if (!level.isClientSide && block instanceof GlowStickLightBlock) {
+    if (!level.isClientSide() && block instanceof GlowStickLightBlock) {
       level.removeBlock(blockPos, true);
     }
   }

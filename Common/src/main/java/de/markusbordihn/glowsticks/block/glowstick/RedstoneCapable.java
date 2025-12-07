@@ -80,7 +80,7 @@ public class RedstoneCapable {
   }
 
   public static void handleBlockPlacement(Level level, BlockPos blockPos, BlockState blockState) {
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       return;
     }
 

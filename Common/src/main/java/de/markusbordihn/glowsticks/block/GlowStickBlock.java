@@ -111,7 +111,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
       BlockState fallingBlockState,
       BlockState surfaceBlockState,
       FallingBlockEntity fallingBlockEntity) {
-    if (level.isClientSide) {
+    if (level.isClientSide()) {
       return;
     }
 
