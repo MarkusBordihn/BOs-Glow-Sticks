@@ -36,7 +36,7 @@ public class PlacementSounds {
   private static final float PITCH_VARIATION_FACTOR = 0.2F;
 
   public static void playPlacementSound(
-      Level level, BlockPos position, BlockState surfaceState, RandomSource random) {
+    Level level, BlockPos position, BlockState surfaceState, RandomSource random) {
     Block surfaceBlock = surfaceState.getBlock();
     float pitch = 1.0F + (random.nextFloat() - 0.5F) * PITCH_VARIATION_FACTOR;
 
@@ -62,20 +62,20 @@ public class PlacementSounds {
 
   private static boolean isStoneLikeSurface(Block surfaceBlock, BlockState surfaceState) {
     return surfaceBlock == Blocks.STONE
-        || surfaceBlock == Blocks.COBBLESTONE
-        || surfaceBlock == Blocks.DEEPSLATE
-        || surfaceState.is(BlockTags.STONE_BRICKS);
+      || surfaceBlock == Blocks.COBBLESTONE
+      || surfaceBlock == Blocks.DEEPSLATE
+      || surfaceState.is(BlockTags.STONE_BRICKS);
   }
 
   private static boolean isDirtLikeSurface(Block surfaceBlock, BlockState surfaceState) {
     return surfaceBlock == Blocks.GRASS_BLOCK
-        || surfaceBlock == Blocks.DIRT
-        || surfaceState.is(BlockTags.DIRT);
+      || surfaceBlock == Blocks.DIRT
+      || surfaceState.is(BlockTags.DIRT);
   }
 
   private static boolean isSandLikeSurface(Block surfaceBlock) {
     return surfaceBlock == Blocks.SAND
-        || surfaceBlock == Blocks.RED_SAND
-        || surfaceBlock == Blocks.GRAVEL;
+      || surfaceBlock == Blocks.RED_SAND
+      || surfaceBlock == Blocks.GRAVEL;
   }
 }

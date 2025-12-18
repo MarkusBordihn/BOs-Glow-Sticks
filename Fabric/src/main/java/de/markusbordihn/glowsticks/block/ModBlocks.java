@@ -25,7 +25,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 
@@ -33,25 +33,25 @@ public class ModBlocks {
 
   // Light blocks
   public static final Block GLOW_STICK_LIGHT =
-      new GlowStickLightBlock(
-          GlowStickBlockProperties.createLightBlockProperties("glow_stick_light"));
+    new GlowStickLightBlock(
+      GlowStickBlockProperties.createLightBlockProperties("glow_stick_light"));
   public static final Block GLOW_STICK_LIGHT_WATER =
-      new GlowStickLightWaterBlock(
-          GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water"));
+    new GlowStickLightWaterBlock(
+      GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water"));
   protected static final Map<DyeColor, Block> GLOW_STICK_BLOCKS = new EnumMap<>(DyeColor.class);
   protected static final Map<DyeColor, Block> CREATIVE_GLOW_STICK_BLOCKS =
-      new EnumMap<>(DyeColor.class);
+    new EnumMap<>(DyeColor.class);
 
   public static void registerBlocks() {
     // Register light blocks
     Registry.register(
-        BuiltInRegistries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light"),
-        GLOW_STICK_LIGHT);
+      BuiltInRegistries.BLOCK,
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light"),
+      GLOW_STICK_LIGHT);
     Registry.register(
-        BuiltInRegistries.BLOCK,
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light_water"),
-        GLOW_STICK_LIGHT_WATER);
+      BuiltInRegistries.BLOCK,
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light_water"),
+      GLOW_STICK_LIGHT_WATER);
 
     // Register all glow stick blocks for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
@@ -60,26 +60,26 @@ public class ModBlocks {
       // Normal glow stick blocks
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
-          dyeColor,
-          Registry.register(
-              BuiltInRegistries.BLOCK,
-              ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, blockName),
-              new GlowStickBlock(
-                  GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
-                  dyeColor,
-                  GlowSticksConfig.despawnTicks)));
+        dyeColor,
+        Registry.register(
+          BuiltInRegistries.BLOCK,
+          Identifier.fromNamespaceAndPath(Constants.MOD_ID, blockName),
+          new GlowStickBlock(
+            GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
+            dyeColor,
+            GlowSticksConfig.despawnTicks)));
 
       // Creative glow stick blocks (despawnTickRate = 0 means no despawn/no aging)
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
-          dyeColor,
-          Registry.register(
-              BuiltInRegistries.BLOCK,
-              ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, creativeBlockName),
-              new GlowStickBlock(
-                  GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
-                  dyeColor,
-                  0)));
+        dyeColor,
+        Registry.register(
+          BuiltInRegistries.BLOCK,
+          Identifier.fromNamespaceAndPath(Constants.MOD_ID, creativeBlockName),
+          new GlowStickBlock(
+            GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
+            dyeColor,
+            0)));
     }
   }
 

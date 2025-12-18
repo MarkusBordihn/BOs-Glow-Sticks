@@ -39,14 +39,14 @@ public class WaypointNavigation {
   private static BlockPos cachedNearestGlowStick = null;
 
   public static void handleWaypointParticles(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
+    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
     if (shouldSpawnWaypointParticles(clientLevel, blockPos, random, glowStickColor)) {
       spawnWaypointParticles(clientLevel, blockPos, random, glowStickColor);
     }
   }
 
   private static boolean shouldSpawnWaypointParticles(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
+    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
     if (!GlowSticksConfig.spawnWaypointParticles) {
       return false;
     }
@@ -72,7 +72,7 @@ public class WaypointNavigation {
   }
 
   private static BlockPos findNearestGlowStick(
-      ClientLevel clientLevel, LocalPlayer player, DyeColor targetColor) {
+    ClientLevel clientLevel, LocalPlayer player, DyeColor targetColor) {
     BlockPos playerPos = player.blockPosition();
     int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
     int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
@@ -87,7 +87,7 @@ public class WaypointNavigation {
           BlockState checkState = clientLevel.getBlockState(checkPos);
 
           if (checkState.getBlock() instanceof GlowStickBlock glowStick
-              && glowStick.getGlowStickColor() == targetColor) {
+            && glowStick.getGlowStickColor() == targetColor) {
             double distSqr = playerPos.distSqr(checkPos);
 
             if (distSqr >= 6.0 && distSqr < nearestDistSqr) {
@@ -113,7 +113,7 @@ public class WaypointNavigation {
   }
 
   private static void spawnWaypointParticles(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
+    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
 
     int particleColor = calculateWaypointColor(glowStickColor);
     LocalPlayer player = Minecraft.getInstance().player;
@@ -162,11 +162,11 @@ public class WaypointNavigation {
     double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
     return new TrailParameters(
-        startX, startY, startZ, targetX, targetY, targetZ, deltaX, deltaY, deltaZ, distance);
+      startX, startY, startZ, targetX, targetY, targetZ, deltaX, deltaY, deltaZ, distance);
   }
 
   private static void spawnWaypointTrail(
-      ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
+    ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
 
     int baseWaypoints = Math.max(8, Math.min(40, (int) (params.distance * 2.2)));
     int particlesPerWaypoint = calculateParticlesPerWaypoint(params.distance);
@@ -174,34 +174,38 @@ public class WaypointNavigation {
     double minSpawnDistance = 1.0;
 
     spawnMainTrail(
-        clientLevel,
-        random,
-        particleColor,
-        params,
-        baseWaypoints,
-        particlesPerWaypoint,
-        waypointStep,
-        minSpawnDistance);
+      clientLevel,
+      random,
+      particleColor,
+      params,
+      baseWaypoints,
+      particlesPerWaypoint,
+      waypointStep,
+      minSpawnDistance);
     spawnTargetParticles(clientLevel, random, particleColor, params);
     spawnHelperParticles(
-        clientLevel, random, particleColor, params, baseWaypoints, minSpawnDistance);
+      clientLevel, random, particleColor, params, baseWaypoints, minSpawnDistance);
   }
 
   private static int calculateParticlesPerWaypoint(double distance) {
-    if (distance < 5.0) return 1;
-    if (distance < 15.0) return 2;
+    if (distance < 5.0) {
+      return 1;
+    }
+    if (distance < 15.0) {
+      return 2;
+    }
     return 3;
   }
 
   private static void spawnMainTrail(
-      ClientLevel clientLevel,
-      RandomSource random,
-      int color,
-      TrailParameters params,
-      int baseWaypoints,
-      int particlesPerWaypoint,
-      double waypointStep,
-      double minSpawnDistance) {
+    ClientLevel clientLevel,
+    RandomSource random,
+    int color,
+    TrailParameters params,
+    int baseWaypoints,
+    int particlesPerWaypoint,
+    double waypointStep,
+    double minSpawnDistance) {
 
     for (int i = 1; i <= baseWaypoints; i++) {
       double progress = i * waypointStep;
@@ -210,51 +214,51 @@ public class WaypointNavigation {
       }
 
       double waypointX =
-          params.startX + (params.deltaX * progress) + (random.nextGaussian() - 0.5) * 0.06;
+        params.startX + (params.deltaX * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointY =
-          params.startY + (params.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
+        params.startY + (params.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointZ =
-          params.startZ + (params.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
+        params.startZ + (params.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
 
       for (int j = 0; j < particlesPerWaypoint; j++) {
         float particleSize =
-            (float) Math.min(2.0f, 0.9f + (params.distance * 0.08f) - (progress * 0.2f));
+          (float) Math.min(2.0f, 0.9f + (params.distance * 0.08f) - (progress * 0.2f));
 
         clientLevel.addParticle(
-            new DustParticleOptions(color, particleSize),
-            waypointX + (random.nextGaussian() - 0.5) * 0.04,
-            waypointY + (random.nextGaussian() - 0.5) * 0.04,
-            waypointZ + (random.nextGaussian() - 0.5) * 0.04,
-            (random.nextGaussian() - 0.5) * 0.003,
-            0.003 + random.nextGaussian() * 0.001,
-            (random.nextGaussian() - 0.5) * 0.003);
+          new DustParticleOptions(color, particleSize),
+          waypointX + (random.nextGaussian() - 0.5) * 0.04,
+          waypointY + (random.nextGaussian() - 0.5) * 0.04,
+          waypointZ + (random.nextGaussian() - 0.5) * 0.04,
+          (random.nextGaussian() - 0.5) * 0.003,
+          0.003 + random.nextGaussian() * 0.001,
+          (random.nextGaussian() - 0.5) * 0.003);
       }
     }
   }
 
   private static void spawnTargetParticles(
-      ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
+    ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
 
     int targetParticleCount = Math.clamp((int) (params.distance * 0.5), 3, 8);
     for (int i = 0; i < targetParticleCount; i++) {
       clientLevel.addParticle(
-          new DustParticleOptions(particleColor, 1.5f),
-          params.targetX + (random.nextGaussian() - 0.5) * 0.2,
-          params.targetY - 0.35 + random.nextFloat() * 0.3,
-          params.targetZ + (random.nextGaussian() - 0.5) * 0.2,
-          (random.nextGaussian() - 0.5) * 0.004,
-          0.004 + random.nextGaussian() * 0.002,
-          (random.nextGaussian() - 0.5) * 0.004);
+        new DustParticleOptions(particleColor, 1.5f),
+        params.targetX + (random.nextGaussian() - 0.5) * 0.2,
+        params.targetY - 0.35 + random.nextFloat() * 0.3,
+        params.targetZ + (random.nextGaussian() - 0.5) * 0.2,
+        (random.nextGaussian() - 0.5) * 0.004,
+        0.004 + random.nextGaussian() * 0.002,
+        (random.nextGaussian() - 0.5) * 0.004);
     }
   }
 
   private static void spawnHelperParticles(
-      ClientLevel clientLevel,
-      RandomSource random,
-      int particleColor,
-      TrailParameters params,
-      int baseWaypoints,
-      double minSpawnDistance) {
+    ClientLevel clientLevel,
+    RandomSource random,
+    int particleColor,
+    TrailParameters params,
+    int baseWaypoints,
+    double minSpawnDistance) {
 
     if (params.distance > 12.0) {
       int helperParticleCount = Math.min(5, baseWaypoints / 8);
@@ -265,26 +269,28 @@ public class WaypointNavigation {
         }
 
         clientLevel.addParticle(
-            new DustParticleOptions(particleColor, 0.8f),
-            params.startX + (params.deltaX * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
-            params.startY + (params.deltaY * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
-            params.startZ + (params.deltaZ * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
-            (random.nextGaussian() - 0.5) * 0.002,
-            0.002,
-            (random.nextGaussian() - 0.5) * 0.002);
+          new DustParticleOptions(particleColor, 0.8f),
+          params.startX + (params.deltaX * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+          params.startY + (params.deltaY * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+          params.startZ + (params.deltaZ * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+          (random.nextGaussian() - 0.5) * 0.002,
+          0.002,
+          (random.nextGaussian() - 0.5) * 0.002);
       }
     }
   }
 
   private record TrailParameters(
-      double startX,
-      double startY,
-      double startZ,
-      double targetX,
-      double targetY,
-      double targetZ,
-      double deltaX,
-      double deltaY,
-      double deltaZ,
-      double distance) {}
+    double startX,
+    double startY,
+    double startZ,
+    double targetX,
+    double targetY,
+    double targetZ,
+    double deltaX,
+    double deltaY,
+    double deltaZ,
+    double distance) {
+
+  }
 }

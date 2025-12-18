@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,18 +35,19 @@ public class DataComponents {
 
   public static DataComponentType<GlowStickData> GLOW_STICK_DATA;
 
-  private DataComponents() {}
+  private DataComponents() {
+  }
 
   public static void registerGlowStickData() {
     log.info("{} Data Components ...", Constants.MOD_NAME);
     GLOW_STICK_DATA =
-        Registry.register(
-            BuiltInRegistries.DATA_COMPONENT_TYPE,
-            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, GlowStickData.ID),
-            DataComponentType.<GlowStickData>builder()
-                .persistent(GlowStickData.CODEC)
-                .networkSynchronized(GlowStickData.STREAM_CODEC)
-                .build());
+      Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, GlowStickData.ID),
+        DataComponentType.<GlowStickData>builder()
+          .persistent(GlowStickData.CODEC)
+          .networkSynchronized(GlowStickData.STREAM_CODEC)
+          .build());
   }
 
   public static void registerGlowStickData(Supplier<DataComponentType<GlowStickData>> supplier) {

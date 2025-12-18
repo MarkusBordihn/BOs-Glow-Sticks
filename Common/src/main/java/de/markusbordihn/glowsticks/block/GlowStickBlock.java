@@ -32,7 +32,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,16 +66,16 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   public static final BooleanProperty CONTROLLED = BooleanProperty.create("controlled");
   public static final BooleanProperty POWERED = BooleanProperty.create("powered");
   public static final MapCodec<GlowStickBlock> CODEC =
-      RecordCodecBuilder.mapCodec(
-          instance ->
-              instance
-                  .group(
-                      propertiesCodec(),
-                      DyeColor.CODEC.fieldOf("dye_color").forGetter(block -> block.dyeColor),
-                      Codec.INT
-                          .fieldOf("despawn_tick_rate")
-                          .forGetter(block -> block.despawnTickRate))
-                  .apply(instance, GlowStickBlock::new));
+    RecordCodecBuilder.mapCodec(
+      instance ->
+        instance
+          .group(
+            propertiesCodec(),
+            DyeColor.CODEC.fieldOf("dye_color").forGetter(block -> block.dyeColor),
+            Codec.INT
+              .fieldOf("despawn_tick_rate")
+              .forGetter(block -> block.despawnTickRate))
+          .apply(instance, GlowStickBlock::new));
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);
 
   private final DyeColor dyeColor;
@@ -98,19 +98,18 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public Item asItem() {
-    ResourceLocation resourceLocation =
-        ResourceLocation.fromNamespaceAndPath(
-            Constants.MOD_ID, "glow_stick_" + this.dyeColor.getName());
-    return BuiltInRegistries.ITEM.getValue(resourceLocation);
+    Identifier identifier =
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + this.dyeColor.getName());
+    return BuiltInRegistries.ITEM.getValue(identifier);
   }
 
   @Override
   public void onLand(
-      Level level,
-      BlockPos blockPos,
-      BlockState fallingBlockState,
-      BlockState surfaceBlockState,
-      FallingBlockEntity fallingBlockEntity) {
+    Level level,
+    BlockPos blockPos,
+    BlockState fallingBlockState,
+    BlockState surfaceBlockState,
+    FallingBlockEntity fallingBlockEntity) {
     if (level.isClientSide()) {
       return;
     }
@@ -124,10 +123,10 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public VoxelShape getShape(
-      BlockState blockState,
-      BlockGetter blockGetter,
-      BlockPos blockPos,
-      CollisionContext collisionContext) {
+    BlockState blockState,
+    BlockGetter blockGetter,
+    BlockPos blockPos,
+    CollisionContext collisionContext) {
     return SHAPE;
   }
 
@@ -143,19 +142,19 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public void randomTick(
-      BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
+    BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
     BlockStateManager.handleRandomTick(
-        blockState, serverLevel, blockPos, random, this.despawnTickRate);
+      blockState, serverLevel, blockPos, random, this.despawnTickRate);
   }
 
   @Override
   public void neighborChanged(
-      BlockState blockState,
-      Level level,
-      BlockPos blockPos,
-      Block neighborBlock,
-      Orientation orientation,
-      boolean isMoving) {
+    BlockState blockState,
+    Level level,
+    BlockPos blockPos,
+    Block neighborBlock,
+    Orientation orientation,
+    boolean isMoving) {
     super.neighborChanged(blockState, level, blockPos, neighborBlock, orientation, isMoving);
     RedstoneCapable.handleNeighborChange(blockState, level, blockPos);
   }
@@ -172,7 +171,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public void animateTick(
-      BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
+    BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
     super.animateTick(blockState, level, blockPos, random);
 
     if (!(level instanceof ClientLevel clientLevel)) {
@@ -188,24 +187,24 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   public void setPlacedBy(
-      Level level,
-      BlockPos blockPos,
-      BlockState blockState,
-      LivingEntity placer,
-      ItemStack itemStack) {
+    Level level,
+    BlockPos blockPos,
+    BlockState blockState,
+    LivingEntity placer,
+    ItemStack itemStack) {
     super.setPlacedBy(level, blockPos, blockState, placer, itemStack);
     RedstoneCapable.handleBlockPlacement(level, blockPos, blockState);
   }
 
   @Override
   public int getSignal(
-      BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
+    BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
     return 0;
   }
 
   @Override
   public int getDirectSignal(
-      BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
+    BlockState blockState, BlockGetter level, BlockPos blockPos, Direction direction) {
     return 0;
   }
 

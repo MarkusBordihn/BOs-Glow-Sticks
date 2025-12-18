@@ -1,4 +1,4 @@
-# 🧪 Glow Sticks (1.21.8)
+# 🧪 Glow Sticks (1.21.11)
 
 ![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_528389_all.svg)
 
@@ -12,7 +12,7 @@
 [![Open Issues](https://img.shields.io/github/issues/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github&color=red)][issues_open]
 [![Closed Issues](https://img.shields.io/github/issues-closed/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github)][issues_closed]
 
-[![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=1.18.2)][ci]
+[![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=1.21.11)][ci]
 
 [![Support me on Ko-fi](https://img.shields.io/badge/Support_me_on_Ko--fi-!?labelColor=black&style=flat&logo=ko-fi)][ko-fi]
 

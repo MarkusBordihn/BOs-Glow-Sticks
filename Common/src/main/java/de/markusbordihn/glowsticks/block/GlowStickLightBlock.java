@@ -53,26 +53,26 @@ public class GlowStickLightBlock extends Block {
 
   @Override
   public VoxelShape getShape(
-      BlockState blockState,
-      BlockGetter blockGetter,
-      BlockPos blockPos,
-      CollisionContext collisionContext) {
+    BlockState blockState,
+    BlockGetter blockGetter,
+    BlockPos blockPos,
+    CollisionContext collisionContext) {
     return SHAPE_AABB;
   }
 
   @Override
   public void setPlacedBy(
-      Level level,
-      BlockPos blockPos,
-      BlockState blockState,
-      LivingEntity placer,
-      ItemStack itemStack) {
+    Level level,
+    BlockPos blockPos,
+    BlockState blockState,
+    LivingEntity placer,
+    ItemStack itemStack) {
     scheduleTick(level, blockPos);
   }
 
   @Override
   public void tick(
-      BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
+    BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
     Block block = blockState.getBlock();
     if (!level.isClientSide() && block instanceof GlowStickLightBlock) {
       level.removeBlock(blockPos, true);
@@ -81,7 +81,7 @@ public class GlowStickLightBlock extends Block {
 
   @Override
   public void randomTick(
-      BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
+    BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
     if (blockState.getBlock() instanceof GlowStickLightBlock) {
       this.scheduleTick(serverLevel, blockPos);
     }

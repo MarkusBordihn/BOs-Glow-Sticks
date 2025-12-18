@@ -34,9 +34,11 @@ import org.apache.logging.log4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class ClientRenderer {
+
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  protected ClientRenderer() {}
+  protected ClientRenderer() {
+  }
 
   public static void registerItemRenderer() {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
@@ -48,19 +50,19 @@ public class ClientRenderer {
 
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
-          ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
+        ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
     }
   }
 
   private static void registerBlockRenderLayers() {
     for (DyeColor dyeColor : DyeColor.values()) {
       BlockRenderLayerMap.putBlock(
-          ModBlocks.getGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
+        ModBlocks.getGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
       BlockRenderLayerMap.putBlock(
-          ModBlocks.getCreativeGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
+        ModBlocks.getCreativeGlowStickBlock(dyeColor), ChunkSectionLayer.TRANSLUCENT);
     }
 
-    BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT, ChunkSectionLayer.CUTOUT_MIPPED);
-    BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT_WATER, ChunkSectionLayer.CUTOUT_MIPPED);
+    BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT, ChunkSectionLayer.CUTOUT);
+    BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT_WATER, ChunkSectionLayer.CUTOUT);
   }
 }

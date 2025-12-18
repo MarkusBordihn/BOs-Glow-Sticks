@@ -25,7 +25,7 @@ import de.markusbordihn.glowsticks.Constants;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record GlowStickData(boolean activated, int step) {
 
@@ -34,27 +34,27 @@ public record GlowStickData(boolean activated, int step) {
   public static final String ACTIVATED_TAG = "activated";
 
   public static final GlowStickData EMPTY = new GlowStickData(false, 0);
-  public static final ResourceLocation STEP_PREDICATE =
-      ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, STEP_TAG);
-  public static final ResourceLocation ACTIVATED_PREDICATE =
-      ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, ACTIVATED_TAG);
+  public static final Identifier STEP_PREDICATE =
+    Identifier.fromNamespaceAndPath(Constants.MOD_ID, STEP_TAG);
+  public static final Identifier ACTIVATED_PREDICATE =
+    Identifier.fromNamespaceAndPath(Constants.MOD_ID, ACTIVATED_TAG);
 
   public static final Codec<GlowStickData> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      Codec.BOOL.fieldOf(ACTIVATED_TAG).forGetter(GlowStickData::activated),
-                      Codec.INT.fieldOf(STEP_TAG).forGetter(GlowStickData::step))
-                  .apply(instance, GlowStickData::new));
+    RecordCodecBuilder.create(
+      instance ->
+        instance
+          .group(
+            Codec.BOOL.fieldOf(ACTIVATED_TAG).forGetter(GlowStickData::activated),
+            Codec.INT.fieldOf(STEP_TAG).forGetter(GlowStickData::step))
+          .apply(instance, GlowStickData::new));
 
   public static final StreamCodec<ByteBuf, GlowStickData> STREAM_CODEC =
-      StreamCodec.composite(
-          ByteBufCodecs.BOOL,
-          GlowStickData::activated,
-          ByteBufCodecs.VAR_INT,
-          GlowStickData::step,
-          GlowStickData::new);
+    StreamCodec.composite(
+      ByteBufCodecs.BOOL,
+      GlowStickData::activated,
+      ByteBufCodecs.VAR_INT,
+      GlowStickData::step,
+      GlowStickData::new);
 
   public GlowStickData withActivated(boolean activated) {
     return new GlowStickData(activated, this.step);

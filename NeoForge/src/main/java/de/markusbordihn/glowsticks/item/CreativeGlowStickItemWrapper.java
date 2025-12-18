@@ -31,7 +31,7 @@ public class CreativeGlowStickItemWrapper extends CreativeGlowStickItem {
 
   @Override
   public boolean shouldCauseReequipAnimation(
-      ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
     return slotChanged || oldStack.getItem() != newStack.getItem();
   }
 }

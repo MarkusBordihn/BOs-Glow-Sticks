@@ -32,23 +32,24 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModTabs {
 
   public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
-      DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
+    DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
   public static final RegistryObject<CreativeModeTab> GLOW_STICKS =
-      CREATIVE_MODE_TABS.register(
-          "glow_sticks_tab",
-          () ->
-              CreativeModeTab.builder()
-                  .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE).get()))
-                  .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
-                  .displayItems(
-                      (parameters, output) -> {
-                        for (DyeColor dyeColor : DyeColor.values()) {
-                          output.accept(ModItems.getGlowStickItem(dyeColor).get());
-                          output.accept(ModItems.getCreativeGlowStickItem(dyeColor).get());
-                        }
-                      })
-                  .build());
+    CREATIVE_MODE_TABS.register(
+      "glow_sticks_tab",
+      () ->
+        CreativeModeTab.builder()
+          .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE).get()))
+          .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
+          .displayItems(
+            (parameters, output) -> {
+              for (DyeColor dyeColor : DyeColor.values()) {
+                output.accept(ModItems.getGlowStickItem(dyeColor).get());
+                output.accept(ModItems.getCreativeGlowStickItem(dyeColor).get());
+              }
+            })
+          .build());
 
-  private ModTabs() {}
+  private ModTabs() {
+  }
 }

@@ -10,7 +10,8 @@ public class GameTestHelpers {
 
   private static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  private GameTestHelpers() {}
+  private GameTestHelpers() {
+  }
 
   public static void assertTrue(GameTestHelper helper, String message, boolean condition) {
     if (condition) {

@@ -33,18 +33,19 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModDataComponents {
 
   public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS =
-      DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
+    DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
 
   public static final RegistryObject<DataComponentType<GlowStickData>> GLOW_STICK_DATA =
-      DATA_COMPONENTS.register(
-          GlowStickData.ID,
-          () ->
-              DataComponentType.<GlowStickData>builder()
-                  .persistent(GlowStickData.CODEC)
-                  .networkSynchronized(GlowStickData.STREAM_CODEC)
-                  .build());
+    DATA_COMPONENTS.register(
+      GlowStickData.ID,
+      () ->
+        DataComponentType.<GlowStickData>builder()
+          .persistent(GlowStickData.CODEC)
+          .networkSynchronized(GlowStickData.STREAM_CODEC)
+          .build());
 
-  private ModDataComponents() {}
+  private ModDataComponents() {
+  }
 
   @SubscribeEvent
   public static void onCommonSetup(FMLCommonSetupEvent event) {

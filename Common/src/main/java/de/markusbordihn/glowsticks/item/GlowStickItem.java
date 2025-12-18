@@ -61,10 +61,10 @@ public class GlowStickItem extends Item {
   }
 
   public GlowStickItem(
-      Properties properties,
-      Supplier<Block> blockSupplier,
-      DyeColor dyeColor,
-      int despawnTickRate) {
+    Properties properties,
+    Supplier<Block> blockSupplier,
+    DyeColor dyeColor,
+    int despawnTickRate) {
     super(properties);
     this.blockSupplier = blockSupplier;
     this.despawnTickRate = despawnTickRate;
@@ -73,39 +73,39 @@ public class GlowStickItem extends Item {
 
   public static boolean isActivated(final ItemStack stack) {
     GlowStickData glowStickData =
-        stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     return glowStickData.activated();
   }
 
   public static void setActivated(final ItemStack stack, final boolean activated) {
     GlowStickData currentData =
-        stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     stack.set(DataComponents.GLOW_STICK_DATA, currentData.withActivated(activated));
   }
 
   public static int getStep(final ItemStack itemStack) {
     GlowStickData glowStickData =
-        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     return glowStickData.step();
   }
 
   public static int setStep(final ItemStack itemStack, final int step) {
     GlowStickData currentData =
-        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     itemStack.set(DataComponents.GLOW_STICK_DATA, currentData.withStep(step));
     return step;
   }
 
   public static int increaseStep(final ItemStack itemStack) {
     GlowStickData currentData =
-        itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
     GlowStickData newData = currentData.withIncrementedStep();
     itemStack.set(DataComponents.GLOW_STICK_DATA, newData);
     return newData.step();
   }
 
   public static float getStepFromDataComponent(
-      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
     if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
       return getStep(itemStack);
     }
@@ -113,7 +113,7 @@ public class GlowStickItem extends Item {
   }
 
   public static float getActivatedFromDataComponent(
-      final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
+    final ItemStack itemStack, final Level level, final LivingEntity livingEntity, final int id) {
     if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
       return isActivated(itemStack) ? 1.0F : 0.0F;
     }
@@ -168,14 +168,14 @@ public class GlowStickItem extends Item {
       int step = increaseStep(itemStack);
       if (step == 4) {
         level.playSound(
-            null,
-            livingEntity.getX(),
-            livingEntity.getY(),
-            livingEntity.getZ(),
-            SoundEvents.TRIDENT_HIT,
-            SoundSource.NEUTRAL,
-            1.0F,
-            1.0F);
+          null,
+          livingEntity.getX(),
+          livingEntity.getY(),
+          livingEntity.getZ(),
+          SoundEvents.TRIDENT_HIT,
+          SoundSource.NEUTRAL,
+          1.0F,
+          1.0F);
       }
       if (step > ANIMATION_STEPS) {
         setStep(itemStack, 0);
@@ -201,21 +201,21 @@ public class GlowStickItem extends Item {
 
   @Override
   public void appendHoverText(
-      ItemStack itemStack,
-      TooltipContext tooltipContext,
-      TooltipDisplay tooltipDisplay,
-      Consumer<Component> tooltipConsumer,
-      TooltipFlag tooltipFlag) {
+    ItemStack itemStack,
+    TooltipContext tooltipContext,
+    TooltipDisplay tooltipDisplay,
+    Consumer<Component> tooltipConsumer,
+    TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + "_" + dyeColor + ".description")
-            .withStyle(ChatFormatting.GRAY));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + "_" + dyeColor + ".description")
+        .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
-            .withStyle(ChatFormatting.GREEN));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
+        .withStyle(ChatFormatting.GREEN));
   }
 }

@@ -21,16 +21,16 @@ package de.markusbordihn.glowsticks.item;
 
 import de.markusbordihn.glowsticks.Constants;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 public class GlowStickItemProperties {
 
   public static Item.Properties createGlowStickItemProperties(String itemId) {
     return new Item.Properties()
-        .setId(
-            ResourceKey.create(
-                Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, itemId)));
+      .setId(
+        ResourceKey.create(
+          Registries.ITEM, Identifier.fromNamespaceAndPath(Constants.MOD_ID, itemId)));
   }
 }

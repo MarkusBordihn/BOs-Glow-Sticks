@@ -33,8 +33,8 @@ public class RedstoneCapable {
       BlockState neighborState = level.getBlockState(neighborPos);
 
       if (neighborState.isSignalSource()
-          || level.getSignal(neighborPos, direction) > 0
-          || level.getDirectSignal(neighborPos, direction) > 0) {
+        || level.getSignal(neighborPos, direction) > 0
+        || level.getDirectSignal(neighborPos, direction) > 0) {
         return true;
       }
     }
@@ -92,18 +92,18 @@ public class RedstoneCapable {
   }
 
   private static void updateControlState(
-      BlockState blockState, Level level, BlockPos blockPos, boolean isControlled) {
+    BlockState blockState, Level level, BlockPos blockPos, boolean isControlled) {
     BlockState updatedState = blockState.setValue(GlowStickBlock.CONTROLLED, isControlled);
 
     if (isControlled) {
       int redstonePowerLevel = getStrongestNeighborSignal(level, blockPos);
       updatedState =
-          updatedState
-              .setValue(GlowStickBlock.POWERED, redstonePowerLevel > 0)
-              .setValue(GlowStickBlock.AGE, 15 - redstonePowerLevel);
+        updatedState
+          .setValue(GlowStickBlock.POWERED, redstonePowerLevel > 0)
+          .setValue(GlowStickBlock.AGE, 15 - redstonePowerLevel);
     } else {
       updatedState =
-          updatedState.setValue(GlowStickBlock.POWERED, false).setValue(GlowStickBlock.AGE, 0);
+        updatedState.setValue(GlowStickBlock.POWERED, false).setValue(GlowStickBlock.AGE, 0);
     }
 
     level.setBlock(blockPos, updatedState, 3);
@@ -115,15 +115,15 @@ public class RedstoneCapable {
 
     if (currentRedstonePower != newRedstonePower) {
       BlockState updatedState =
-          blockState
-              .setValue(GlowStickBlock.POWERED, newRedstonePower > 0)
-              .setValue(GlowStickBlock.AGE, 15 - newRedstonePower);
+        blockState
+          .setValue(GlowStickBlock.POWERED, newRedstonePower > 0)
+          .setValue(GlowStickBlock.AGE, 15 - newRedstonePower);
       level.setBlock(blockPos, updatedState, 3);
     }
   }
 
   public static BlockState getInitialPlacementState(
-      BlockState defaultState, Level level, BlockPos blockPos) {
+    BlockState defaultState, Level level, BlockPos blockPos) {
     boolean isRedstoneControlled = hasRedstoneCapableNeighbor(level, blockPos);
     int initialAge = 0;
     boolean isPowered = false;
@@ -135,9 +135,9 @@ public class RedstoneCapable {
     }
 
     return defaultState
-        .setValue(GlowStickBlock.CONTROLLED, isRedstoneControlled)
-        .setValue(GlowStickBlock.POWERED, isPowered)
-        .setValue(GlowStickBlock.AGE, initialAge);
+      .setValue(GlowStickBlock.CONTROLLED, isRedstoneControlled)
+      .setValue(GlowStickBlock.POWERED, isPowered)
+      .setValue(GlowStickBlock.AGE, initialAge);
   }
 
   private static void updateNeighborConnections(Level level, BlockPos blockPos) {

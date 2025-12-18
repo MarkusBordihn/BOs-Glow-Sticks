@@ -28,16 +28,17 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class GlowStickActivated implements ConditionalItemModelProperty {
+
   public static final MapCodec<GlowStickActivated> MAP_CODEC =
-      MapCodec.unit(new GlowStickActivated());
+    MapCodec.unit(new GlowStickActivated());
 
   @Override
   public boolean get(
-      ItemStack itemStack,
-      ClientLevel clientLevel,
-      LivingEntity livingEntity,
-      int i,
-      ItemDisplayContext itemDisplayContext) {
+    ItemStack itemStack,
+    ClientLevel clientLevel,
+    LivingEntity livingEntity,
+    int i,
+    ItemDisplayContext itemDisplayContext) {
     return GlowStickItem.isActivated(itemStack);
   }
 

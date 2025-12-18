@@ -1,8 +1,6 @@
-import org.gradle.tooling.GradleConnector
-
 plugins {
   id 'idea'
-  id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.8"
+  id "org.jetbrains.gradle.plugin.idea-ext" version "1.3"
 }
 
 tasks.register('runAllGameTests') {
@@ -37,7 +35,7 @@ subprojects {
   }
 
   tasks.register('wrapper', Wrapper) {
-    gradleVersion = '8.14.3'
+    gradleVersion = '9.2.1'
     distributionType = Wrapper.DistributionType.BIN
   }
 
@@ -63,56 +61,70 @@ subprojects {
   }
 }
 
-// Create a publish task to clean, build and publish sequentially
+// Modern Gradle 9.x compatible publish task with delays
+// Publishes to Modrinth and CurseForge with 5 second delays between uploads
 tasks.register('publish') {
-  description = 'Cleans, builds and publishes to Modrinth and CurseForge sequentially'
+  description = 'Cleans, builds and publishes to Modrinth and CurseForge sequentially with delays'
   group = "publishing"
 
+  dependsOn 'clean', 'build'
+
   doLast {
-    // First ensure clean runs, then build, then publishing tasks for all subprojects
-    def buildTasks = ['clean', 'build']
-    def publishingTasks = [
-        ':Fabric:modrinth',
-        ':Forge:modrinth',
-        ':NeoForge:modrinth',
-        ':Fabric:curseforge',
-        ':Forge:curseforge',
-        ':NeoForge:curseforge']
-    def allTasks = buildTasks + publishingTasks
+    println "============================================================"
+    println "Starting sequential publishing to Modrinth and CurseForge"
+    println "============================================================"
 
-    // Process each task sequentially to guarantee order
-    allTasks.eachWithIndex { taskName, index ->
-      println "Executing task: ${taskName}"
+    def isWindows = System.properties['os.name'].toLowerCase().contains('windows')
+    def gradlewCmd = isWindows ? 'gradlew.bat' : './gradlew'
 
-      try {
-        // Use GradleConnector for proper task execution
-        def connection = GradleConnector.newConnector()
-            .forProjectDirectory(rootDir)
-            .connect()
-
-        try {
-          def taskLauncher = connection.newBuild()
-          taskLauncher.forTasks(taskName)
-          taskLauncher.setStandardOutput(System.out)
-          taskLauncher.setStandardError(System.err)
-          taskLauncher.run()
-          println "Successfully executed task: ${taskName}"
-
-          // Add delay of 5 seconds between modrinth and curseforge tasks
-          if (taskName.endsWith(':modrinth') && (index + 1) < allTasks.size() && allTasks[index + 1].endsWith(':curseforge')) {
-            println "Waiting 5 seconds before proceeding to CurseForge..."
-            sleep(5000)
-          }
-        } finally {
-          connection.close()
-        }
-      } catch (Exception e) {
-        println "Warning: Failed to execute ${taskName}"
-        println "Error message: ${e.message}"
-        throw e
-      }
+    // Fabric Modrinth
+    println "\n[1/4] Publishing Fabric to Modrinth..."
+    exec {
+      workingDir rootDir
+      commandLine gradlewCmd, ':Fabric:modrinth', '--no-daemon'
     }
 
-    println "All tasks completed successfully."
+    println "\n⏳ Waiting 5 seconds before CurseForge upload..."
+    Thread.sleep(5000)
+
+    // Fabric CurseForge
+    println "\n[2/4] Publishing Fabric to CurseForge..."
+    exec {
+      workingDir rootDir
+      commandLine gradlewCmd, ':Fabric:curseforge', '--no-daemon'
+    }
+
+    println "\n⏳ Waiting 5 seconds before next platform..."
+    Thread.sleep(5000)
+
+    // NeoForge Modrinth
+    println "\n[3/4] Publishing NeoForge to Modrinth..."
+    exec {
+      workingDir rootDir
+      commandLine gradlewCmd, ':NeoForge:modrinth', '--no-daemon'
+    }
+
+    println "\n⏳ Waiting 5 seconds before CurseForge upload..."
+    Thread.sleep(5000)
+
+    // NeoForge CurseForge
+    println "\n[4/4] Publishing NeoForge to CurseForge..."
+    exec {
+      workingDir rootDir
+      commandLine gradlewCmd, ':NeoForge:curseforge', '--no-daemon'
+    }
+
+    println "\n============================================================"
+    println "✅ All uploads completed successfully!"
+    println "============================================================"
   }
+}
+
+// Quick publish without delays (for testing)
+tasks.register('publishFast') {
+  description = 'Publishes to Modrinth and CurseForge without delays (for testing)'
+  group = "publishing"
+
+  dependsOn 'clean', 'build'
+  finalizedBy ':Fabric:modrinth', ':Fabric:curseforge', ':NeoForge:modrinth', ':NeoForge:curseforge'
 }

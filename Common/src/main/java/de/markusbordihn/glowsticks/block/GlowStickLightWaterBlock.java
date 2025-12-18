@@ -37,20 +37,20 @@ public class GlowStickLightWaterBlock extends GlowStickLightBlock implements Liq
 
   @Override
   public boolean canPlaceLiquid(
-      LivingEntity livingEntity,
-      BlockGetter blockGetter,
-      BlockPos blockPos,
-      BlockState blockState,
-      Fluid fluid) {
+    LivingEntity livingEntity,
+    BlockGetter blockGetter,
+    BlockPos blockPos,
+    BlockState blockState,
+    Fluid fluid) {
     return false;
   }
 
   @Override
   public boolean placeLiquid(
-      LevelAccessor levelAccessor,
-      BlockPos blockPos,
-      BlockState blockState,
-      FluidState fluidState) {
+    LevelAccessor levelAccessor,
+    BlockPos blockPos,
+    BlockState blockState,
+    FluidState fluidState) {
     return false;
   }
 

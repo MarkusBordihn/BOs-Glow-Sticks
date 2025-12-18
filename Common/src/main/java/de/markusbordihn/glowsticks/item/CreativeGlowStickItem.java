@@ -52,7 +52,7 @@ public class CreativeGlowStickItem extends Item {
   private final DyeColor dyeColor;
 
   public CreativeGlowStickItem(
-      Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
+    Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
     super(properties);
     this.blockSupplier = blockSupplier;
     this.dyeColor = dyeColor;
@@ -77,7 +77,7 @@ public class CreativeGlowStickItem extends Item {
 
     if (clickedState.getBlock() instanceof GlowStickBlock existingGlowStick) {
       return handleGlowStickReplacement(
-          level, clickedPos, clickedState, existingGlowStick, player, itemStack);
+        level, clickedPos, clickedState, existingGlowStick, player, itemStack);
     }
 
     BlockPos placementPos = context.getClickedPos().relative(context.getClickedFace());
@@ -85,7 +85,7 @@ public class CreativeGlowStickItem extends Item {
 
     if (targetState.getBlock() instanceof GlowStickBlock existingGlowStick) {
       return handleGlowStickReplacement(
-          level, placementPos, targetState, existingGlowStick, player, itemStack);
+        level, placementPos, targetState, existingGlowStick, player, itemStack);
     }
 
     BlockPos belowPos = placementPos.below();
@@ -109,11 +109,11 @@ public class CreativeGlowStickItem extends Item {
   }
 
   private InteractionResult attemptBlockPlacement(
-      Level level,
-      BlockPos placementPos,
-      UseOnContext context,
-      Player player,
-      ItemStack itemStack) {
+    Level level,
+    BlockPos placementPos,
+    UseOnContext context,
+    Player player,
+    ItemStack itemStack) {
     Block glowStickBlock = blockSupplier.get();
     if (glowStickBlock == null) {
       return InteractionResult.FAIL;
@@ -142,12 +142,12 @@ public class CreativeGlowStickItem extends Item {
   }
 
   private InteractionResult handleGlowStickReplacement(
-      Level level,
-      BlockPos placementPos,
-      BlockState existingState,
-      GlowStickBlock existingGlowStick,
-      Player player,
-      ItemStack itemStack) {
+    Level level,
+    BlockPos placementPos,
+    BlockState existingState,
+    GlowStickBlock existingGlowStick,
+    Player player,
+    ItemStack itemStack) {
     Block newGlowStickBlock = blockSupplier.get();
     if (!(newGlowStickBlock instanceof GlowStickBlock newGlowStick)) {
       return InteractionResult.FAIL;
@@ -162,29 +162,29 @@ public class CreativeGlowStickItem extends Item {
       Direction preservedFacing = existingState.getValue(GlowStickBlock.FACING);
       level.removeBlock(placementPos, false);
       return placeBlockWithVariantAndFacing(
-          level,
-          placementPos,
-          newGlowStickBlock,
-          preservedVariant,
-          preservedFacing,
-          player,
-          itemStack);
+        level,
+        placementPos,
+        newGlowStickBlock,
+        preservedVariant,
+        preservedFacing,
+        player,
+        itemStack);
     }
   }
 
   private InteractionResult placeBlockWithVariantAndFacing(
-      Level level,
-      BlockPos placementPos,
-      Block blockToPlace,
-      int variant,
-      Direction facing,
-      Player player,
-      ItemStack itemStack) {
+    Level level,
+    BlockPos placementPos,
+    Block blockToPlace,
+    int variant,
+    Direction facing,
+    Player player,
+    ItemStack itemStack) {
     BlockState proposedState =
-        blockToPlace
-            .defaultBlockState()
-            .setValue(GlowStickBlock.VARIANT, variant)
-            .setValue(GlowStickBlock.FACING, facing);
+      blockToPlace
+        .defaultBlockState()
+        .setValue(GlowStickBlock.VARIANT, variant)
+        .setValue(GlowStickBlock.FACING, facing);
 
     proposedState = RedstoneCapable.getInitialPlacementState(proposedState, level, placementPos);
 
@@ -201,22 +201,22 @@ public class CreativeGlowStickItem extends Item {
   private void replaceWithNextVariant(Level level, BlockPos position, BlockState existingState) {
     int currentVariant = existingState.getValue(GlowStickBlock.VARIANT);
     level.setBlockAndUpdate(
-        position,
-        existingState.setValue(
-            GlowStickBlock.VARIANT, currentVariant >= 5 ? 0 : currentVariant + 1));
+      position,
+      existingState.setValue(
+        GlowStickBlock.VARIANT, currentVariant >= 5 ? 0 : currentVariant + 1));
   }
 
   private void spawnGlowStickItem(Level level, BlockPos position, Block glowStickBlock) {
     ItemEntity itemEntity =
-        new ItemEntity(
-            level,
-            position.getX() + 0.5,
-            position.getY() + 0.5,
-            position.getZ() + 0.5,
-            new ItemStack(glowStickBlock.asItem()));
+      new ItemEntity(
+        level,
+        position.getX() + 0.5,
+        position.getY() + 0.5,
+        position.getZ() + 0.5,
+        new ItemStack(glowStickBlock.asItem()));
 
     itemEntity.setDeltaMovement(
-        (level.random.nextFloat() - 0.5F) * 0.1F, 0.2F, (level.random.nextFloat() - 0.5F) * 0.1F);
+      (level.random.nextFloat() - 0.5F) * 0.1F, 0.2F, (level.random.nextFloat() - 0.5F) * 0.1F);
 
     level.addFreshEntity(itemEntity);
   }
@@ -234,23 +234,23 @@ public class CreativeGlowStickItem extends Item {
 
   @Override
   public void appendHoverText(
-      ItemStack itemStack,
-      TooltipContext tooltipContext,
-      TooltipDisplay tooltipDisplay,
-      Consumer<Component> tooltipConsumer,
-      TooltipFlag tooltipFlag) {
+    ItemStack itemStack,
+    TooltipContext tooltipContext,
+    TooltipDisplay tooltipDisplay,
+    Consumer<Component> tooltipConsumer,
+    TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(GlowStickItem.TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
-            .withStyle(ChatFormatting.GRAY));
+      tooltipConsumer,
+      Component.translatable(GlowStickItem.TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
+        .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + ".use").withStyle(ChatFormatting.GREEN));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + ".use").withStyle(ChatFormatting.GREEN));
     ToolTips.addTooltip(
-        tooltipConsumer,
-        Component.translatable(TOOLTIP_PREFIX + ".permanent").withStyle(ChatFormatting.GOLD));
+      tooltipConsumer,
+      Component.translatable(TOOLTIP_PREFIX + ".permanent").withStyle(ChatFormatting.GOLD));
   }
 }

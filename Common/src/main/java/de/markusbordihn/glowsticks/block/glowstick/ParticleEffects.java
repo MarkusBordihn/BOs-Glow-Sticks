@@ -32,11 +32,11 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ParticleEffects {
 
   public static void handleParticleAnimation(
-      BlockState blockState,
-      Level level,
-      BlockPos blockPos,
-      RandomSource random,
-      DyeColor dyeColor) {
+    BlockState blockState,
+    Level level,
+    BlockPos blockPos,
+    RandomSource random,
+    DyeColor dyeColor) {
     if (!(level instanceof ClientLevel clientLevel) || !shouldSpawnParticles(blockState, random)) {
       return;
     }
@@ -55,8 +55,8 @@ public class ParticleEffects {
 
   private static boolean shouldSpawnParticles(BlockState blockState, RandomSource random) {
     return GlowSticksConfig.spawnRandomParticles
-        && random.nextInt(GlowSticksConfig.randomParticleSpawnRate) == 0
-        && blockState.getValue(GlowStickBlock.AGE) < 15;
+      && random.nextInt(GlowSticksConfig.randomParticleSpawnRate) == 0
+      && blockState.getValue(GlowStickBlock.AGE) < 15;
   }
 
   private static int calculateAdjustedColor(DyeColor dyeColor, float brightness) {
@@ -73,26 +73,26 @@ public class ParticleEffects {
   }
 
   private static void spawnMainParticle(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource random, int color, float size) {
+    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, int color, float size) {
     clientLevel.addParticle(
-        new DustParticleOptions(color, size),
-        blockPos.getX() + 0.5 + (random.nextFloat() - 0.5) * 0.3,
-        blockPos.getY() + 0.1,
-        blockPos.getZ() + 0.5 + (random.nextFloat() - 0.5) * 0.3,
-        0,
-        0.01,
-        0);
+      new DustParticleOptions(color, size),
+      blockPos.getX() + 0.5 + (random.nextFloat() - 0.5) * 0.3,
+      blockPos.getY() + 0.1,
+      blockPos.getZ() + 0.5 + (random.nextFloat() - 0.5) * 0.3,
+      0,
+      0.01,
+      0);
   }
 
   private static void spawnExtraParticle(
-      ClientLevel clientLevel, BlockPos blockPos, RandomSource random, int color, float size) {
+    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, int color, float size) {
     clientLevel.addParticle(
-        new DustParticleOptions(color, size * 0.7f),
-        blockPos.getX() + 0.5 + (random.nextFloat() - 0.5) * 0.4,
-        blockPos.getY() + 0.15,
-        blockPos.getZ() + 0.5 + (random.nextFloat() - 0.5) * 0.4,
-        0,
-        0.005,
-        0);
+      new DustParticleOptions(color, size * 0.7f),
+      blockPos.getX() + 0.5 + (random.nextFloat() - 0.5) * 0.4,
+      blockPos.getY() + 0.15,
+      blockPos.getZ() + 0.5 + (random.nextFloat() - 0.5) * 0.4,
+      0,
+      0.005,
+      0);
   }
 }

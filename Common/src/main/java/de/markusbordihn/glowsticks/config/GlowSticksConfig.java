@@ -23,31 +23,32 @@ import java.io.File;
 import java.util.Properties;
 
 public class GlowSticksConfig extends Config {
+
   public static final String CONFIG_FILE_NAME = "glow_sticks.cfg";
   public static final String CONFIG_FILE_HEADER =
-"""
-  Glow Sticks Configuration
-
-  This file contains the configuration for the Glow Sticks mod.
-  You can enable or disable features and adjust settings as needed.
-
-  Glow Stick Despawn:
-  - despawnTicks: Controls the aging probability of glow sticks during random ticks.
-    A value 0 means glow sticks will never age automatically.
-    A value of 1 means every random tick has a 100% chance to age the glow stick.
-    A value of 2 means every random tick has a 50% chance to age the glow stick.
-    A value of 5 means every random tick has a 20% chance to age the glow stick.
-    Higher values make glow sticks last longer on average.
-    When a glow stick reaches age 15, it will despawn automatically.
-
-  Particle Effects (Client Side Only):
-  - spawnRandomParticles: Enable or disable random glow particles from placed glow sticks.
-  - randomParticleSpawnRate: How often random glow particles spawn (higher = less frequent). Default: 25
-  - spawnWaypointParticles: Enable waypoint particles when sneaking and holding a glow stick to show path to nearest matching glow stick.
-  - waypointSearchRadius: Horizontal radius in blocks to search for nearest glow stick. Default: 32
-  - waypointVerticalSearchRadius: Vertical radius in blocks to search for nearest glow stick. Default: 16
-
-""";
+    """
+        Glow Sticks Configuration
+      
+        This file contains the configuration for the Glow Sticks mod.
+        You can enable or disable features and adjust settings as needed.
+      
+        Glow Stick Despawn:
+        - despawnTicks: Controls the aging probability of glow sticks during random ticks.
+          A value 0 means glow sticks will never age automatically.
+          A value of 1 means every random tick has a 100% chance to age the glow stick.
+          A value of 2 means every random tick has a 50% chance to age the glow stick.
+          A value of 5 means every random tick has a 20% chance to age the glow stick.
+          Higher values make glow sticks last longer on average.
+          When a glow stick reaches age 15, it will despawn automatically.
+      
+        Particle Effects (Client Side Only):
+        - spawnRandomParticles: Enable or disable random glow particles from placed glow sticks.
+        - randomParticleSpawnRate: How often random glow particles spawn (higher = less frequent). Default: 25
+        - spawnWaypointParticles: Enable waypoint particles when sneaking and holding a glow stick to show path to nearest matching glow stick.
+        - waypointSearchRadius: Horizontal radius in blocks to search for nearest glow stick. Default: 32
+        - waypointVerticalSearchRadius: Vertical radius in blocks to search for nearest glow stick. Default: 16
+      
+      """;
 
   public static int despawnTicks = 2;
   public static boolean spawnRandomParticles = true;
@@ -69,15 +70,15 @@ public class GlowSticksConfig extends Config {
     // Config entries
     despawnTicks = parseConfigValue(properties, "despawnTicks", despawnTicks);
     spawnRandomParticles =
-        parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
+      parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
     randomParticleSpawnRate =
-        parseConfigValue(properties, "randomParticleSpawnRate", randomParticleSpawnRate);
+      parseConfigValue(properties, "randomParticleSpawnRate", randomParticleSpawnRate);
     spawnWaypointParticles =
-        parseConfigValue(properties, "spawnWaypointParticles", spawnWaypointParticles);
+      parseConfigValue(properties, "spawnWaypointParticles", spawnWaypointParticles);
     waypointSearchRadius =
-        parseConfigValue(properties, "waypointSearchRadius", waypointSearchRadius);
+      parseConfigValue(properties, "waypointSearchRadius", waypointSearchRadius);
     waypointVerticalSearchRadius =
-        parseConfigValue(properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius);
+      parseConfigValue(properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius);
 
     // Update config file if needed
     updateConfigFileIfChanged(configFile, CONFIG_FILE_HEADER, properties, unmodifiedProperties);

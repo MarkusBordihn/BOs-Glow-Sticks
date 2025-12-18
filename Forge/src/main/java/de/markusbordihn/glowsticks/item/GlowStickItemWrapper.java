@@ -36,19 +36,19 @@ public class GlowStickItemWrapper extends GlowStickItem {
   @Override
   public GlowStickProjectile getGlowStickEntity(Level level, LivingEntity entity) {
     return new GlowStickProjectile(
-        ModEntity.getGlowStickEntity(getDyeColor()).get(),
-        level,
-        entity,
-        getDyeColor(),
-        ModBlocks.getGlowStickBlock(getDyeColor()),
-        ModItems.getGlowStickItem(getDyeColor()),
-        ModBlocks.GLOW_STICK_LIGHT,
-        ModBlocks.GLOW_STICK_LIGHT_WATER);
+      ModEntity.getGlowStickEntity(getDyeColor()).get(),
+      level,
+      entity,
+      getDyeColor(),
+      ModBlocks.getGlowStickBlock(getDyeColor()),
+      ModItems.getGlowStickItem(getDyeColor()),
+      ModBlocks.GLOW_STICK_LIGHT,
+      ModBlocks.GLOW_STICK_LIGHT_WATER);
   }
 
   @Override
   public boolean shouldCauseReequipAnimation(
-      ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
     return slotChanged || oldStack.getItem() != newStack.getItem();
   }
 }

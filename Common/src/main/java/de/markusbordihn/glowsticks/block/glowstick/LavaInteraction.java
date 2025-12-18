@@ -37,16 +37,16 @@ public class LavaInteraction {
 
   public static void handleLavaDestruction(Level level, BlockPos lavaPosition) {
     level.explode(
-        null,
-        lavaPosition.getX() + 0.5,
-        lavaPosition.getY() + 0.5,
-        lavaPosition.getZ() + 0.5,
-        LAVA_EXPLOSION_STRENGTH,
-        false,
-        Level.ExplosionInteraction.NONE);
+      null,
+      lavaPosition.getX() + 0.5,
+      lavaPosition.getY() + 0.5,
+      lavaPosition.getZ() + 0.5,
+      LAVA_EXPLOSION_STRENGTH,
+      false,
+      Level.ExplosionInteraction.NONE);
 
     level.playSound(
-        null, lavaPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
+      null, lavaPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
     level.playSound(null, lavaPosition, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.18F, 0.8F);
   }
 }

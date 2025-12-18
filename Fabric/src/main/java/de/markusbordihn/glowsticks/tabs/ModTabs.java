@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,26 +35,27 @@ import org.apache.logging.log4j.Logger;
 public class ModTabs {
 
   public static final CreativeModeTab GLOW_STICKS_TAB =
-      FabricItemGroup.builder()
-          .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE)))
-          .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
-          .displayItems(
-              (displayContext, entries) -> {
-                for (DyeColor dyeColor : DyeColor.values()) {
-                  entries.accept(ModItems.getGlowStickItem(dyeColor));
-                  entries.accept(ModItems.getCreativeGlowStickItem(dyeColor));
-                }
-              })
-          .build();
+    FabricItemGroup.builder()
+      .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE)))
+      .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
+      .displayItems(
+        (displayContext, entries) -> {
+          for (DyeColor dyeColor : DyeColor.values()) {
+            entries.accept(ModItems.getGlowStickItem(dyeColor));
+            entries.accept(ModItems.getCreativeGlowStickItem(dyeColor));
+          }
+        })
+      .build();
   private static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  protected ModTabs() {}
+  protected ModTabs() {
+  }
 
   public static void registerModTabs() {
     log.info("{} Glow Sticks Tabs ...", Constants.LOG_SUB_REGISTER_PREFIX);
     Registry.register(
-        BuiltInRegistries.CREATIVE_MODE_TAB,
-        ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "tab"),
-        GLOW_STICKS_TAB);
+      BuiltInRegistries.CREATIVE_MODE_TAB,
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "tab"),
+      GLOW_STICKS_TAB);
   }
 }

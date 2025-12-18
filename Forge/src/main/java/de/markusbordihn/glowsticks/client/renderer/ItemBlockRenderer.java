@@ -35,36 +35,38 @@ import org.apache.logging.log4j.Logger;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ItemBlockRenderer {
+
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  protected ItemBlockRenderer() {}
+  protected ItemBlockRenderer() {
+  }
 
   @SubscribeEvent
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Item Block Renderer Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     event.enqueueWork(
-        () -> {
-          // Register render layers for all glow stick blocks
-          for (DyeColor dyeColor : DyeColor.values()) {
-            RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-            if (glowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(
-                  glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-            }
-            RegistryObject<Block> creativeGlowStickBlock =
-                ModBlocks.getCreativeGlowStickBlock(dyeColor);
-            if (creativeGlowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(
-                  creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-            }
+      () -> {
+        // Register render layers for all glow stick blocks
+        for (DyeColor dyeColor : DyeColor.values()) {
+          RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+          if (glowStickBlock != null) {
+            ItemBlockRenderTypes.setRenderLayer(
+              glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
           }
+          RegistryObject<Block> creativeGlowStickBlock =
+            ModBlocks.getCreativeGlowStickBlock(dyeColor);
+          if (creativeGlowStickBlock != null) {
+            ItemBlockRenderTypes.setRenderLayer(
+              creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+          }
+        }
 
-          // Glow Stick Light Blocks (cutout mip)
-          ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
-          ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
-        });
+        // Glow Stick Light Blocks (cutout mip)
+        ItemBlockRenderTypes.setRenderLayer(
+          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+        ItemBlockRenderTypes.setRenderLayer(
+          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+      });
   }
 }

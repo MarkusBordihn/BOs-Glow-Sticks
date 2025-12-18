@@ -1,6 +1,6 @@
 plugins {
   id 'maven-publish'
-  id 'net.neoforged.gradle.userdev' version '7.1.4'
+  id 'net.neoforged.moddev' version '2.0.126'
   id 'com.matthewprenger.cursegradle' version '1.4.0'
   id 'nu.studer.credentials' version '3.0'
   id "com.modrinth.minotaur" version "2.+"
@@ -10,50 +10,55 @@ base {
   archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
-minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+neoForge {
+  version = project.neoforge_version
 
-runs {
-  configureEach {
-    systemProperty 'forge.logging.markers', 'REGISTRIES'
-    systemProperty 'forge.logging.console.level', 'debug'
-    modSource project.sourceSets.main
+  accessTransformers {
+    file('src/main/resources/META-INF/accesstransformer.cfg')
   }
 
-  client {
-    systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+  runs {
+    configureEach {
+      systemProperty 'forge.logging.markers', 'REGISTRIES'
+      logLevel = org.slf4j.event.Level.DEBUG
+    }
+
+    client {
+      client()
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    client2 {
+      client()
+      gameDirectory = project.file('runs/client2')
+      programArguments.addAll '--username', 'guest_player'
+    }
+
+    server {
+      server()
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+      programArgument '--nogui'
+    }
+
+    gameTestServer {
+      type = 'gameTestServer'
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
   }
 
-  client2 {
-    configure('client')
-    workingDirectory project.file('runs/client2')
-    programArguments.addAll '--username', 'guest_player'
-  }
-
-  server {
-    systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    programArgument '--nogui'
-  }
-
-  gameTestServer {
-    systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-  }
-
-  clientData {
-    programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+  mods {
+    "${project.mod_id}" {
+      sourceSet sourceSets.main
+    }
   }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-  implementation "net.neoforged:neoforge:${project.neoforge_version}"
   compileOnly project(":Common")
-
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
 }
 
-// NeoGradle compiles the game, but we don't want to add our common code to the game's code
 Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
 
 tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
@@ -70,15 +75,6 @@ tasks.named("sourcesJar", Jar) {
 
 tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
   from project(":Common").sourceSets.main.resources
-}
-
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      artifactId base.archivesName.get()
-      from components.java
-    }
-  }
 }
 
 // CurseForge Publishing

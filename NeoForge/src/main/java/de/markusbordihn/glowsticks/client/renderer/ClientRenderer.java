@@ -37,36 +37,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ClientRenderer {
+
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  protected ClientRenderer() {}
+  protected ClientRenderer() {
+  }
 
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     event.enqueueWork(
-        () -> {
-          // Register render layers for all glow stick blocks
-          for (DyeColor dyeColor : DyeColor.values()) {
-            DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-            if (glowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(
-                  glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-            }
-            DeferredBlock<Block> creativeGlowStickBlock =
-                ModBlocks.getCreativeGlowStickBlock(dyeColor);
-            if (creativeGlowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(
-                  creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-            }
+      () -> {
+        // Register render layers for all glow stick blocks
+        for (DyeColor dyeColor : DyeColor.values()) {
+          DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+          if (glowStickBlock != null) {
+            ItemBlockRenderTypes.setRenderLayer(
+              glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
           }
+          DeferredBlock<Block> creativeGlowStickBlock =
+            ModBlocks.getCreativeGlowStickBlock(dyeColor);
+          if (creativeGlowStickBlock != null) {
+            ItemBlockRenderTypes.setRenderLayer(
+              creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
+          }
+        }
 
-          // Glow Stick Light Blocks (cutout mip)
-          ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
-          ItemBlockRenderTypes.setRenderLayer(
-              ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
-        });
+        // Glow Stick Light Blocks (cutout mip)
+        ItemBlockRenderTypes.setRenderLayer(
+          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT);
+        ItemBlockRenderTypes.setRenderLayer(
+          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT);
+      });
   }
 
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -75,7 +77,7 @@ public class ClientRenderer {
     // Register renderer for all glow stick entity colors
     for (DyeColor dyeColor : DyeColor.values()) {
       DeferredHolder<EntityType<?>, EntityType<GlowStickProjectile>> glowStickEntity =
-          ModEntity.getGlowStickEntity(dyeColor);
+        ModEntity.getGlowStickEntity(dyeColor);
       if (glowStickEntity != null) {
         event.registerEntityRenderer(glowStickEntity.get(), ThrownItemRenderer::new);
       }

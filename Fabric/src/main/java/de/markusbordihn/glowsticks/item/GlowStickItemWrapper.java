@@ -35,13 +35,13 @@ public class GlowStickItemWrapper extends GlowStickItem {
   @Override
   public GlowStickProjectile getGlowStickEntity(Level level, LivingEntity entity) {
     return new GlowStickProjectile(
-        ModEntity.getGlowStickEntity(getDyeColor()),
-        level,
-        entity,
-        getDyeColor(),
-        () -> ModBlocks.getGlowStickBlock(getDyeColor()),
-        () -> ModItems.getGlowStickItem(getDyeColor()),
-        () -> ModBlocks.GLOW_STICK_LIGHT,
-        () -> ModBlocks.GLOW_STICK_LIGHT_WATER);
+      ModEntity.getGlowStickEntity(getDyeColor()),
+      level,
+      entity,
+      getDyeColor(),
+      () -> ModBlocks.getGlowStickBlock(getDyeColor()),
+      () -> ModItems.getGlowStickItem(getDyeColor()),
+      () -> ModBlocks.GLOW_STICK_LIGHT,
+      () -> ModBlocks.GLOW_STICK_LIGHT_WATER);
   }
 }

@@ -33,17 +33,18 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModDataComponents {
 
   public static final DeferredRegister.DataComponents DATA_COMPONENTS =
-      DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
+    DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Constants.MOD_ID);
 
   public static final Supplier<DataComponentType<GlowStickData>> GLOW_STICK_DATA =
-      DATA_COMPONENTS.registerComponentType(
-          GlowStickData.ID,
-          builder ->
-              builder
-                  .persistent(GlowStickData.CODEC)
-                  .networkSynchronized(GlowStickData.STREAM_CODEC));
+    DATA_COMPONENTS.registerComponentType(
+      GlowStickData.ID,
+      builder ->
+        builder
+          .persistent(GlowStickData.CODEC)
+          .networkSynchronized(GlowStickData.STREAM_CODEC));
 
-  private ModDataComponents() {}
+  private ModDataComponents() {
+  }
 
   @SubscribeEvent
   public static void onCommonSetup(FMLCommonSetupEvent event) {

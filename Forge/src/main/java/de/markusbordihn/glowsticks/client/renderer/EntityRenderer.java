@@ -35,9 +35,11 @@ import org.apache.logging.log4j.Logger;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class EntityRenderer {
+
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
 
-  protected EntityRenderer() {}
+  protected EntityRenderer() {
+  }
 
   @SubscribeEvent
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -46,7 +48,7 @@ public class EntityRenderer {
     // Register renderer for all glow stick entity colors
     for (DyeColor dyeColor : DyeColor.values()) {
       RegistryObject<EntityType<GlowStickProjectile>> glowStickEntity =
-          ModEntity.getGlowStickEntity(dyeColor);
+        ModEntity.getGlowStickEntity(dyeColor);
       if (glowStickEntity != null) {
         event.registerEntityRenderer(glowStickEntity.get(), ThrownItemRenderer::new);
       }

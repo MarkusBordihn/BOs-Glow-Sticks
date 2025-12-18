@@ -31,23 +31,23 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModBlocks {
 
   public static final DeferredRegister.Blocks BLOCKS =
-      DeferredRegister.createBlocks(Constants.MOD_ID);
+    DeferredRegister.createBlocks(Constants.MOD_ID);
   public static final DeferredBlock<Block> GLOW_STICK_LIGHT =
-      BLOCKS.register(
-          "glow_stick_light",
-          () ->
-              new GlowStickLightBlock(
-                  GlowStickBlockProperties.createLightBlockProperties("glow_stick_light")));
+    BLOCKS.register(
+      "glow_stick_light",
+      () ->
+        new GlowStickLightBlock(
+          GlowStickBlockProperties.createLightBlockProperties("glow_stick_light")));
   public static final DeferredBlock<Block> GLOW_STICK_LIGHT_WATER =
-      BLOCKS.register(
-          "glow_stick_light_water",
-          () ->
-              new GlowStickLightWaterBlock(
-                  GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water")));
+    BLOCKS.register(
+      "glow_stick_light_water",
+      () ->
+        new GlowStickLightWaterBlock(
+          GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water")));
   protected static final Map<DyeColor, DeferredBlock<Block>> GLOW_STICK_BLOCKS =
-      new EnumMap<>(DyeColor.class);
+    new EnumMap<>(DyeColor.class);
   protected static final Map<DyeColor, DeferredBlock<Block>> CREATIVE_GLOW_STICK_BLOCKS =
-      new EnumMap<>(DyeColor.class);
+    new EnumMap<>(DyeColor.class);
 
   // Register all glow stick blocks for each dye color
   static {
@@ -57,26 +57,26 @@ public class ModBlocks {
       // Normal glow stick blocks
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
-          dyeColor,
-          BLOCKS.register(
-              blockName,
-              () ->
-                  new GlowStickBlock(
-                      GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
-                      dyeColor,
-                      GlowSticksConfig.despawnTicks)));
+        dyeColor,
+        BLOCKS.register(
+          blockName,
+          () ->
+            new GlowStickBlock(
+              GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
+              dyeColor,
+              GlowSticksConfig.despawnTicks)));
 
       // Creative glow stick blocks
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
-          dyeColor,
-          BLOCKS.register(
-              creativeBlockName,
-              () ->
-                  new GlowStickBlock(
-                      GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
-                      dyeColor,
-                      GlowSticksConfig.despawnTicks)));
+        dyeColor,
+        BLOCKS.register(
+          creativeBlockName,
+          () ->
+            new GlowStickBlock(
+              GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
+              dyeColor,
+              GlowSticksConfig.despawnTicks)));
     }
   }
 

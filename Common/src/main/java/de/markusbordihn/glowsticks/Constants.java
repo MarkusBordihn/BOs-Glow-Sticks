@@ -22,5 +22,6 @@ public final class Constants {
 
   public static boolean HAS_FABRIC_TOOLTIPFIX_MOD = false;
 
-  private Constants() {}
+  private Constants() {
+  }
 }

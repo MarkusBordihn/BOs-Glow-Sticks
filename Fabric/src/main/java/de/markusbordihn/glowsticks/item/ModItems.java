@@ -24,7 +24,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 
@@ -33,7 +33,7 @@ public class ModItems {
   protected static final Map<DyeColor, Item> GLOW_STICK_ITEMS = new EnumMap<>(DyeColor.class);
 
   protected static final Map<DyeColor, Item> CREATIVE_GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+    new EnumMap<>(DyeColor.class);
 
   public static void registerItems() {
     // Register all glow stick items for each dye color
@@ -43,24 +43,24 @@ public class ModItems {
       // Normal glow stick items
       String itemName = "glow_stick_" + colorName;
       Item glowStickItem =
-          new GlowStickItemWrapper(
-              GlowStickItemProperties.createGlowStickItemProperties(itemName), dyeColor);
+        new GlowStickItemWrapper(
+          GlowStickItemProperties.createGlowStickItemProperties(itemName), dyeColor);
       GLOW_STICK_ITEMS.put(dyeColor, glowStickItem);
       Registry.register(
-          BuiltInRegistries.ITEM,
-          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, itemName),
-          glowStickItem);
+        BuiltInRegistries.ITEM,
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, itemName),
+        glowStickItem);
 
       // Creative glow stick items
       String creativeItemName = "creative_glow_stick_" + colorName;
       Item creativeGlowStickItem =
-          new CreativeGlowStickItemWrapper(
-              GlowStickItemProperties.createGlowStickItemProperties(creativeItemName), dyeColor);
+        new CreativeGlowStickItemWrapper(
+          GlowStickItemProperties.createGlowStickItemProperties(creativeItemName), dyeColor);
       CREATIVE_GLOW_STICK_ITEMS.put(dyeColor, creativeGlowStickItem);
       Registry.register(
-          BuiltInRegistries.ITEM,
-          ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, creativeItemName),
-          creativeGlowStickItem);
+        BuiltInRegistries.ITEM,
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, creativeItemName),
+        creativeGlowStickItem);
     }
   }
 

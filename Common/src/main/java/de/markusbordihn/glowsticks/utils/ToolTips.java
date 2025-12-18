@@ -29,16 +29,17 @@ import net.minecraft.network.chat.Style;
 
 public class ToolTips {
 
-  private ToolTips() {}
+  private ToolTips() {
+  }
 
   public static void addTooltip(
-      final Consumer<Component> tooltipConsumer, final Component component) {
+    final Consumer<Component> tooltipConsumer, final Component component) {
     if (Constants.IS_FABRIC && !Constants.HAS_FABRIC_TOOLTIPFIX_MOD) {
       List<FormattedText> lines =
-          Minecraft.getInstance()
-              .font
-              .getSplitter()
-              .splitLines(component.getString(), 200, Style.EMPTY);
+        Minecraft.getInstance()
+          .font
+          .getSplitter()
+          .splitLines(component.getString(), 200, Style.EMPTY);
       for (FormattedText line : lines) {
         tooltipConsumer.accept(Component.literal(line.getString()).withStyle(component.getStyle()));
       }

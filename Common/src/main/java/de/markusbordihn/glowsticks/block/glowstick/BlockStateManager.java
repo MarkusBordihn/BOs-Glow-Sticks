@@ -34,14 +34,14 @@ public class BlockStateManager {
 
   public static BlockState createInitialBlockState(GlowStickBlock block) {
     return block
-        .getStateDefinition()
-        .any()
-        .setValue(GlowStickBlock.AGE, 0)
-        .setValue(GlowStickBlock.FACING, Direction.NORTH)
-        .setValue(GlowStickBlock.WATERLOGGED, false)
-        .setValue(GlowStickBlock.VARIANT, 1)
-        .setValue(GlowStickBlock.CONTROLLED, false)
-        .setValue(GlowStickBlock.POWERED, false);
+      .getStateDefinition()
+      .any()
+      .setValue(GlowStickBlock.AGE, 0)
+      .setValue(GlowStickBlock.FACING, Direction.NORTH)
+      .setValue(GlowStickBlock.WATERLOGGED, false)
+      .setValue(GlowStickBlock.VARIANT, 1)
+      .setValue(GlowStickBlock.CONTROLLED, false)
+      .setValue(GlowStickBlock.POWERED, false);
   }
 
   public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
@@ -54,25 +54,25 @@ public class BlockStateManager {
     }
 
     BlockState baseState =
-        block.defaultBlockState().setValue(GlowStickBlock.FACING, playerFacingDirection);
+      block.defaultBlockState().setValue(GlowStickBlock.FACING, playerFacingDirection);
     return RedstoneCapable.getInitialPlacementState(baseState, level, blockPlacementPos);
   }
 
   public static FluidState getFluidState(BlockState blockState) {
     return blockState.getValue(GlowStickBlock.WATERLOGGED)
-        ? Fluids.WATER.getSource(false)
-        : Fluids.EMPTY.defaultFluidState();
+      ? Fluids.WATER.getSource(false)
+      : Fluids.EMPTY.defaultFluidState();
   }
 
   public static void handleRandomTick(
-      BlockState blockState,
-      ServerLevel serverLevel,
-      BlockPos blockPos,
-      RandomSource random,
-      int despawnTickRate) {
+    BlockState blockState,
+    ServerLevel serverLevel,
+    BlockPos blockPos,
+    RandomSource random,
+    int despawnTickRate) {
     if (despawnTickRate <= 0
-        || random.nextInt(despawnTickRate) != 0
-        || blockState.getValue(GlowStickBlock.CONTROLLED)) {
+      || random.nextInt(despawnTickRate) != 0
+      || blockState.getValue(GlowStickBlock.CONTROLLED)) {
       return;
     }
 
@@ -88,7 +88,7 @@ public class BlockStateManager {
 
   public static int calculateLightLevel(BlockState blockState) {
     if (blockState.getValue(GlowStickBlock.CONTROLLED)
-        && !blockState.getValue(GlowStickBlock.POWERED)) {
+      && !blockState.getValue(GlowStickBlock.POWERED)) {
       return 0;
     }
 
