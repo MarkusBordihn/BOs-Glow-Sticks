@@ -24,6 +24,7 @@ import de.markusbordihn.glowsticks.client.renderer.item.properties.conditional.G
 import de.markusbordihn.glowsticks.client.renderer.item.properties.numeric.GlowStickStep;
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
+import net.minecraft.resources.Identifier;
 
 public class ModItemProperties {
 

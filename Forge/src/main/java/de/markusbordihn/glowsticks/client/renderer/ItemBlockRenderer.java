@@ -64,9 +64,9 @@ public class ItemBlockRenderer {
 
         // Glow Stick Light Blocks (cutout mip)
         ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT);
         ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT_MIPPED);
+          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT);
       });
   }
 }
