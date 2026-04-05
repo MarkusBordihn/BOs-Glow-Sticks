@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 This change log includes the summarized changes.
 For the full changelog, please go to the [GitHub History][history] instead.
 
+### v7.3.0
+
+- Fixed #5 by adding vertical placeable creative glow sticks.
+- Fixed #6 by adjusting the Japanese Name for "Glow Stick". Thanks a lot to `@looksky495`
+  for the detailed explanation.
+- Fixed temporary underwater light blocks to restore water correctly after expiring.
+- Fixed waypoint particles for white glow sticks when no glow stick was held.
+- Added config value validation for particle spawn rate and other glow stick settings.
+- Improved tooltip texts and configuration handling for glow sticks.
+
 ### v7.2.0
 
 - Refactored code for better readability and maintenance.

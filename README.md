@@ -1,4 +1,4 @@
-# 🧪 Glow Sticks (1.20.1)
+# Glow Sticks
 
 ![Glow Sticks Versions](http://cf.way2muchnoise.eu/versions/Minecraft_528389_all.svg)
 
@@ -14,47 +14,62 @@
 
 [![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=1.18.2)][ci]
 
-[![Support me on Ko-fi](https://img.shields.io/badge/Support_me_on_Ko--fi-!?labelColor=black&style=flat&logo=ko-fi)][ko-fi]
-
 ![Glow Sticks][logo]
 
-This mod adds **glow sticks in all dye colors** which can be thrown and placed on land or
-underwater.  
-They shine for a limited time, making them perfect for exploring caves, diving, or RPG adventures.
+Glow Sticks adds throwable and placeable light sources for Minecraft.
 
-## Introduction & Overview Video (English)
+Craft glow sticks in all 16 dye colors, throw them into caves or water, place permanent creative
+versions in builds, and use matching glow sticks as simple waypoints while exploring.
+
+## Features
+
+- 16 glow stick colors
+- Temporary glow sticks that can be activated, thrown, and placed
+- Permanent creative glow sticks for decorative lighting
+- Land and underwater usage without separate items
+- Several visual variants for placed glow sticks
+- Waypoint particles and configurable behavior
+
+## Overview Video
 
 [![Watch the video](https://img.youtube.com/vi/9NV4Ja-vreg/maxresdefault.jpg)](https://youtu.be/9NV4Ja-vreg)
 
-## ✨ Features
+## Quick Start
 
-* **Craftable** with glowing items (e.g., glowstone dust, glowing ink sac), glass, and glass panes.
-* **Available in all 16 dye colors**.
-* **Server-friendly**: glow sticks despawn automatically after a set time.
-* **Works on land and underwater** without extra setup.
-* **Waypoint feature**: shows a waypoint to the nearest glow stick when sneaking while holding one.
-* **Lightweight**: no custom renderer or core modifications required.
-* **Configurable**: adjust glow stick lifespan in the config file.
+1. Craft glow sticks with a glowing ingredient, glass, and glass panes.
+2. Use a glow stick once to activate it.
+3. After activation it is thrown automatically and places light where it lands.
 
-## ℹ️ More Information
+The mod accepts `glow berries`, `glow ink sacs`, `glow lichen`, and `glowstone dust` as glowing
+ingredients.  
+Colored glow sticks use matching stained glass. The white glow stick uses normal glass.
 
-- [CurseForge Mod Page][mod_page]
-- [Modrinth Mod Page][modrinth_page]
-- [GitHub Issues & Bug Reports][issues]
+## Highlights
 
-## 🐛 Report Issues, Bugs, Crashes or Feature Requests
+- Works on land and underwater
+- Glow sticks fade over time and lose brightness before disappearing
+- `despawnTicks=0` disables automatic fading for normal placed glow sticks
+- Sneak while holding a glow stick to show waypoint particles to the nearest placed glow stick of
+  the same color
+- Creative glow sticks can be placed on floors, walls, and ceilings
+- Clicking an existing creative glow stick cycles through its visual variant
+- Glow sticks react to nearby redstone and can be controlled by signal strength
 
-Please report issues through the [issues link][issues].  
-Providing logs and reproduction steps helps me to fix bugs faster.
+## Why It Is Useful
 
-## 🫶 Support me
+- Fast cave marking without carrying lots of torches
+- Underwater lighting for ruins, caves, and diving routes
+- Atmospheric lights for adventure maps, RPG builds, and decoration
+- Easy color-coding for paths, entrances, or points of interest
 
-If you enjoy using my creations, consider supporting my development! ☕  
-Donations via [Ko-fi][ko-fi] are appreciated, but never required.  
-Every bit helps me to continue creating free, open-source mods and cover software, service, and
-hardware costs.
+## Report Issues
 
-## ⚖️ License
+Please report issues through the GitHub issue tracker:  
+https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues
+
+Logs and clear reproduction steps help a lot when tracking down bugs.
+
+## License
 
 The [MIT LICENSE](LICENSE.md) applies only to the code in this repository.  
 Images, models, and other assets are explicitly excluded.
@@ -72,5 +87,3 @@ Images, models, and other assets are explicitly excluded.
 [issues_closed]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues?q=is%3Aclosed
 
 [ci]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml
-
-[ko-fi]: https://ko-fi.com/Kaworru  

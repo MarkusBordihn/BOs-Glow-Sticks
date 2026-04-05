@@ -19,14 +19,15 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
+import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -44,18 +45,43 @@ public class BlockStateManager {
         .setValue(GlowStickBlock.POWERED, false);
   }
 
-  public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
-    Direction playerFacingDirection = context.getHorizontalDirection().getOpposite();
-    Level level = context.getLevel();
-    BlockPos blockPlacementPos = context.getClickedPos();
+  public static BlockState getCreativeStateForPlacement(
+      CreativeGlowStickBlock block, BlockPlaceContext context) {
+    Direction clickedFace = context.getClickedFace();
+    AttachFace attachFace;
+    Direction horizontalFacing;
+    if (clickedFace == Direction.UP) {
+      attachFace = AttachFace.FLOOR;
+      horizontalFacing = context.getHorizontalDirection().getOpposite();
+    } else if (clickedFace == Direction.DOWN) {
+      attachFace = AttachFace.CEILING;
+      horizontalFacing = context.getHorizontalDirection().getOpposite();
+    } else {
+      attachFace = AttachFace.WALL;
+      horizontalFacing = clickedFace.getOpposite();
+    }
 
+    return RedstoneCapable.getInitialPlacementState(
+        block
+            .defaultBlockState()
+            .setValue(CreativeGlowStickBlock.FACE, attachFace)
+            .setValue(GlowStickBlock.FACING, horizontalFacing),
+        context.getLevel(),
+        context.getClickedPos());
+  }
+
+  public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
+    BlockPos blockPlacementPos = context.getClickedPos();
     if (!context.canPlace()) {
       blockPlacementPos = blockPlacementPos.relative(context.getClickedFace());
     }
 
-    BlockState baseState =
-        block.defaultBlockState().setValue(GlowStickBlock.FACING, playerFacingDirection);
-    return RedstoneCapable.getInitialPlacementState(baseState, level, blockPlacementPos);
+    return RedstoneCapable.getInitialPlacementState(
+        block
+            .defaultBlockState()
+            .setValue(GlowStickBlock.FACING, context.getHorizontalDirection().getOpposite()),
+        context.getLevel(),
+        blockPlacementPos);
   }
 
   public static FluidState getFluidState(BlockState blockState) {
@@ -82,8 +108,8 @@ public class BlockStateManager {
       return;
     }
 
-    BlockState updatedState = blockState.setValue(GlowStickBlock.AGE, currentAge + 1);
-    serverLevel.setBlockAndUpdate(blockPos, updatedState);
+    serverLevel.setBlockAndUpdate(
+        blockPos, blockState.setValue(GlowStickBlock.AGE, currentAge + 1));
   }
 
   public static int calculateLightLevel(BlockState blockState) {
