@@ -70,6 +70,11 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
   from project(":Common").sourceSets.main.resources
 }
 
+tasks.withType(Test).configureEach {
+  minHeapSize = "512m"
+  maxHeapSize = "2g"
+}
+
 publishing {
   publications {
     mavenJava(MavenPublication) {

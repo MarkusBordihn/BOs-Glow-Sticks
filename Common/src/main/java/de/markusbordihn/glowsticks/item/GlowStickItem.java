@@ -212,7 +212,10 @@ public class GlowStickItem extends Item {
         Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
         tooltipList,
-        Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
-            .withStyle(ChatFormatting.GREEN));
+        despawnTickRate <= 0
+            ? Component.translatable(TOOLTIP_PREFIX + ".use_infinite")
+                .withStyle(ChatFormatting.DARK_GREEN)
+            : Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
+                .withStyle(ChatFormatting.GREEN));
   }
 }

@@ -66,15 +66,15 @@ public class ModBlocks {
                   dyeColor,
                   GlowSticksConfig.despawnTicks)));
 
-      // Creative glow stick blocks (despawnTickRate = 0 means no despawn/no aging)
+      // Creative glow stick blocks (wall/ceiling/floor placement, never despawn)
       CREATIVE_GLOW_STICK_BLOCKS.put(
           dyeColor,
           Registry.register(
               BuiltInRegistries.BLOCK,
               ResourceLocation.fromNamespaceAndPath(
                   Constants.MOD_ID, "creative_glow_stick_" + colorName),
-              new GlowStickBlock(
-                  GlowStickBlockProperties.createGlowStickBlockProperties(), dyeColor, 0)));
+              new CreativeGlowStickBlock(
+                  GlowStickBlockProperties.createGlowStickBlockProperties(), dyeColor)));
     }
   }
 

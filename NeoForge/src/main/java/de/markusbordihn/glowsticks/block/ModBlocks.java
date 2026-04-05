@@ -62,16 +62,14 @@ public class ModBlocks {
                       dyeColor,
                       GlowSticksConfig.despawnTicks)));
 
-      // Creative glow stick blocks
+      // Creative glow stick blocks (wall/ceiling/floor placement, never despawn)
       CREATIVE_GLOW_STICK_BLOCKS.put(
           dyeColor,
           BLOCKS.register(
               "creative_glow_stick_" + colorName,
               () ->
-                  new GlowStickBlock(
-                      GlowStickBlockProperties.createGlowStickBlockProperties(),
-                      dyeColor,
-                      GlowSticksConfig.despawnTicks)));
+                  new CreativeGlowStickBlock(
+                      GlowStickBlockProperties.createGlowStickBlockProperties(), dyeColor)));
     }
   }
 

@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -73,9 +74,8 @@ public class GlowStickLightBlock extends Block {
   @Override
   public void tick(
       BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
-    Block block = blockState.getBlock();
-    if (!level.isClientSide && block instanceof GlowStickLightBlock) {
-      level.removeBlock(blockPos, true);
+    if (!level.isClientSide && blockState.getBlock() instanceof GlowStickLightBlock) {
+      level.setBlockAndUpdate(blockPos, getExpiredState(blockState));
     }
   }
 
@@ -85,5 +85,9 @@ public class GlowStickLightBlock extends Block {
     if (blockState.getBlock() instanceof GlowStickLightBlock) {
       this.scheduleTick(serverLevel, blockPos);
     }
+  }
+
+  protected BlockState getExpiredState(BlockState blockState) {
+    return Blocks.AIR.defaultBlockState();
   }
 }

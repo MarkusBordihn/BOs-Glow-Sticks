@@ -67,17 +67,18 @@ public class GlowSticksConfig extends Config {
     Properties unmodifiedProperties = (Properties) properties.clone();
 
     // Config entries
-    despawnTicks = parseConfigValue(properties, "despawnTicks", despawnTicks);
+    despawnTicks = parseConfigMinValue(properties, "despawnTicks", despawnTicks, 0);
     spawnRandomParticles =
         parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
     randomParticleSpawnRate =
-        parseConfigValue(properties, "randomParticleSpawnRate", randomParticleSpawnRate);
+        parseConfigMinValue(properties, "randomParticleSpawnRate", randomParticleSpawnRate, 1);
     spawnWaypointParticles =
         parseConfigValue(properties, "spawnWaypointParticles", spawnWaypointParticles);
     waypointSearchRadius =
-        parseConfigValue(properties, "waypointSearchRadius", waypointSearchRadius);
+        parseConfigMinValue(properties, "waypointSearchRadius", waypointSearchRadius, 0);
     waypointVerticalSearchRadius =
-        parseConfigValue(properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius);
+        parseConfigMinValue(
+            properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius, 0);
 
     // Update config file if needed
     updateConfigFileIfChanged(configFile, CONFIG_FILE_HEADER, properties, unmodifiedProperties);

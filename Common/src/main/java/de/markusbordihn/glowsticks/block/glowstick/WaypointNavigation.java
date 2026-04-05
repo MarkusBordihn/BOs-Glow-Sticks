@@ -110,7 +110,7 @@ public class WaypointNavigation {
     if (player.getOffhandItem().getItem() instanceof GlowStickItem offHandGlowStick) {
       return offHandGlowStick.getDyeColor();
     }
-    return DyeColor.WHITE;
+    return null;
   }
 
   private static void spawnWaypointParticles(
@@ -135,9 +135,7 @@ public class WaypointNavigation {
     float red = ((colorValue >> 16) & 0xFF) / 255.0f;
     float green = ((colorValue >> 8) & 0xFF) / 255.0f;
     float blue = (colorValue & 0xFF) / 255.0f;
-    float maxColorValue = Math.max(red, Math.max(green, blue));
-    float colorMultiplier = maxColorValue > 0.3f ? 1.8f : 2.5f;
-
+    float colorMultiplier = Math.max(red, Math.max(green, blue)) > 0.3f ? 1.8f : 2.5f;
     return new Vector3f(
         Math.min(1.0f, red * colorMultiplier),
         Math.min(1.0f, green * colorMultiplier),
@@ -171,18 +169,15 @@ public class WaypointNavigation {
       TrailParameters params) {
 
     int baseWaypoints = Math.max(8, Math.min(40, (int) (params.distance * 2.2)));
-    int particlesPerWaypoint = calculateParticlesPerWaypoint(params.distance);
-    double waypointStep = 1.0 / (baseWaypoints + 1);
     double minSpawnDistance = 1.0;
-
     spawnMainTrail(
         clientLevel,
         random,
         particleColors,
         params,
         baseWaypoints,
-        particlesPerWaypoint,
-        waypointStep,
+        calculateParticlesPerWaypoint(params.distance),
+        1.0 / (baseWaypoints + 1),
         minSpawnDistance);
     spawnTargetParticles(clientLevel, random, particleColors, params);
     spawnHelperParticles(
@@ -190,8 +185,12 @@ public class WaypointNavigation {
   }
 
   private static int calculateParticlesPerWaypoint(double distance) {
-    if (distance < 5.0) return 1;
-    if (distance < 15.0) return 2;
+    if (distance < 5.0) {
+      return 1;
+    }
+    if (distance < 15.0) {
+      return 2;
+    }
     return 3;
   }
 
@@ -217,7 +216,6 @@ public class WaypointNavigation {
           params.startY + (params.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointZ =
           params.startZ + (params.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
-
       for (int j = 0; j < particlesPerWaypoint; j++) {
         float particleSize =
             (float) Math.min(2.0f, 0.9f + (params.distance * 0.08f) - (progress * 0.2f));

@@ -75,6 +75,12 @@ public class ClientRenderer {
             if (glowStickBlock != null) {
               ItemBlockRenderTypes.setRenderLayer(glowStickBlock.get(), RenderType.translucent());
             }
+            RegistryObject<Block> creativeGlowStickBlock =
+                ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            if (creativeGlowStickBlock != null) {
+              ItemBlockRenderTypes.setRenderLayer(
+                  creativeGlowStickBlock.get(), RenderType.translucent());
+            }
           }
 
           // Glow Stick Light Blocks (cutout mip)
