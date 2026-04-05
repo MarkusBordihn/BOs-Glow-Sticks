@@ -19,24 +19,22 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
+import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 public class BlockStateManager {
 
   public static BlockState createInitialBlockState(GlowStickBlock block) {
-    return block
-      .getStateDefinition()
-      .any()
-      .setValue(GlowStickBlock.AGE, 0)
+    return block.getStateDefinition().any().setValue(GlowStickBlock.AGE, 0)
       .setValue(GlowStickBlock.FACING, Direction.NORTH)
       .setValue(GlowStickBlock.WATERLOGGED, false)
       .setValue(GlowStickBlock.VARIANT, 1)
@@ -44,35 +42,59 @@ public class BlockStateManager {
       .setValue(GlowStickBlock.POWERED, false);
   }
 
-  public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
-    Direction playerFacingDirection = context.getHorizontalDirection().getOpposite();
-    Level level = context.getLevel();
+  public static BlockState getCreativeStateForPlacement(CreativeGlowStickBlock block,
+    BlockPlaceContext context) {
+    Direction clickedFace = context.getClickedFace();
     BlockPos blockPlacementPos = context.getClickedPos();
+    if (!context.canPlace()) {
+      blockPlacementPos = blockPlacementPos.relative(clickedFace);
+    }
 
+    AttachFace attachFace;
+    Direction horizontalFacing;
+    if (clickedFace == Direction.UP) {
+      attachFace = AttachFace.FLOOR;
+      horizontalFacing = context.getHorizontalDirection().getOpposite();
+    } else if (clickedFace == Direction.DOWN) {
+      attachFace = AttachFace.CEILING;
+      horizontalFacing = context.getHorizontalDirection().getOpposite();
+    } else {
+      attachFace = AttachFace.WALL;
+      horizontalFacing = clickedFace.getOpposite();
+    }
+
+    return RedstoneCapable.getInitialPlacementState(
+      block
+        .defaultBlockState()
+        .setValue(CreativeGlowStickBlock.FACE, attachFace)
+        .setValue(GlowStickBlock.FACING, horizontalFacing)
+        .setValue(
+          GlowStickBlock.WATERLOGGED,
+          context.getLevel().getFluidState(blockPlacementPos).getType() == Fluids.WATER),
+      context.getLevel(),
+      blockPlacementPos);
+  }
+
+  public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
+    BlockPos blockPlacementPos = context.getClickedPos();
     if (!context.canPlace()) {
       blockPlacementPos = blockPlacementPos.relative(context.getClickedFace());
     }
 
-    BlockState baseState =
-      block.defaultBlockState().setValue(GlowStickBlock.FACING, playerFacingDirection);
-    return RedstoneCapable.getInitialPlacementState(baseState, level, blockPlacementPos);
+    return RedstoneCapable.getInitialPlacementState(block.defaultBlockState()
+        .setValue(GlowStickBlock.FACING, context.getHorizontalDirection().getOpposite()),
+      context.getLevel(), blockPlacementPos);
   }
 
   public static FluidState getFluidState(BlockState blockState) {
-    return blockState.getValue(GlowStickBlock.WATERLOGGED)
-      ? Fluids.WATER.getSource(false)
+    return blockState.getValue(GlowStickBlock.WATERLOGGED) ? Fluids.WATER.getSource(false)
       : Fluids.EMPTY.defaultFluidState();
   }
 
-  public static void handleRandomTick(
-    BlockState blockState,
-    ServerLevel serverLevel,
-    BlockPos blockPos,
-    RandomSource random,
-    int despawnTickRate) {
-    if (despawnTickRate <= 0
-      || random.nextInt(despawnTickRate) != 0
-      || blockState.getValue(GlowStickBlock.CONTROLLED)) {
+  public static void handleRandomTick(BlockState blockState, ServerLevel serverLevel,
+    BlockPos blockPos, RandomSource random, int despawnTickRate) {
+    if (despawnTickRate <= 0 || random.nextInt(despawnTickRate) != 0 || blockState.getValue(
+      GlowStickBlock.CONTROLLED)) {
       return;
     }
 
@@ -82,13 +104,13 @@ public class BlockStateManager {
       return;
     }
 
-    BlockState updatedState = blockState.setValue(GlowStickBlock.AGE, currentAge + 1);
-    serverLevel.setBlockAndUpdate(blockPos, updatedState);
+    serverLevel.setBlockAndUpdate(blockPos,
+      blockState.setValue(GlowStickBlock.AGE, currentAge + 1));
   }
 
   public static int calculateLightLevel(BlockState blockState) {
-    if (blockState.getValue(GlowStickBlock.CONTROLLED)
-      && !blockState.getValue(GlowStickBlock.POWERED)) {
+    if (blockState.getValue(GlowStickBlock.CONTROLLED) && !blockState.getValue(
+      GlowStickBlock.POWERED)) {
       return 0;
     }
 

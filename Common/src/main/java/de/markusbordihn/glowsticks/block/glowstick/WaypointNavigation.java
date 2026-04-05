@@ -19,6 +19,7 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
+import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
@@ -86,8 +87,7 @@ public class WaypointNavigation {
           BlockPos checkPos = playerPos.offset(x, y, z);
           BlockState checkState = clientLevel.getBlockState(checkPos);
 
-          if (checkState.getBlock() instanceof GlowStickBlock glowStick
-            && glowStick.getGlowStickColor() == targetColor) {
+          if (matchesGlowStickColor(checkState, targetColor)) {
             double distSqr = playerPos.distSqr(checkPos);
 
             if (distSqr >= 6.0 && distSqr < nearestDistSqr) {
@@ -102,6 +102,16 @@ public class WaypointNavigation {
     return nearest;
   }
 
+  private static boolean matchesGlowStickColor(BlockState blockState, DyeColor targetColor) {
+    if (blockState.getBlock() instanceof GlowStickBlock glowStick) {
+      return glowStick.getGlowStickColor() == targetColor;
+    }
+    if (blockState.getBlock() instanceof CreativeGlowStickBlock creativeGlowStick) {
+      return creativeGlowStick.getGlowStickColor() == targetColor;
+    }
+    return false;
+  }
+
   private static DyeColor getHeldGlowStickColor(LocalPlayer player) {
     if (player.getMainHandItem().getItem() instanceof GlowStickItem mainHandGlowStick) {
       return mainHandGlowStick.getDyeColor();
@@ -109,13 +119,12 @@ public class WaypointNavigation {
     if (player.getOffhandItem().getItem() instanceof GlowStickItem offHandGlowStick) {
       return offHandGlowStick.getDyeColor();
     }
-    return DyeColor.WHITE;
+    return null;
   }
 
   private static void spawnWaypointParticles(
     ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
 
-    int particleColor = calculateWaypointColor(glowStickColor);
     LocalPlayer player = Minecraft.getInstance().player;
     if (player == null) {
       return;
@@ -126,7 +135,7 @@ public class WaypointNavigation {
       return;
     }
 
-    spawnWaypointTrail(clientLevel, random, particleColor, trailParams);
+    spawnWaypointTrail(clientLevel, random, calculateWaypointColor(glowStickColor), trailParams);
   }
 
   private static int calculateWaypointColor(DyeColor glowStickColor) {
@@ -169,18 +178,15 @@ public class WaypointNavigation {
     ClientLevel clientLevel, RandomSource random, int particleColor, TrailParameters params) {
 
     int baseWaypoints = Math.max(8, Math.min(40, (int) (params.distance * 2.2)));
-    int particlesPerWaypoint = calculateParticlesPerWaypoint(params.distance);
-    double waypointStep = 1.0 / (baseWaypoints + 1);
     double minSpawnDistance = 1.0;
-
     spawnMainTrail(
       clientLevel,
       random,
       particleColor,
       params,
       baseWaypoints,
-      particlesPerWaypoint,
-      waypointStep,
+      calculateParticlesPerWaypoint(params.distance),
+      1.0 / (baseWaypoints + 1),
       minSpawnDistance);
     spawnTargetParticles(clientLevel, random, particleColor, params);
     spawnHelperParticles(
@@ -219,7 +225,6 @@ public class WaypointNavigation {
         params.startY + (params.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointZ =
         params.startZ + (params.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
-
       for (int j = 0; j < particlesPerWaypoint; j++) {
         float particleSize =
           (float) Math.min(2.0f, 0.9f + (params.distance * 0.08f) - (progress * 0.2f));

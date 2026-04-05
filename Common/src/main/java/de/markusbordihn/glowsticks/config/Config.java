@@ -149,6 +149,39 @@ public class Config {
     return defaultValue;
   }
 
+  protected static int parseConfigMinValue(
+    final Properties properties, final String key, final int defaultValue, final int minValue) {
+    return parseConfigRangedValue(properties, key, defaultValue, minValue, null);
+  }
+
+  protected static int parseConfigMaxValue(
+    final Properties properties, final String key, final int defaultValue, final int maxValue) {
+    return parseConfigRangedValue(properties, key, defaultValue, null, maxValue);
+  }
+
+  protected static int parseConfigRangedValue(
+    final Properties properties,
+    final String key,
+    final int defaultValue,
+    final Integer minValue,
+    final Integer maxValue) {
+    int value = parseConfigValue(properties, key, defaultValue);
+    int normalizedValue = value;
+
+    if (minValue != null) {
+      normalizedValue = Math.max(minValue, normalizedValue);
+    }
+    if (maxValue != null) {
+      normalizedValue = Math.min(maxValue, normalizedValue);
+    }
+
+    if (normalizedValue != value || !properties.containsKey(key)) {
+      properties.setProperty(key, Integer.toString(normalizedValue));
+    }
+
+    return normalizedValue;
+  }
+
   protected static boolean parseConfigValue(
     final Properties properties, final String key, final boolean defaultValue) {
     if (properties.containsKey(key)) {

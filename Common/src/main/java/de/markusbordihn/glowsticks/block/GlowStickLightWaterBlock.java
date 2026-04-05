@@ -58,4 +58,9 @@ public class GlowStickLightWaterBlock extends GlowStickLightBlock implements Liq
   public FluidState getFluidState(BlockState blockState) {
     return Fluids.WATER.getSource(false);
   }
+
+  @Override
+  protected BlockState getExpiredState(BlockState blockState) {
+    return Fluids.WATER.defaultFluidState().createLegacyBlock();
+  }
 }

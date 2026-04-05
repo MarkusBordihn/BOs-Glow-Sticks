@@ -72,34 +72,28 @@ public class GlowStickItem extends Item {
   }
 
   public static boolean isActivated(final ItemStack stack) {
-    GlowStickData glowStickData =
-      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
-    return glowStickData.activated();
+    return stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).activated();
   }
 
   public static void setActivated(final ItemStack stack, final boolean activated) {
-    GlowStickData currentData =
-      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
-    stack.set(DataComponents.GLOW_STICK_DATA, currentData.withActivated(activated));
+    stack.set(DataComponents.GLOW_STICK_DATA,
+      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY)
+        .withActivated(activated));
   }
 
   public static int getStep(final ItemStack itemStack) {
-    GlowStickData glowStickData =
-      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
-    return glowStickData.step();
+    return itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).step();
   }
 
   public static int setStep(final ItemStack itemStack, final int step) {
-    GlowStickData currentData =
-      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
-    itemStack.set(DataComponents.GLOW_STICK_DATA, currentData.withStep(step));
+    itemStack.set(DataComponents.GLOW_STICK_DATA,
+      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).withStep(step));
     return step;
   }
 
   public static int increaseStep(final ItemStack itemStack) {
-    GlowStickData currentData =
-      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
-    GlowStickData newData = currentData.withIncrementedStep();
+    GlowStickData newData = itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA,
+      GlowStickData.EMPTY).withIncrementedStep();
     itemStack.set(DataComponents.GLOW_STICK_DATA, newData);
     return newData.step();
   }
@@ -185,10 +179,7 @@ public class GlowStickItem extends Item {
 
   @Override
   public boolean releaseUsing(ItemStack itemStack, Level level, LivingEntity entity, int timeLeft) {
-    if (!isActivated(itemStack)) {
-      return true;
-    }
-    return false;
+    return !isActivated(itemStack);
   }
 
   @Override
@@ -215,7 +206,10 @@ public class GlowStickItem extends Item {
       Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
       tooltipConsumer,
-      Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
-        .withStyle(ChatFormatting.GREEN));
+      despawnTickRate <= 0
+        ? Component.translatable(TOOLTIP_PREFIX + ".use_infinite")
+          .withStyle(ChatFormatting.DARK_GREEN)
+        : Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
+          .withStyle(ChatFormatting.GREEN));
   }
 }
