@@ -1,8 +1,8 @@
 plugins {
   id 'maven-publish'
   id 'net.minecraftforge.accesstransformers' version '5.0.1'
-  id 'net.minecraftforge.gradle' version '7.0.0-beta.46'
-  id 'net.darkhax.curseforgegradle' version '1.1.28'
+  id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+  id 'net.darkhax.curseforgegradle' version '1.2.30'
   id 'nu.studer.credentials' version '3.0'
   id "com.modrinth.minotaur" version "2.+"
 }
@@ -13,13 +13,10 @@ base {
   archivesName = "${mod_id}-forge-${minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 minecraft {
   mappings channel: 'official', version: "${project.minecraft_version}"
-
-  // Access Transformer
-  accessTransformers = true
 
   // Run configurations
   runs {
@@ -35,6 +32,7 @@ minecraft {
 
     server {
       workingDir = project.file('run/server')
+      args '--nogui'
     }
 
     data {
@@ -75,7 +73,7 @@ repositories {
 dependencies {
   implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
-  annotationProcessor 'net.minecraftforge:eventbus-validator:7.0-beta.12'
+  annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
 
   // Include Common code
   compileOnly project(":Common")
@@ -105,6 +103,25 @@ tasks.withType(Test).configureEach {
 
 processResources {
   from project(":Common").sourceSets.main.resources
+  def minecraftVersionParts = project.minecraft_version.tokenize('.')
+  def javaVersion = project.extensions
+      .getByType(org.gradle.api.plugins.JavaPluginExtension)
+      .toolchain
+      .languageVersion
+      .get()
+      .asInt()
+  def replaceProperties = [
+      file                      : [jarVersion: '${file.jarVersion}'],
+      forge_loader_version_range: "[${project.forge_version.tokenize('.')[0]},)",
+      forge_version_range       : "[${project.forge_version},)",
+      minecraft_version_range   : "[${project.minecraft_version},${minecraftVersionParts[0]}.${(minecraftVersionParts[1] as int) + 1})",
+      java_version_range        : "[${javaVersion},)"
+  ]
+  inputs.properties replaceProperties
+
+  filesMatching("META-INF/mods.toml") {
+    expand replaceProperties
+  }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -133,12 +150,6 @@ publishing {
 // Merge the resources and classes into the same directory, because Java expects modules to be in a single directory.
 // And if we have it in multiple we have to do performance intensive hacks like having the UnionFileSystem
 // This will eventually be migrated to ForgeGradle so modders don't need to manually do it. But that is later.
-sourceSets.each {
-  def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
-  it.output.resourcesDir = dir
-  it.java.destinationDirectory = dir
-}
-
 sourceSets.each {
   def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
   it.output.resourcesDir = dir

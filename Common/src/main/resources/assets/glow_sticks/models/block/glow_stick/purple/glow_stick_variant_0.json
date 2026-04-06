@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:translucent",
   "parent": "glow_sticks:block/glow_stick/template/glow_stick_variant_0",
   "textures": {
     "particle": "glow_sticks:block/glow_stick/purple_75pc",

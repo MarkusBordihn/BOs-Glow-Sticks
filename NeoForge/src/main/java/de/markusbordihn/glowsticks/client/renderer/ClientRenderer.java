@@ -20,18 +20,13 @@
 package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
-import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,30 +40,6 @@ public class ClientRenderer {
 
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
-
-    event.enqueueWork(
-      () -> {
-        // Register render layers for all glow stick blocks
-        for (DyeColor dyeColor : DyeColor.values()) {
-          DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-          if (glowStickBlock != null) {
-            ItemBlockRenderTypes.setRenderLayer(
-              glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-          }
-          DeferredBlock<Block> creativeGlowStickBlock =
-            ModBlocks.getCreativeGlowStickBlock(dyeColor);
-          if (creativeGlowStickBlock != null) {
-            ItemBlockRenderTypes.setRenderLayer(
-              creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-          }
-        }
-
-        // Glow Stick Light Blocks (cutout mip)
-        ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT);
-        ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT);
-      });
   }
 
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {

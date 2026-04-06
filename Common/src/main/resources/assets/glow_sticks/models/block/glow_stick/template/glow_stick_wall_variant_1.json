@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:translucent",
   "credit": "Made with Blockbench by Markus Bordihn",
   "textures": {
     "particle": "glow_sticks:block/glow_stick/green_25pc",

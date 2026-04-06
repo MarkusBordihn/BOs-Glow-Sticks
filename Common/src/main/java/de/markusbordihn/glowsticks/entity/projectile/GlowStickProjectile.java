@@ -166,7 +166,9 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
         new ItemStack(getDefaultItem()));
 
     droppedItem.setDeltaMovement(
-      (level.random.nextFloat() - 0.5F) * 0.3F, 0.25F, (level.random.nextFloat() - 0.5F) * 0.3F);
+      (level.getRandom().nextFloat() - 0.5F) * 0.3F,
+      0.25F,
+      (level.getRandom().nextFloat() - 0.5F) * 0.3F);
 
     level.addFreshEntity(droppedItem);
   }

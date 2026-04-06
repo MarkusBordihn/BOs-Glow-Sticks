@@ -3,6 +3,9 @@ plugins {
   id "org.jetbrains.gradle.plugin.idea-ext" version "1.3"
 }
 
+def ghostRefScript = file(findProperty('ghostRefIndex') ?: '')
+if (ghostRefScript.exists()) apply from: ghostRefScript
+
 tasks.register('runAllGameTests') {
   group = 'verification'
   description = 'Runs both Fabric and Forge game tests.'
@@ -13,7 +16,7 @@ subprojects {
 
   apply plugin: 'java'
 
-  java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+  java.toolchain.languageVersion = JavaLanguageVersion.of(25)
   java.withSourcesJar()
   java.withJavadocJar()
 
@@ -29,8 +32,8 @@ subprojects {
 
   dependencies {
     configurations.configureEach {
-      resolutionStrategy.force 'org.ow2.asm:asm-analysis:9.8'
-      resolutionStrategy.force 'org.ow2.asm:asm-util:9.8'
+      resolutionStrategy.force 'org.ow2.asm:asm:9.8'
+      resolutionStrategy.force 'org.ow2.asm:asm-commons:9.8'
     }
   }
 
@@ -59,72 +62,4 @@ subprojects {
       downloadJavadoc = true
     }
   }
-}
-
-// Modern Gradle 9.x compatible publish task with delays
-// Publishes to Modrinth and CurseForge with 5 second delays between uploads
-tasks.register('publish') {
-  description = 'Cleans, builds and publishes to Modrinth and CurseForge sequentially with delays'
-  group = "publishing"
-
-  dependsOn 'clean', 'build'
-
-  doLast {
-    println "============================================================"
-    println "Starting sequential publishing to Modrinth and CurseForge"
-    println "============================================================"
-
-    def isWindows = System.properties['os.name'].toLowerCase().contains('windows')
-    def gradlewCmd = isWindows ? 'gradlew.bat' : './gradlew'
-
-    // Fabric Modrinth
-    println "\n[1/4] Publishing Fabric to Modrinth..."
-    exec {
-      workingDir rootDir
-      commandLine gradlewCmd, ':Fabric:modrinth', '--no-daemon'
-    }
-
-    println "\n⏳ Waiting 5 seconds before CurseForge upload..."
-    Thread.sleep(5000)
-
-    // Fabric CurseForge
-    println "\n[2/4] Publishing Fabric to CurseForge..."
-    exec {
-      workingDir rootDir
-      commandLine gradlewCmd, ':Fabric:curseforge', '--no-daemon'
-    }
-
-    println "\n⏳ Waiting 5 seconds before next platform..."
-    Thread.sleep(5000)
-
-    // NeoForge Modrinth
-    println "\n[3/4] Publishing NeoForge to Modrinth..."
-    exec {
-      workingDir rootDir
-      commandLine gradlewCmd, ':NeoForge:modrinth', '--no-daemon'
-    }
-
-    println "\n⏳ Waiting 5 seconds before CurseForge upload..."
-    Thread.sleep(5000)
-
-    // NeoForge CurseForge
-    println "\n[4/4] Publishing NeoForge to CurseForge..."
-    exec {
-      workingDir rootDir
-      commandLine gradlewCmd, ':NeoForge:curseforge', '--no-daemon'
-    }
-
-    println "\n============================================================"
-    println "✅ All uploads completed successfully!"
-    println "============================================================"
-  }
-}
-
-// Quick publish without delays (for testing)
-tasks.register('publishFast') {
-  description = 'Publishes to Modrinth and CurseForge without delays (for testing)'
-  group = "publishing"
-
-  dependsOn 'clean', 'build'
-  finalizedBy ':Fabric:modrinth', ':Fabric:curseforge', ':NeoForge:modrinth', ':NeoForge:curseforge'
 }

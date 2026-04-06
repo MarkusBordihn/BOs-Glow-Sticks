@@ -25,15 +25,33 @@ import de.markusbordihn.glowsticks.client.renderer.item.properties.numeric.GlowS
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties;
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ExtraCodecs;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModItemProperties {
 
-  public static void registerItemProperties() {
-    ConditionalItemModelProperties.ID_MAPPER.put(
-      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "activated"),
-      GlowStickActivated.MAP_CODEC);
+  private static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
+  private static final String ID_MAPPER_FIELD = "ID_MAPPER";
 
-    RangeSelectItemModelProperties.ID_MAPPER.put(
-      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "step"), GlowStickStep.MAP_CODEC);
+  @SuppressWarnings("unchecked")
+  public static void registerItemProperties() {
+    try {
+      getIdMapper(ConditionalItemModelProperties.class).put(
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "activated"),
+        GlowStickActivated.MAP_CODEC);
+
+      getIdMapper(RangeSelectItemModelProperties.class).put(
+        Identifier.fromNamespaceAndPath(Constants.MOD_ID, "step"), GlowStickStep.MAP_CODEC);
+    } catch (ReflectiveOperationException e) {
+      log.error("Failed to register item model properties via reflection: {}", e.getMessage());
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> ExtraCodecs.LateBoundIdMapper<Identifier, T> getIdMapper(
+    Class<?> itemPropertiesClass) throws ReflectiveOperationException {
+    return (ExtraCodecs.LateBoundIdMapper<Identifier, T>)
+      itemPropertiesClass.getField(ID_MAPPER_FIELD).get(null);
   }
 }

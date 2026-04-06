@@ -261,7 +261,9 @@ public class CreativeGlowStickItem extends Item {
         new ItemStack(glowStickBlock.asItem()));
 
     itemEntity.setDeltaMovement(
-      (level.random.nextFloat() - 0.5F) * 0.1F, 0.2F, (level.random.nextFloat() - 0.5F) * 0.1F);
+      (level.getRandom().nextFloat() - 0.5F) * 0.1F,
+      0.2F,
+      (level.getRandom().nextFloat() - 0.5F) * 0.1F);
 
     level.addFreshEntity(itemEntity);
   }

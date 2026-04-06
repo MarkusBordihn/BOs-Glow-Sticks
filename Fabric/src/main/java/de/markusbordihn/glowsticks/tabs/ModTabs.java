@@ -21,11 +21,10 @@ package de.markusbordihn.glowsticks.tabs;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.item.ModItems;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 public class ModTabs {
 
   public static final CreativeModeTab GLOW_STICKS_TAB =
-    FabricItemGroup.builder()
+    FabricCreativeModeTab.builder()
       .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE)))
       .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
       .displayItems(
@@ -55,7 +54,7 @@ public class ModTabs {
     log.info("{} Glow Sticks Tabs ...", Constants.LOG_SUB_REGISTER_PREFIX);
     Registry.register(
       BuiltInRegistries.CREATIVE_MODE_TAB,
-      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "tab"),
+      Constants.MOD_ID + ":tab",
       GLOW_STICKS_TAB);
   }
 }

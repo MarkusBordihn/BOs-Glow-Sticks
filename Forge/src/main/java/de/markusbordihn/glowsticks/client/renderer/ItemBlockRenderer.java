@@ -20,16 +20,10 @@
 package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
-import de.markusbordihn.glowsticks.block.ModBlocks;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,29 +38,5 @@ public class ItemBlockRenderer {
   @SubscribeEvent
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Item Block Renderer Setup ...", Constants.LOG_REGISTER_PREFIX);
-
-    event.enqueueWork(
-      () -> {
-        // Register render layers for all glow stick blocks
-        for (DyeColor dyeColor : DyeColor.values()) {
-          RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-          if (glowStickBlock != null) {
-            ItemBlockRenderTypes.setRenderLayer(
-              glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-          }
-          RegistryObject<Block> creativeGlowStickBlock =
-            ModBlocks.getCreativeGlowStickBlock(dyeColor);
-          if (creativeGlowStickBlock != null) {
-            ItemBlockRenderTypes.setRenderLayer(
-              creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
-          }
-        }
-
-        // Glow Stick Light Blocks (cutout mip)
-        ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT.get(), ChunkSectionLayer.CUTOUT);
-        ItemBlockRenderTypes.setRenderLayer(
-          ModBlocks.GLOW_STICK_LIGHT_WATER.get(), ChunkSectionLayer.CUTOUT);
-      });
   }
 }

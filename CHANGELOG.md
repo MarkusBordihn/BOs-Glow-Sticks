@@ -40,4 +40,4 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - First release of reworked Glow Sticks mods for Fabric, Forge and NeoForge.
 - General Code optimizations and improvements.
 
-[history]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/commits/1.21.11
+[history]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/commits/26.1.1
