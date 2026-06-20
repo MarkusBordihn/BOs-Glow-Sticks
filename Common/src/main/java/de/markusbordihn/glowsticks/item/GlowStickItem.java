@@ -208,7 +208,7 @@ public class GlowStickItem extends Item {
       tooltipConsumer,
       despawnTickRate <= 0
         ? Component.translatable(TOOLTIP_PREFIX + ".use_infinite")
-          .withStyle(ChatFormatting.DARK_GREEN)
+        .withStyle(ChatFormatting.DARK_GREEN)
         : Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
           .withStyle(ChatFormatting.GREEN));
   }

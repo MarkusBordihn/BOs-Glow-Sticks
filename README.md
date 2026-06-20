@@ -12,7 +12,7 @@
 [![Open Issues](https://img.shields.io/github/issues/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github&color=red)][issues_open]
 [![Closed Issues](https://img.shields.io/github/issues-closed/MarkusBordihn/BOs-Glow-Sticks?style=flat&logo=Github)][issues_closed]
 
-[![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=26.1.1)][ci]
+[![Java CI with Gradle](https://github.com/MarkusBordihn/BOs-Glow-Sticks/actions/workflows/gradle.yml/badge.svg?branch=26.2)][ci]
 
 ![Glow Sticks][logo]
 

@@ -25,13 +25,11 @@ import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
 import de.markusbordihn.glowsticks.item.ModItems;
 import java.util.EnumMap;
 import java.util.Map;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.DyeColor;
@@ -54,12 +52,12 @@ public class ModEntity {
       ResourceKey<EntityType<?>> entityKey = ResourceKey.create(Registries.ENTITY_TYPE, entityId);
 
       EntityType<GlowStickProjectile> glowStickEntity =
-        FabricEntityTypeBuilder.<GlowStickProjectile>create(
-            MobCategory.MISC,
-            (entityType, level) -> createGlowStickProjectile(entityType, level, dyeColor))
-          .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
-          .trackRangeChunks(4)
-          .trackedUpdateRate(10)
+        EntityType.Builder.<GlowStickProjectile>of(
+            (entityType, level) -> createGlowStickProjectile(entityType, level, dyeColor),
+            MobCategory.MISC)
+          .sized(0.25F, 0.25F)
+          .clientTrackingRange(4)
+          .updateInterval(10)
           .build(entityKey);
 
       GLOW_STICK_ENTITIES.put(dyeColor, glowStickEntity);
