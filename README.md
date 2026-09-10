@@ -21,7 +21,7 @@ Glow Sticks adds throwable and placeable light sources for Minecraft.
 Craft glow sticks in all 16 dye colors, throw them into caves or water, place permanent creative
 versions in builds, and use matching glow sticks as simple waypoints while exploring.
 
-## Features
+## ✨ Features
 
 - 16 glow stick colors
 - Temporary glow sticks that can be activated, thrown, and placed
@@ -44,7 +44,7 @@ The mod accepts `glow berries`, `glow ink sacs`, `glow lichen`, and `glowstone d
 ingredients.  
 Colored glow sticks use matching stained glass. The white glow stick uses normal glass.
 
-## Highlights
+## ✨ Highlights
 
 - Works on land and underwater
 - Glow sticks fade over time and lose brightness before disappearing
@@ -55,21 +55,28 @@ Colored glow sticks use matching stained glass. The white glow stick uses normal
 - Clicking an existing creative glow stick cycles through its visual variant
 - Glow sticks react to nearby redstone and can be controlled by signal strength
 
-## Why It Is Useful
+## ℹ️ Why It Is Useful
 
 - Fast cave marking without carrying lots of torches
 - Underwater lighting for ruins, caves, and diving routes
 - Atmospheric lights for adventure maps, RPG builds, and decoration
 - Easy color-coding for paths, entrances, or points of interest
 
-## Report Issues
+## 🐛 Report Issues
 
 Please report issues through the GitHub issue tracker:  
 https://github.com/MarkusBordihn/BOs-Glow-Sticks/issues
 
 Logs and clear reproduction steps help a lot when tracking down bugs.
 
-## License
+## 🧠 AI Assistance
+
+AI-assisted tools are used to improve documentation, translations, and repetitive code sections.
+This allows more time to be spent on feature development, maintenance, and long-term support. All
+technical concepts, gameplay logic, and final assets are created manually.
+See [AI ASSISTANCE](AI_ASSISTANCE.md) for full details.
+
+## ⚖️ License
 
 The [MIT LICENSE](LICENSE.md) applies only to the code in this repository.  
 Images, models, and other assets are explicitly excluded.
