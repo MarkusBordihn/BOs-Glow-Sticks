@@ -38,11 +38,9 @@ public class ModEntity {
 
   public static final DeferredRegister<EntityType<?>> ENTITIES =
       DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
-
+  public static final RegistryObject<EntityType<GlowStickProjectile>> GLOW_STICK;
   protected static final Map<DyeColor, RegistryObject<EntityType<GlowStickProjectile>>>
       GLOW_STICK_ENTITIES = new EnumMap<>(DyeColor.class);
-  public static final RegistryObject<EntityType<GlowStickProjectile>> GLOW_STICK =
-      GLOW_STICK_ENTITIES.get(DyeColor.WHITE);
 
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
@@ -63,6 +61,7 @@ public class ModEntity {
                           new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName)
                               .toString())));
     }
+    GLOW_STICK = GLOW_STICK_ENTITIES.get(DyeColor.WHITE);
   }
 
   protected ModEntity() {}

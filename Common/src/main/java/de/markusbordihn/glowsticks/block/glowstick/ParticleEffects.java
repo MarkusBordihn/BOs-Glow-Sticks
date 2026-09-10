@@ -19,8 +19,8 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
-import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -38,16 +38,20 @@ public class ParticleEffects {
       BlockPos blockPos,
       RandomSource random,
       DyeColor dyeColor) {
-    if (!(level instanceof ClientLevel clientLevel) || !shouldSpawnParticles(blockState, random)) {
+    if (!(level instanceof ClientLevel clientLevel)) {
       return;
     }
 
-    int currentAge = blockState.getValue(GlowStickBlock.AGE);
+    int currentAge = BlockStateManager.getAge(blockState);
+    if (!shouldSpawnParticles(currentAge, random)) {
+      return;
+    }
+
     float ageFactor = Math.max(0.2f, 1.0f - (currentAge / 15.0f));
     float size = Math.max(0.8f, ageFactor * 1.2f);
 
     Vector3f adjustedColors =
-        calculateAdjustedColors(dyeColor.getTextureDiffuseColors(), ageFactor);
+        calculateAdjustedColors(GlowStickColors.getRgbComponents(dyeColor), ageFactor);
     spawnMainParticle(clientLevel, blockPos, random, adjustedColors, size);
 
     if (currentAge <= 5 && random.nextInt(3) == 0) {
@@ -55,10 +59,10 @@ public class ParticleEffects {
     }
   }
 
-  private static boolean shouldSpawnParticles(BlockState blockState, RandomSource random) {
+  private static boolean shouldSpawnParticles(int age, RandomSource random) {
     return GlowSticksConfig.spawnRandomParticles
         && random.nextInt(GlowSticksConfig.randomParticleSpawnRate) == 0
-        && blockState.getValue(GlowStickBlock.AGE) < 15;
+        && age < BlockStateManager.MAX_AGE;
   }
 
   private static Vector3f calculateAdjustedColors(float[] baseColors, float brightness) {

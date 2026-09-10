@@ -21,17 +21,23 @@ package de.markusbordihn.glowsticks.block.glowstick;
 
 import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
+import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 public class BlockStateManager {
+
+  public static final int MAX_AGE = 15;
+  public static final int MIN_VARIANT = 0;
+  public static final int MAX_VARIANT = 5;
 
   public static BlockState createInitialBlockState(GlowStickBlock block) {
     return block
@@ -40,9 +46,25 @@ public class BlockStateManager {
         .setValue(GlowStickBlock.AGE, 0)
         .setValue(GlowStickBlock.FACING, Direction.NORTH)
         .setValue(GlowStickBlock.WATERLOGGED, false)
-        .setValue(GlowStickBlock.VARIANT, 1)
-        .setValue(GlowStickBlock.CONTROLLED, false)
-        .setValue(GlowStickBlock.POWERED, false);
+        .setValue(GlowStickBlock.REDSTONE_CONTROL, RedstoneCapable.UNCONTROLLED);
+  }
+
+  public static int getAge(BlockState blockState) {
+    return blockState.hasProperty(GlowStickBlock.AGE) ? blockState.getValue(GlowStickBlock.AGE) : 0;
+  }
+
+  public static int getVariant(BlockState blockState) {
+    return blockState.getValue(CreativeGlowStickBlock.VARIANT);
+  }
+
+  public static BlockState setVariant(BlockState blockState, int variant) {
+    return blockState.setValue(
+        CreativeGlowStickBlock.VARIANT, Mth.clamp(variant, MIN_VARIANT, MAX_VARIANT));
+  }
+
+  public static int getNextVariant(BlockState blockState) {
+    int currentVariant = getVariant(blockState);
+    return currentVariant >= MAX_VARIANT ? MIN_VARIANT : currentVariant + 1;
   }
 
   public static BlockState getCreativeStateForPlacement(
@@ -65,9 +87,14 @@ public class BlockStateManager {
         block
             .defaultBlockState()
             .setValue(CreativeGlowStickBlock.FACE, attachFace)
-            .setValue(GlowStickBlock.FACING, horizontalFacing),
+            .setValue(GlowStickBlock.FACING, horizontalFacing)
+            .setValue(GlowStickBlock.WATERLOGGED, isWaterAt(context, context.getClickedPos())),
         context.getLevel(),
         context.getClickedPos());
+  }
+
+  private static boolean isWaterAt(BlockPlaceContext context, BlockPos blockPos) {
+    return context.getLevel().getFluidState(blockPos).getType() == Fluids.WATER;
   }
 
   public static BlockState getStateForPlacement(GlowStickBlock block, BlockPlaceContext context) {
@@ -79,7 +106,8 @@ public class BlockStateManager {
     return RedstoneCapable.getInitialPlacementState(
         block
             .defaultBlockState()
-            .setValue(GlowStickBlock.FACING, context.getHorizontalDirection().getOpposite()),
+            .setValue(GlowStickBlock.FACING, context.getHorizontalDirection().getOpposite())
+            .setValue(GlowStickBlock.WATERLOGGED, isWaterAt(context, blockPlacementPos)),
         context.getLevel(),
         blockPlacementPos);
   }
@@ -90,35 +118,56 @@ public class BlockStateManager {
         : Fluids.EMPTY.defaultFluidState();
   }
 
-  public static void handleRandomTick(
-      BlockState blockState,
-      ServerLevel serverLevel,
-      BlockPos blockPos,
-      RandomSource random,
-      int despawnTickRate) {
-    if (despawnTickRate <= 0
-        || random.nextInt(despawnTickRate) != 0
-        || blockState.getValue(GlowStickBlock.CONTROLLED)) {
+  public static void handleDespawnTick(
+      BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, GlowStickBlock block) {
+    if (GlowSticksConfig.getGlowStickStageTicks() <= 0) {
       return;
     }
+
+    block.scheduleDespawnTick(serverLevel, blockPos);
 
     int currentAge = blockState.getValue(GlowStickBlock.AGE);
-    if (currentAge >= 15) {
-      serverLevel.destroyBlock(blockPos, true);
+    if (RedstoneCapable.isControlled(blockState)) {
+      if (GlowSticksConfig.glowStickRedstoneRecharges && RedstoneCapable.isPowered(blockState)) {
+        setAge(blockState, serverLevel, blockPos, currentAge - 1);
+      } else if (!GlowSticksConfig.glowStickRedstoneFreezesLifetime && currentAge < MAX_AGE) {
+        setAge(blockState, serverLevel, blockPos, currentAge + 1);
+      }
       return;
     }
 
-    serverLevel.setBlockAndUpdate(
-        blockPos, blockState.setValue(GlowStickBlock.AGE, currentAge + 1));
+    if (currentAge >= MAX_AGE) {
+      serverLevel.destroyBlock(blockPos, GlowSticksConfig.glowStickDropsOnDespawn);
+      return;
+    }
+
+    setAge(blockState, serverLevel, blockPos, currentAge + 1);
+  }
+
+  private static void setAge(
+      BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, int age) {
+    int normalizedAge = Mth.clamp(age, 0, MAX_AGE);
+    if (normalizedAge == blockState.getValue(GlowStickBlock.AGE)) {
+      return;
+    }
+
+    serverLevel.setBlock(
+        blockPos, blockState.setValue(GlowStickBlock.AGE, normalizedAge), Block.UPDATE_CLIENTS);
   }
 
   public static int calculateLightLevel(BlockState blockState) {
-    if (blockState.getValue(GlowStickBlock.CONTROLLED)
-        && !blockState.getValue(GlowStickBlock.POWERED)) {
-      return 0;
+    if (RedstoneCapable.isControlled(blockState)) {
+      return RedstoneCapable.getPower(blockState);
     }
 
-    int ageValue = blockState.getValue(GlowStickBlock.AGE);
-    return (int) Math.round(15 - (ageValue < 10 ? ageValue * 0.25 : ageValue * 0.75));
+    return Mth.clamp(MAX_AGE - blockState.getValue(GlowStickBlock.AGE), 1, MAX_AGE);
+  }
+
+  public static int calculateCreativeLightLevel(BlockState blockState) {
+    if (RedstoneCapable.isControlled(blockState)) {
+      return RedstoneCapable.getPower(blockState);
+    }
+
+    return MAX_AGE;
   }
 }

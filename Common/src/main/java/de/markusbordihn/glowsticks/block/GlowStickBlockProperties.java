@@ -34,6 +34,14 @@ public class GlowStickBlockProperties {
         .randomTicks();
   }
 
+  public static BlockBehaviour.Properties createCreativeGlowStickBlockProperties() {
+    return BlockBehaviour.Properties.of()
+        .mapColor(MapColor.NONE)
+        .sound(SoundType.SCAFFOLDING)
+        .noOcclusion()
+        .lightLevel(CreativeGlowStickBlock::getLightLevel);
+  }
+
   public static BlockBehaviour.Properties createLightBlockProperties() {
     return BlockBehaviour.Properties.of()
         .mapColor(MapColor.NONE)

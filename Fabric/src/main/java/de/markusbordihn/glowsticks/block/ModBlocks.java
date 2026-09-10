@@ -20,7 +20,6 @@
 package de.markusbordihn.glowsticks.block;
 
 import de.markusbordihn.glowsticks.Constants;
-import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.Registry;
@@ -31,7 +30,6 @@ import net.minecraft.world.level.block.Block;
 
 public class ModBlocks {
 
-  // Light blocks
   public static final Block GLOW_STICK_LIGHT =
       new GlowStickLightBlock(GlowStickBlockProperties.createLightBlockProperties());
   public static final Block GLOW_STICK_LIGHT_WATER =
@@ -41,7 +39,6 @@ public class ModBlocks {
       new EnumMap<>(DyeColor.class);
 
   public static void registerBlocks() {
-    // Register light blocks
     Registry.register(
         BuiltInRegistries.BLOCK,
         new ResourceLocation(Constants.MOD_ID, "glow_stick_light"),
@@ -51,29 +48,23 @@ public class ModBlocks {
         new ResourceLocation(Constants.MOD_ID, "glow_stick_light_water"),
         GLOW_STICK_LIGHT_WATER);
 
-    // Register all glow stick blocks for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
-
-      // Normal glow stick blocks
       GLOW_STICK_BLOCKS.put(
           dyeColor,
           Registry.register(
               BuiltInRegistries.BLOCK,
               new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName),
               new GlowStickBlock(
-                  GlowStickBlockProperties.createGlowStickBlockProperties(),
-                  dyeColor,
-                  GlowSticksConfig.despawnTicks)));
+                  GlowStickBlockProperties.createGlowStickBlockProperties(), dyeColor)));
 
-      // Creative glow stick blocks (wall/ceiling/floor placement, never despawn)
       CREATIVE_GLOW_STICK_BLOCKS.put(
           dyeColor,
           Registry.register(
               BuiltInRegistries.BLOCK,
               new ResourceLocation(Constants.MOD_ID, "creative_glow_stick_" + colorName),
               new CreativeGlowStickBlock(
-                  GlowStickBlockProperties.createGlowStickBlockProperties(), dyeColor)));
+                  GlowStickBlockProperties.createCreativeGlowStickBlockProperties(), dyeColor)));
     }
   }
 

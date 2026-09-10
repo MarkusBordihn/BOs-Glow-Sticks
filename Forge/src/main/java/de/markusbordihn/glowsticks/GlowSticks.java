@@ -2,6 +2,7 @@ package de.markusbordihn.glowsticks;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.config.Config;
+import de.markusbordihn.glowsticks.crafting.CreativeRecipeCondition;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
 import de.markusbordihn.glowsticks.tabs.ModTabs;
@@ -34,6 +35,9 @@ public class GlowSticks {
     log.info("{} Config ...", Constants.LOG_REGISTER_PREFIX);
     Config.register();
 
+    log.info("{} Recipe Conditions ...", Constants.LOG_REGISTER_PREFIX);
+    CreativeRecipeCondition.register();
+
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
@@ -46,7 +50,6 @@ public class GlowSticks {
     log.info("{} Creative Mode Tabs ...", Constants.LOG_REGISTER_PREFIX);
     ModTabs.register(modEventBus);
 
-    // Initialize the client mod initializer
     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new GlowSticksClient(modEventBus));
   }
 }

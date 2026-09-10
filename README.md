@@ -48,7 +48,7 @@ Colored glow sticks use matching stained glass. The white glow stick uses normal
 
 - Works on land and underwater
 - Glow sticks fade over time and lose brightness before disappearing
-- `despawnTicks=0` disables automatic fading for normal placed glow sticks
+- `glowStickLifetimeSeconds=0` disables automatic fading for normal placed glow sticks
 - Sneak while holding a glow stick to show waypoint particles to the nearest placed glow stick of
   the same color
 - Creative glow sticks can be placed on floors, walls, and ceilings

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "conditions": [
+    {
+      "type": "glow_sticks:creative_recipe_enabled"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "glow_sticks:creative_recipe_enabled"
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "glow_sticks:glow_stick_light_gray"
+    },
+    {
+      "item": "minecraft:glowstone"
+    },
+    {
+      "item": "minecraft:echo_shard"
+    }
+  ],
+  "result": {
+    "item": "glow_sticks:creative_glow_stick_light_gray",
+    "count": 1
+  }
+}

@@ -30,13 +30,11 @@ forge*changelog.txt
 # VSCode
 .vscode/launch.json
 
-# Template placeholder files
-put_your_*_here
-
 # Other
 .DS_Store
 generated
 *.clip
 *.stackdump
 *.log
+*.log.gz
 *.bak

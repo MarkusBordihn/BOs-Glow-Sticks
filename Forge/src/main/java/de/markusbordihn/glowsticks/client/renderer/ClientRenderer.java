@@ -23,12 +23,12 @@ import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -60,17 +61,19 @@ public class ClientRenderer {
         () -> {
           ResourceLocation animationStep =
               new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_STEP);
+          ResourceLocation activated =
+              new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_ACTIVATED);
 
-          // Register animation steps for all glow stick colors
           for (DyeColor dyeColor : DyeColor.values()) {
             RegistryObject<Item> glowStickItem = ModItems.getGlowStickItem(dyeColor);
             if (glowStickItem != null) {
               ItemProperties.register(
                   glowStickItem.get(), animationStep, ClientRenderer::getStepFromTag);
+              ItemProperties.register(
+                  glowStickItem.get(), activated, ClientRenderer::getActivatedFromTag);
             }
           }
 
-          // Register render layers for all glow stick blocks
           for (DyeColor dyeColor : DyeColor.values()) {
             RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
             if (glowStickBlock != null) {
@@ -84,7 +87,6 @@ public class ClientRenderer {
             }
           }
 
-          // Glow Stick Light Blocks (cutout mip)
           ItemBlockRenderTypes.setRenderLayer(
               ModBlocks.GLOW_STICK_LIGHT.get(), RenderType.cutoutMipped());
           ItemBlockRenderTypes.setRenderLayer(
@@ -103,16 +105,48 @@ public class ClientRenderer {
     return 0.0F;
   }
 
+  public static float getActivatedFromTag(
+      final ItemStack itemStack, final ClientLevel level, final LivingEntity living, final int id) {
+    return GlowStickItem.isActivated(itemStack) ? 1.0F : 0.0F;
+  }
+
+  @SubscribeEvent
+  public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      int rgb = GlowStickColors.getRgb(dyeColor);
+      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+      RegistryObject<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
+      if (glowStickBlock != null && creativeGlowStickBlock != null) {
+        event.register(
+            (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
+            glowStickBlock.get(),
+            creativeGlowStickBlock.get());
+      }
+    }
+  }
+
+  @SubscribeEvent
+  public static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      int rgb = GlowStickColors.getRgb(dyeColor);
+      RegistryObject<Item> glowStickItem = ModItems.getGlowStickItem(dyeColor);
+      RegistryObject<Item> creativeGlowStickItem = ModItems.getCreativeGlowStickItem(dyeColor);
+      if (glowStickItem != null && creativeGlowStickItem != null) {
+        event.register(
+            (itemStack, tintIndex) -> rgb, glowStickItem.get(), creativeGlowStickItem.get());
+      }
+    }
+  }
+
   @SubscribeEvent
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    // Register renderer for all glow stick entity colors
     for (DyeColor dyeColor : DyeColor.values()) {
       RegistryObject<EntityType<GlowStickProjectile>> glowStickEntity =
           ModEntity.getGlowStickEntity(dyeColor);
       if (glowStickEntity != null) {
-        event.registerEntityRenderer(glowStickEntity.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(glowStickEntity.get(), GlowStickProjectileRenderer::new);
       }
     }
   }

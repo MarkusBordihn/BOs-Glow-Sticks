@@ -31,14 +31,22 @@ public class GlowSticksConfig extends Config {
   This file contains the configuration for the Glow Sticks mod.
   You can enable or disable features and adjust settings as needed.
 
-  Glow Stick Despawn:
-  - despawnTicks: Controls the aging probability of glow sticks during random ticks.
-    A value 0 means glow sticks will never age automatically.
-    A value of 1 means every random tick has a 100% chance to age the glow stick.
-    A value of 2 means every random tick has a 50% chance to age the glow stick.
-    A value of 5 means every random tick has a 20% chance to age the glow stick.
-    Higher values make glow sticks last longer on average.
-    When a glow stick reaches age 15, it will despawn automatically.
+  Glow Stick Lifetime:
+  - glowStickLifetimeSeconds: How long a placed glow stick lasts before it despawns, in seconds.
+    The glow stick fades over 16 evenly spaced steps and vanishes at the end. Default: 2160 (36 min)
+    A value of 0 means glow sticks never fade and never despawn.
+  - glowStickDropsOnDespawn: Whether a glow stick drops its item when its lifetime runs out.
+  - glowStickRedstoneFreezesLifetime: Whether glow sticks next to redstone stop aging, even while
+    unpowered. Useful for permanent builds, disable this for a stricter survival balance.
+  - glowStickRedstoneRecharges: Whether powered glow sticks slowly recharge back to full brightness.
+  - glowStickChainLimit: How many connected glow sticks a single redstone signal can control.
+    A value of 0 disables chains, so only glow sticks touching redstone directly are controlled.
+
+  Glow Stick Handling:
+  - allowGlowStickBlockPlacement: Whether glow sticks can be placed as a block by right-clicking.
+  - allowGlowStickPickup: Whether placed glow sticks can be picked up again by sneak right-clicking.
+  - enableCreativeGlowStickRecipe: Whether permanent glow sticks can be crafted in survival.
+    Requires a world restart or /reload to take effect.
 
   Particle Effects (Client Side Only):
   - spawnRandomParticles: Enable or disable random glow particles from placed glow sticks.
@@ -49,7 +57,19 @@ public class GlowSticksConfig extends Config {
 
 """;
 
-  public static int despawnTicks = 2;
+  public static final int AGE_STEPS = 16;
+  private static final String LEGACY_DESPAWN_TICKS_KEY = "despawnTicks";
+  private static final int LEGACY_RANDOM_TICK_SECONDS = 68;
+  private static final int MAX_LIFETIME_SECONDS = 86400;
+
+  public static int glowStickLifetimeSeconds = 2160;
+  public static boolean glowStickDropsOnDespawn = false;
+  public static boolean glowStickRedstoneFreezesLifetime = true;
+  public static boolean glowStickRedstoneRecharges = true;
+  public static int glowStickChainLimit = 64;
+  public static boolean allowGlowStickBlockPlacement = true;
+  public static boolean allowGlowStickPickup = true;
+  public static boolean enableCreativeGlowStickRecipe = false;
   public static boolean spawnRandomParticles = true;
   public static int randomParticleSpawnRate = 25;
   public static boolean spawnWaypointParticles = true;
@@ -61,13 +81,67 @@ public class GlowSticksConfig extends Config {
     parseConfigFile();
   }
 
+  public static int getGlowStickStageTicks() {
+    if (glowStickLifetimeSeconds <= 0) {
+      return 0;
+    }
+
+    return Math.max(1, Math.round(glowStickLifetimeSeconds * 20.0f / AGE_STEPS));
+  }
+
+  static void migrateLegacyDespawnTicks(final Properties properties) {
+    if (!properties.containsKey(LEGACY_DESPAWN_TICKS_KEY)) {
+      return;
+    }
+
+    if (!properties.containsKey("glowStickLifetimeSeconds")) {
+      int legacyDespawnTicks = parseConfigMinValue(properties, LEGACY_DESPAWN_TICKS_KEY, 0, 0);
+      int migratedLifetimeSeconds =
+          legacyDespawnTicks <= 0
+              ? 0
+              : Math.min(
+                  MAX_LIFETIME_SECONDS,
+                  legacyDespawnTicks * AGE_STEPS * LEGACY_RANDOM_TICK_SECONDS);
+      properties.setProperty("glowStickLifetimeSeconds", Integer.toString(migratedLifetimeSeconds));
+      log.info(
+          "Migrated legacy despawnTicks {} to glowStickLifetimeSeconds {}",
+          legacyDespawnTicks,
+          migratedLifetimeSeconds);
+    }
+
+    properties.remove(LEGACY_DESPAWN_TICKS_KEY);
+  }
+
   public static void parseConfigFile() {
     File configFile = getConfigFile(CONFIG_FILE_NAME);
     Properties properties = readConfigFile(configFile);
     Properties unmodifiedProperties = (Properties) properties.clone();
 
-    // Config entries
-    despawnTicks = parseConfigMinValue(properties, "despawnTicks", despawnTicks, 0);
+    migrateLegacyDespawnTicks(properties);
+
+    glowStickLifetimeSeconds =
+        parseConfigRangedValue(
+            properties,
+            "glowStickLifetimeSeconds",
+            glowStickLifetimeSeconds,
+            0,
+            MAX_LIFETIME_SECONDS);
+    glowStickDropsOnDespawn =
+        parseConfigValue(properties, "glowStickDropsOnDespawn", glowStickDropsOnDespawn);
+    glowStickRedstoneFreezesLifetime =
+        parseConfigValue(
+            properties, "glowStickRedstoneFreezesLifetime", glowStickRedstoneFreezesLifetime);
+    glowStickRedstoneRecharges =
+        parseConfigValue(properties, "glowStickRedstoneRecharges", glowStickRedstoneRecharges);
+    glowStickChainLimit =
+        parseConfigMinValue(properties, "glowStickChainLimit", glowStickChainLimit, 0);
+    allowGlowStickBlockPlacement =
+        parseConfigValue(properties, "allowGlowStickBlockPlacement", allowGlowStickBlockPlacement);
+    allowGlowStickPickup =
+        parseConfigValue(properties, "allowGlowStickPickup", allowGlowStickPickup);
+    enableCreativeGlowStickRecipe =
+        parseConfigValue(
+            properties, "enableCreativeGlowStickRecipe", enableCreativeGlowStickRecipe);
     spawnRandomParticles =
         parseConfigValue(properties, "spawnRandomParticles", spawnRandomParticles);
     randomParticleSpawnRate =
@@ -80,7 +154,6 @@ public class GlowSticksConfig extends Config {
         parseConfigMinValue(
             properties, "waypointVerticalSearchRadius", waypointVerticalSearchRadius, 0);
 
-    // Update config file if needed
     updateConfigFileIfChanged(configFile, CONFIG_FILE_HEADER, properties, unmodifiedProperties);
   }
 }

@@ -22,13 +22,14 @@ package de.markusbordihn.glowsticks.client.renderer;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -47,14 +48,16 @@ public class ClientRenderer {
     log.info("{} Client Setup ...", Constants.LOG_REGISTER_PREFIX);
 
     ResourceLocation animationStep = new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_STEP);
+    ResourceLocation activated =
+        new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_ACTIVATED);
 
-    // Register animation steps for all glow stick colors
     for (DyeColor dyeColor : DyeColor.values()) {
       ItemProperties.register(
           ModItems.getGlowStickItem(dyeColor), animationStep, ClientRenderer::getStepFromTag);
+      ItemProperties.register(
+          ModItems.getGlowStickItem(dyeColor), activated, ClientRenderer::getActivatedFromTag);
     }
 
-    // Register render layers for all glow stick blocks
     for (DyeColor dyeColor : DyeColor.values()) {
       BlockRenderLayerMap.INSTANCE.putBlock(
           ModBlocks.getGlowStickBlock(dyeColor), RenderType.translucent());
@@ -62,10 +65,23 @@ public class ClientRenderer {
           ModBlocks.getCreativeGlowStickBlock(dyeColor), RenderType.translucent());
     }
 
-    // Glow Stick Light Blocks (cutout mip)
     BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GLOW_STICK_LIGHT, RenderType.cutoutMipped());
     BlockRenderLayerMap.INSTANCE.putBlock(
         ModBlocks.GLOW_STICK_LIGHT_WATER, RenderType.cutoutMipped());
+  }
+
+  public static void registerColorHandlers() {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      int rgb = GlowStickColors.getRgb(dyeColor);
+      ColorProviderRegistry.BLOCK.register(
+          (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
+          ModBlocks.getGlowStickBlock(dyeColor),
+          ModBlocks.getCreativeGlowStickBlock(dyeColor));
+      ColorProviderRegistry.ITEM.register(
+          (itemStack, tintIndex) -> rgb,
+          ModItems.getGlowStickItem(dyeColor),
+          ModItems.getCreativeGlowStickItem(dyeColor));
+    }
   }
 
   public static float getStepFromTag(
@@ -79,13 +95,17 @@ public class ClientRenderer {
     return 0.0F;
   }
 
+  public static float getActivatedFromTag(
+      final ItemStack itemStack, final ClientLevel level, final LivingEntity living, final int id) {
+    return GlowStickItem.isActivated(itemStack) ? 1.0F : 0.0F;
+  }
+
   public static void registerRenderers() {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    // Register renderer for all glow stick entity colors
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
-          ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
+          ModEntity.getGlowStickEntity(dyeColor), GlowStickProjectileRenderer::new);
     }
   }
 }

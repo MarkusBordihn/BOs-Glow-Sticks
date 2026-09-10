@@ -1,0 +1,59 @@
+import groovy.json.JsonOutput
+
+// Configuration
+ext {
+  lootTableColors = [
+      "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+      "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+  ]
+  lootTablePath =
+      "$projectDir/../Common/src/main/resources/data/glow_sticks/loot_tables/blocks"
+}
+
+tasks.register("generateGlowStickLootTables") {
+  group = "build"
+  description = "Generates the block loot tables for all glow stick blocks."
+
+  doLast {
+    def lootTableDir = new File(lootTablePath)
+    if (!lootTableDir.exists()) {
+      lootTableDir.mkdirs()
+    }
+
+    def singleItemLootTable = { itemName ->
+      [
+          type : "minecraft:block",
+          pools: [
+              [
+                  rolls  : 1,
+                  bonus_rolls: 0,
+                  entries: [
+                      [
+                          type: "minecraft:item",
+                          name: "glow_sticks:${itemName}"
+                      ]
+                  ],
+                  conditions: [
+                      [condition: "minecraft:survives_explosion"]
+                  ]
+              ]
+          ]
+      ]
+    }
+
+    lootTableColors.each { color ->
+      new File(lootTableDir, "glow_stick_${color}.json").text =
+          JsonOutput.prettyPrint(JsonOutput.toJson(singleItemLootTable("glow_stick_${color}")))
+      new File(lootTableDir, "creative_glow_stick_${color}.json").text =
+          JsonOutput.prettyPrint(
+              JsonOutput.toJson(singleItemLootTable("creative_glow_stick_${color}")))
+    }
+
+    ["glow_stick_light", "glow_stick_light_water"].each { lightBlock ->
+      new File(lootTableDir, "${lightBlock}.json").text =
+          JsonOutput.prettyPrint(JsonOutput.toJson([type: "minecraft:block", pools: []]))
+    }
+
+    println "✔ Generated ${lootTableColors.size() * 2 + 2} glow stick loot tables"
+  }
+}
