@@ -16,16 +16,16 @@
     "background": "glow_sticks:textures/gui/advancements/backgrounds/crafting.png"
   },
   "criteria": {
-    "glowstone_dust": {
+    "has_glow_item": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:glowstone_dust"]
+            "tag": "glow_sticks:glow_item"
           }
         ]
       }
     }
   },
-  "requirements": [["glowstone_dust"]]
+  "requirements": [["has_glow_item"]]
 }

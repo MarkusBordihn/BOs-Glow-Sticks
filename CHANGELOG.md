@@ -7,7 +7,23 @@ All notable changes to this project will be documented in this file.
 This change log includes the summarized changes.
 For the full changelog, please go to the [GitHub History][history] instead.
 
-### v7.3.0
+### 7.4.0
+
+- Fixed #7 by granting the crafting advancements only for actually crafted glow sticks.
+- Fixed #8 by replacing the random despawn chance with an exact lifetime in seconds.
+- Fixed glow sticks next to redstone components staying lit and immortal forever.
+- Fixed placed glow sticks dropping nothing, floating in the air or being destroyed by throws.
+- Fixed advancements and recipe book hints not unlocking for several glow stick actions.
+- Changed `despawnTicks` to `glowStickLifetimeSeconds`, migrated on first start, default 36 minutes.
+- Changed "Sharing is caring." from a challenge to a goal, so it no longer plays the challenge tune.
+- Changed glow stick colors to runtime tinting of one shared texture set.
+  Resource packs replacing single colored glow stick textures need to be updated.
+- Added placing and picking up of normal glow sticks, both toggleable in the config.
+- Added redstone recharging and evenly lit glow stick chains with a configurable size limit.
+- Added the "Follow the light" advancement and an optional survival recipe for creative sticks.
+- Added self-lit rendering, a flight animation and a particle trail for thrown glow sticks.
+
+### 7.3.0
 
 - Fixed #5 by adding vertical placeable creative glow sticks.
 - Fixed #6 by adjusting the Japanese Name for "Glow Stick". Thanks a lot to `@looksky495`
@@ -17,7 +33,7 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - Added config value validation for particle spawn rate and other glow stick settings.
 - Improved tooltip texts and configuration handling for glow sticks.
 
-### v7.2.0
+### 7.2.0
 
 - Refactored code for better readability and maintenance.
 - Fixed #2 by adding distance requirement.
@@ -28,14 +44,14 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - Added additional 3 variants for normal and creative Glow Sticks.
 - Removed `despawnEnabled` config entry and replaced it with `despawnTicks=0` configuration option.
 
-### v7.1.0
+### 7.1.0
 
 - Added basic particle effects for the Glow Sticks.
 - Added waypoint feature which shows a waypoint to the player when holding a Glow Stick and
   sneaking.
 - Added a new configuration option.
 
-### v7.0.0
+### 7.0.0
 
 - First release of reworked Glow Sticks mods for Fabric, Forge and NeoForge.
 - General Code optimizations and improvements.

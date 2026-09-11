@@ -1,0 +1,53 @@
+/*
+ * Copyright 2021 Markus Bordihn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package de.markusbordihn.glowsticks.crafting;
+
+import com.mojang.serialization.MapCodec;
+import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+
+public record CreativeRecipeCondition() implements ICondition {
+
+  public static final String NAME = "creative_recipe_enabled";
+  public static final MapCodec<CreativeRecipeCondition> CODEC =
+      MapCodec.unit(CreativeRecipeCondition::new);
+
+  private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS =
+      DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, Constants.MOD_ID);
+
+  public static void register(final IEventBus modEventBus) {
+    CONDITION_CODECS.register(NAME, () -> CODEC);
+    CONDITION_CODECS.register(modEventBus);
+  }
+
+  @Override
+  public boolean test(IContext context) {
+    return GlowSticksConfig.enableCreativeGlowStickRecipe;
+  }
+
+  @Override
+  public MapCodec<? extends ICondition> codec() {
+    return CODEC;
+  }
+}

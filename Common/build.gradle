@@ -18,10 +18,21 @@ minecraft {
 
 dependencies {
   compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+  testImplementation platform('org.junit:junit-bom:5.10.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-apply from: "$projectDir/../gradle/tasks/generateGlowStickModelOverrides.gradle"
-apply from: "$projectDir/../gradle/tasks/generateCreativeGlowStickModels.gradle"
+test {
+  useJUnitPlatform()
+  testLogging {
+    events 'failed'
+    exceptionFormat = 'full'
+  }
+}
+
+apply from: "$projectDir/../gradle/tasks/generateGlowStickLootTables.gradle"
+apply from: "$projectDir/../gradle/tasks/generateCreativeGlowStickRecipes.gradle"
 
 processResources {
 

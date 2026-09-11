@@ -3,6 +3,7 @@ package de.markusbordihn.glowsticks;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.component.ModDataComponents;
 import de.markusbordihn.glowsticks.config.Config;
+import de.markusbordihn.glowsticks.crafting.CreativeRecipeCondition;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.neoforged.bus.api.IEventBus;
@@ -31,6 +32,9 @@ public class GlowSticks {
 
     log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
     ModDataComponents.DATA_COMPONENTS.register(modEventBus);
+
+    log.info("{} Recipe Conditions ...", Constants.LOG_REGISTER_PREFIX);
+    CreativeRecipeCondition.register(modEventBus);
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(modEventBus);

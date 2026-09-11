@@ -1,0 +1,110 @@
+{
+  "credit": "Made with Blockbench by Markus Bordihn",
+  "textures": {
+    "particle": "glow_sticks:item/glow_stick/glow_stick_75pc",
+    "shell": "glow_sticks:item/glow_stick/glow_stick_75pc",
+    "core": "glow_sticks:item/glow_stick/glow_stick_100pc"
+  },
+  "elements": [
+    {
+      "name": "Shell",
+      "from": [11.5, 0, 4.1],
+      "to": [12.5, 1, 12.2],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [12.04667, 0.4875, 8.03939]
+      },
+      "faces": {
+        "north": {
+          "uv": [15, 3, 12, 0],
+          "texture": "#shell",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [9, 0, 12, 16],
+          "rotation": 90,
+          "texture": "#shell",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [15, 3, 12, 6],
+          "rotation": 180,
+          "texture": "#shell",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [3, 0, 6, 16],
+          "rotation": 270,
+          "texture": "#shell",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [0, 0, 3, 16],
+          "texture": "#shell",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [6, 0, 9, 16],
+          "rotation": 180,
+          "texture": "#shell",
+          "tintindex": 0
+        }
+      },
+      "forge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    },
+    {
+      "name": "Core",
+      "from": [11.9, 0.3, 4.4],
+      "to": [12.1, 0.6, 11.4],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [12.04667, 0.4875, 8.03939]
+      },
+      "faces": {
+        "north": {
+          "uv": [15, 3, 12, 0],
+          "texture": "#core",
+          "tintindex": 0
+        },
+        "east": {
+          "uv": [3, 0, 6, 16],
+          "rotation": 90,
+          "texture": "#core",
+          "tintindex": 0
+        },
+        "south": {
+          "uv": [15, 3, 12, 6],
+          "rotation": 180,
+          "texture": "#core",
+          "tintindex": 0
+        },
+        "west": {
+          "uv": [9, 0, 12, 16],
+          "rotation": 270,
+          "texture": "#core",
+          "tintindex": 0
+        },
+        "up": {
+          "uv": [0, 0, 3, 16],
+          "texture": "#core",
+          "tintindex": 0
+        },
+        "down": {
+          "uv": [6, 0, 9, 16],
+          "rotation": 180,
+          "texture": "#core",
+          "tintindex": 0
+        }
+      },
+      "forge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  ]
+}

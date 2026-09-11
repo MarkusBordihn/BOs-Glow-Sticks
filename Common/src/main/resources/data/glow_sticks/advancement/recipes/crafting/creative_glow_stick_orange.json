@@ -1,0 +1,60 @@
+{
+  "parent": "minecraft:recipes/root",
+  "forge:condition": {
+    "type": "glow_sticks:creative_recipe_enabled"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "glow_sticks:creative_recipe_enabled"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "glow_sticks:creative_recipe_enabled"
+    }
+  ],
+  "rewards": {
+    "recipes": [
+      "glow_sticks:creative_glow_stick_orange"
+    ]
+  },
+  "criteria": {
+    "has_glow_stick": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "glow_sticks:glow_stick_orange"
+            ]
+          }
+        ]
+      }
+    },
+    "has_echo_shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:echo_shard"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "glow_sticks:creative_glow_stick_orange"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_glow_stick",
+      "has_echo_shard",
+      "has_the_recipe"
+    ]
+  ]
+}

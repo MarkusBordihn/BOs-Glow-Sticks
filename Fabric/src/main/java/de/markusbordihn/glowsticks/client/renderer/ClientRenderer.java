@@ -23,14 +23,15 @@ import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.data.GlowStickData;
 import de.markusbordihn.glowsticks.entity.ModEntity;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
@@ -56,7 +57,7 @@ public class ClientRenderer {
 
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
-          ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
+          ModEntity.getGlowStickEntity(dyeColor), GlowStickProjectileRenderer::new);
     }
   }
 
@@ -84,5 +85,21 @@ public class ClientRenderer {
     BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GLOW_STICK_LIGHT, RenderType.cutoutMipped());
     BlockRenderLayerMap.INSTANCE.putBlock(
         ModBlocks.GLOW_STICK_LIGHT_WATER, RenderType.cutoutMipped());
+  }
+
+  public static void registerColorHandlers() {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      int rgb = GlowStickColors.getRgb(dyeColor);
+      ColorProviderRegistry.BLOCK.register(
+          (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
+          ModBlocks.getGlowStickBlock(dyeColor),
+          ModBlocks.getCreativeGlowStickBlock(dyeColor));
+
+      int opaqueArgb = GlowStickColors.getOpaqueArgb(dyeColor);
+      ColorProviderRegistry.ITEM.register(
+          (itemStack, tintIndex) -> opaqueArgb,
+          ModItems.getGlowStickItem(dyeColor),
+          ModItems.getCreativeGlowStickItem(dyeColor));
+    }
   }
 }

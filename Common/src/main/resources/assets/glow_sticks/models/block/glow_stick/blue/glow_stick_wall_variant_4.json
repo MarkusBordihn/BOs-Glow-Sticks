@@ -1,8 +1,0 @@
-{
-  "parent": "glow_sticks:block/glow_stick/template/glow_stick_wall_variant_4",
-  "textures": {
-    "particle": "glow_sticks:item/glow_stick/blue_75pc",
-    "shell": "glow_sticks:item/glow_stick/blue_75pc",
-    "core": "glow_sticks:item/glow_stick/blue_100pc"
-  }
-}

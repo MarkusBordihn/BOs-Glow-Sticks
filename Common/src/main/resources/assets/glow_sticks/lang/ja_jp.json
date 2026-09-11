@@ -5,6 +5,8 @@
   "advancements.glow_sticks.crafting.craft_glow_stick.title": "ケミカルライトをクラフト",
   "advancements.glow_sticks.crafting.root.description": "世界で最も暗い場所に光を持ち込む",
   "advancements.glow_sticks.crafting.root.title": "ケミカルライト",
+  "advancements.glow_sticks.interaction.place_waypoint.description": "ケミカルライトを設置し、同じ色のものを持ってスニークして目印のパーティクルをたどる",
+  "advancements.glow_sticks.interaction.place_waypoint.title": "光をたどって",
   "advancements.glow_sticks.interaction.share_glow_stick.description": "暗闇は危険だ！ ケミカルライトを他のプレイヤーに渡す",
   "advancements.glow_sticks.interaction.share_glow_stick.title": "分け合う心",
   "item.glow_sticks.creative_glow_stick_black": "クリエイティブ用ケミカルライト（黒色）",
@@ -59,7 +61,10 @@
   "text.glow_sticks.glow_stick_red.description": "レッドストーンのように赤いが、感電はしない",
   "text.glow_sticks.glow_stick_white.description": "日光に照らされたスケルトンよりも明るく輝く",
   "text.glow_sticks.glow_stick_yellow.description": "太陽のように輝くが、日焼けはしない",
+  "text.glow_sticks.glow_stick.pickup": "スニーク中に設置済みのケミカルライトを使用すると回収できます。",
+  "text.glow_sticks.glow_stick.place": "ブロックに使用すると、ケミカルライトを直接設置できます。",
+  "text.glow_sticks.glow_stick.remaining": "残りの発光: %s%%",
   "text.glow_sticks.glow_stick.usage": "使用すると起動し、その後自動的に投げられます。",
-  "text.glow_sticks.glow_stick.use": "ランダムティックごとに %s 分の1 の確率で劣化してやがて消滅する",
+  "text.glow_sticks.glow_stick.use": "約 %s 分で消滅します。",
   "text.glow_sticks.glow_stick.use_infinite": "設置されたケミカルライトは自動では消えません"
 }

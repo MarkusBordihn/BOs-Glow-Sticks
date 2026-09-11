@@ -19,6 +19,7 @@
 
 package de.markusbordihn.glowsticks.block;
 
+import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
 import de.markusbordihn.glowsticks.block.glowstick.ParticleEffects;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
@@ -26,9 +27,12 @@ import de.markusbordihn.glowsticks.block.glowstick.WaypointNavigation;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -43,6 +47,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -51,6 +56,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBlock {
 
   public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
+  public static final IntegerProperty VARIANT =
+      IntegerProperty.create(
+          "variant", BlockStateManager.MIN_VARIANT, BlockStateManager.MAX_VARIANT);
 
   private static final VoxelShape SHAPE_FLOOR = Block.box(2, 0, 2, 14, 2, 14);
   private static final VoxelShape SHAPE_CEILING = Block.box(2, 14, 2, 14, 16, 14);
@@ -69,19 +77,24 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
             .any()
             .setValue(FACE, AttachFace.FLOOR)
             .setValue(GlowStickBlock.FACING, Direction.NORTH)
-            .setValue(GlowStickBlock.AGE, 0)
-            .setValue(GlowStickBlock.VARIANT, 1)
+            .setValue(VARIANT, 1)
             .setValue(GlowStickBlock.WATERLOGGED, false)
-            .setValue(GlowStickBlock.CONTROLLED, false)
-            .setValue(GlowStickBlock.POWERED, false));
+            .setValue(GlowStickBlock.REDSTONE_CONTROL, RedstoneCapable.UNCONTROLLED));
   }
 
   public static int getLightLevel(BlockState blockState) {
-    return BlockStateManager.calculateLightLevel(blockState);
+    return BlockStateManager.calculateCreativeLightLevel(blockState);
   }
 
   public DyeColor getGlowStickColor() {
     return this.dyeColor;
+  }
+
+  @Override
+  public Item asItem() {
+    return BuiltInRegistries.ITEM.get(
+        ResourceLocation.fromNamespaceAndPath(
+            Constants.MOD_ID, "creative_glow_stick_" + this.dyeColor.getName()));
   }
 
   private Direction getConnectedDirection(BlockState state) {
@@ -114,9 +127,11 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
 
   @Override
   public boolean canSurvive(BlockState blockState, LevelReader level, BlockPos pos) {
-    Direction connected = getConnectedDirection(blockState);
-    BlockPos supportPos = pos.relative(connected);
-    return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, connected.getOpposite());
+    Direction connectedDirection = this.getConnectedDirection(blockState);
+    BlockPos supportPos = pos.relative(connectedDirection);
+    return level
+        .getBlockState(supportPos)
+        .isFaceSturdy(level, supportPos, connectedDirection.getOpposite());
   }
 
   @Override
@@ -127,12 +142,14 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       LevelAccessor level,
       BlockPos pos,
       BlockPos neighborPos) {
-    if (direction == getConnectedDirection(state) && !state.canSurvive(level, pos)) {
+    if (direction == this.getConnectedDirection(state) && !state.canSurvive(level, pos)) {
       return Blocks.AIR.defaultBlockState();
     }
+
     if (state.getValue(GlowStickBlock.WATERLOGGED)) {
       level.scheduleTick(pos, Fluids.WATER, 5);
     }
+
     return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
   }
 
@@ -140,12 +157,10 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     builder.add(
         FACE,
-        GlowStickBlock.AGE,
         GlowStickBlock.FACING,
-        GlowStickBlock.VARIANT,
+        VARIANT,
         GlowStickBlock.WATERLOGGED,
-        GlowStickBlock.CONTROLLED,
-        GlowStickBlock.POWERED);
+        GlowStickBlock.REDSTONE_CONTROL);
   }
 
   @Override
@@ -167,7 +182,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       BlockPos neighborPos,
       boolean isMoving) {
     super.neighborChanged(blockState, level, blockPos, neighborBlock, neighborPos, isMoving);
-    RedstoneCapable.handleNeighborChange(blockState, level, blockPos);
+    RedstoneCapable.handleNeighborChange(level, blockPos);
   }
 
   @Override
@@ -191,7 +206,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       LivingEntity placer,
       ItemStack itemStack) {
     super.setPlacedBy(level, blockPos, blockState, placer, itemStack);
-    RedstoneCapable.handleBlockPlacement(level, blockPos, blockState);
+    RedstoneCapable.handleBlockPlacement(level, blockPos);
   }
 
   @Override
@@ -208,6 +223,6 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
 
   @Override
   public boolean isSignalSource(BlockState blockState) {
-    return blockState.getValue(GlowStickBlock.CONTROLLED);
+    return false;
   }
 }

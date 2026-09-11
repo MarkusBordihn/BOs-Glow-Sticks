@@ -19,25 +19,34 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
+import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import de.markusbordihn.glowsticks.item.CreativeGlowStickItem;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
 
 public class WaypointNavigation {
 
   private static final int SEARCH_INTERVAL_TICKS = 10;
+  private static final double MIN_WAYPOINT_DISTANCE_SQUARED = 6.0;
   private static long lastSearchTick = 0;
   private static DyeColor cachedSearchColor = null;
   private static BlockPos cachedNearestGlowStick = null;
+  private static ResourceKey<Level> cachedSearchDimension = null;
 
   public static void handleWaypointParticles(
       ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
@@ -63,9 +72,14 @@ public class WaypointNavigation {
     }
 
     long currentTick = clientLevel.getGameTime();
-    if (cachedSearchColor != heldColor || currentTick - lastSearchTick >= SEARCH_INTERVAL_TICKS) {
+    ResourceKey<Level> currentDimension = clientLevel.dimension();
+    if (cachedSearchColor != heldColor
+        || cachedSearchDimension != currentDimension
+        || currentTick < lastSearchTick
+        || currentTick - lastSearchTick >= SEARCH_INTERVAL_TICKS) {
       lastSearchTick = currentTick;
       cachedSearchColor = heldColor;
+      cachedSearchDimension = currentDimension;
       cachedNearestGlowStick = findNearestGlowStick(clientLevel, player, heldColor);
     }
 
@@ -77,25 +91,62 @@ public class WaypointNavigation {
     BlockPos playerPos = player.blockPosition();
     int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
     int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
+    BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+
+    for (int shellRadius = 1;
+        shellRadius <= Math.max(horizontalRadius, verticalRadius);
+        shellRadius++) {
+      BlockPos nearestOfShell =
+          findInShell(
+              clientLevel,
+              playerPos,
+              checkPos,
+              targetColor,
+              shellRadius,
+              horizontalRadius,
+              verticalRadius);
+      if (nearestOfShell != null) {
+        return nearestOfShell;
+      }
+    }
+
+    return null;
+  }
+
+  private static BlockPos findInShell(
+      ClientLevel clientLevel,
+      BlockPos playerPos,
+      BlockPos.MutableBlockPos checkPos,
+      DyeColor targetColor,
+      int shellRadius,
+      int horizontalRadius,
+      int verticalRadius) {
+    int horizontalLimit = Math.min(shellRadius, horizontalRadius);
+    int verticalLimit = Math.min(shellRadius, verticalRadius);
 
     BlockPos nearest = null;
-    double nearestDistSqr = Double.MAX_VALUE;
+    double nearestDistanceSquared = Double.MAX_VALUE;
 
-    for (int x = -horizontalRadius; x <= horizontalRadius; x++) {
-      for (int y = -verticalRadius; y <= verticalRadius; y++) {
-        for (int z = -horizontalRadius; z <= horizontalRadius; z++) {
-          BlockPos checkPos = playerPos.offset(x, y, z);
-          BlockState checkState = clientLevel.getBlockState(checkPos);
-
-          if (checkState.getBlock() instanceof GlowStickBlock glowStick
-              && glowStick.getGlowStickColor() == targetColor) {
-            double distSqr = playerPos.distSqr(checkPos);
-
-            if (distSqr >= 6.0 && distSqr < nearestDistSqr) {
-              nearestDistSqr = distSqr;
-              nearest = checkPos;
-            }
+    for (int offsetY = -verticalLimit; offsetY <= verticalLimit; offsetY++) {
+      for (int offsetX = -horizontalLimit; offsetX <= horizontalLimit; offsetX++) {
+        boolean fullRow = Math.abs(offsetX) == shellRadius || Math.abs(offsetY) == shellRadius;
+        for (int offsetZ = -horizontalLimit; offsetZ <= horizontalLimit; offsetZ++) {
+          if (!fullRow && Math.abs(offsetZ) != shellRadius) {
+            continue;
           }
+
+          checkPos.set(
+              playerPos.getX() + offsetX, playerPos.getY() + offsetY, playerPos.getZ() + offsetZ);
+          double distanceSquared = playerPos.distSqr(checkPos);
+          if (distanceSquared < MIN_WAYPOINT_DISTANCE_SQUARED
+              || distanceSquared >= nearestDistanceSquared
+              || !clientLevel.isLoaded(checkPos)
+              || !matchesGlowStickColor(clientLevel.getBlockState(checkPos), targetColor)) {
+            continue;
+          }
+
+          nearestDistanceSquared = distanceSquared;
+          nearest = checkPos.immutable();
         }
       }
     }
@@ -103,13 +154,35 @@ public class WaypointNavigation {
     return nearest;
   }
 
+  private static boolean matchesGlowStickColor(BlockState blockState, DyeColor targetColor) {
+    Block block = blockState.getBlock();
+    if (block instanceof GlowStickBlock glowStickBlock) {
+      return glowStickBlock.getGlowStickColor() == targetColor;
+    }
+    if (block instanceof CreativeGlowStickBlock creativeGlowStickBlock) {
+      return creativeGlowStickBlock.getGlowStickColor() == targetColor;
+    }
+
+    return false;
+  }
+
   private static DyeColor getHeldGlowStickColor(LocalPlayer player) {
-    if (player.getMainHandItem().getItem() instanceof GlowStickItem mainHandGlowStick) {
-      return mainHandGlowStick.getDyeColor();
+    DyeColor mainHandColor = getGlowStickColor(player.getMainHandItem());
+    if (mainHandColor != null) {
+      return mainHandColor;
     }
-    if (player.getOffhandItem().getItem() instanceof GlowStickItem offHandGlowStick) {
-      return offHandGlowStick.getDyeColor();
+
+    return getGlowStickColor(player.getOffhandItem());
+  }
+
+  private static DyeColor getGlowStickColor(ItemStack itemStack) {
+    if (itemStack.getItem() instanceof GlowStickItem glowStickItem) {
+      return glowStickItem.getDyeColor();
     }
+    if (itemStack.getItem() instanceof CreativeGlowStickItem creativeGlowStickItem) {
+      return creativeGlowStickItem.getDyeColor();
+    }
+
     return null;
   }
 
@@ -122,24 +195,23 @@ public class WaypointNavigation {
       return;
     }
 
-    TrailParameters trailParams = calculateTrailParameters(player, blockPos);
-    if (trailParams.distance < 2.0) {
+    TrailParameters trail = calculateTrailParameters(player, blockPos);
+    if (trail.distance < 2.0) {
       return;
     }
 
-    spawnWaypointTrail(clientLevel, random, particleColors, trailParams);
+    spawnWaypointTrail(clientLevel, random, particleColors, trail);
   }
 
   private static Vector3f calculateWaypointColors(DyeColor glowStickColor) {
-    int colorValue = glowStickColor.getTextureDiffuseColor();
-    float red = ((colorValue >> 16) & 0xFF) / 255.0f;
-    float green = ((colorValue >> 8) & 0xFF) / 255.0f;
-    float blue = (colorValue & 0xFF) / 255.0f;
-    float colorMultiplier = Math.max(red, Math.max(green, blue)) > 0.3f ? 1.8f : 2.5f;
+    float[] baseColors = GlowStickColors.getRgbComponents(glowStickColor);
+    float colorMultiplier =
+        Math.max(baseColors[0], Math.max(baseColors[1], baseColors[2])) > 0.3f ? 1.8f : 2.5f;
+
     return new Vector3f(
-        Math.min(1.0f, red * colorMultiplier),
-        Math.min(1.0f, green * colorMultiplier),
-        Math.min(1.0f, blue * colorMultiplier));
+        Math.min(1.0f, baseColors[0] * colorMultiplier),
+        Math.min(1.0f, baseColors[1] * colorMultiplier),
+        Math.min(1.0f, baseColors[2] * colorMultiplier));
   }
 
   private static TrailParameters calculateTrailParameters(LocalPlayer player, BlockPos blockPos) {
@@ -166,22 +238,22 @@ public class WaypointNavigation {
       ClientLevel clientLevel,
       RandomSource random,
       Vector3f particleColors,
-      TrailParameters params) {
+      TrailParameters trail) {
 
-    int baseWaypoints = Math.max(8, Math.min(40, (int) (params.distance * 2.2)));
+    int baseWaypoints = Math.max(8, Math.min(40, (int) (trail.distance * 2.2)));
     double minSpawnDistance = 1.0;
     spawnMainTrail(
         clientLevel,
         random,
         particleColors,
-        params,
+        trail,
         baseWaypoints,
-        calculateParticlesPerWaypoint(params.distance),
+        calculateParticlesPerWaypoint(trail.distance),
         1.0 / (baseWaypoints + 1),
         minSpawnDistance);
-    spawnTargetParticles(clientLevel, random, particleColors, params);
+    spawnTargetParticles(clientLevel, random, particleColors, trail);
     spawnHelperParticles(
-        clientLevel, random, particleColors, params, baseWaypoints, minSpawnDistance);
+        clientLevel, random, particleColors, trail, baseWaypoints, minSpawnDistance);
   }
 
   private static int calculateParticlesPerWaypoint(double distance) {
@@ -198,7 +270,7 @@ public class WaypointNavigation {
       ClientLevel clientLevel,
       RandomSource random,
       Vector3f particleColors,
-      TrailParameters params,
+      TrailParameters trail,
       int baseWaypoints,
       int particlesPerWaypoint,
       double waypointStep,
@@ -206,19 +278,19 @@ public class WaypointNavigation {
 
     for (int i = 1; i <= baseWaypoints; i++) {
       double progress = i * waypointStep;
-      if (progress * params.distance < minSpawnDistance) {
+      if (progress * trail.distance < minSpawnDistance) {
         continue;
       }
 
       double waypointX =
-          params.startX + (params.deltaX * progress) + (random.nextGaussian() - 0.5) * 0.06;
+          trail.startX + (trail.deltaX * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointY =
-          params.startY + (params.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
+          trail.startY + (trail.deltaY * progress) + (random.nextGaussian() - 0.5) * 0.06;
       double waypointZ =
-          params.startZ + (params.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
+          trail.startZ + (trail.deltaZ * progress) + (random.nextGaussian() - 0.5) * 0.06;
       for (int j = 0; j < particlesPerWaypoint; j++) {
         float particleSize =
-            (float) Math.min(2.0f, 0.9f + (params.distance * 0.08f) - (progress * 0.2f));
+            (float) Math.min(2.0f, 0.9f + (trail.distance * 0.08f) - (progress * 0.2f));
 
         clientLevel.addParticle(
             new DustParticleOptions(particleColors, particleSize),
@@ -236,15 +308,15 @@ public class WaypointNavigation {
       ClientLevel clientLevel,
       RandomSource random,
       Vector3f particleColors,
-      TrailParameters params) {
+      TrailParameters trail) {
 
-    int targetParticleCount = Math.max(3, Math.min(8, (int) (params.distance * 0.5)));
+    int targetParticleCount = Math.max(3, Math.min(8, (int) (trail.distance * 0.5)));
     for (int i = 0; i < targetParticleCount; i++) {
       clientLevel.addParticle(
           new DustParticleOptions(particleColors, 1.5f),
-          params.targetX + (random.nextGaussian() - 0.5) * 0.2,
-          params.targetY - 0.35 + random.nextFloat() * 0.3,
-          params.targetZ + (random.nextGaussian() - 0.5) * 0.2,
+          trail.targetX + (random.nextGaussian() - 0.5) * 0.2,
+          trail.targetY - 0.35 + random.nextFloat() * 0.3,
+          trail.targetZ + (random.nextGaussian() - 0.5) * 0.2,
           (random.nextGaussian() - 0.5) * 0.004,
           0.004 + random.nextGaussian() * 0.002,
           (random.nextGaussian() - 0.5) * 0.004);
@@ -255,23 +327,23 @@ public class WaypointNavigation {
       ClientLevel clientLevel,
       RandomSource random,
       Vector3f particleColors,
-      TrailParameters params,
+      TrailParameters trail,
       int baseWaypoints,
       double minSpawnDistance) {
 
-    if (params.distance > 12.0) {
+    if (trail.distance > 12.0) {
       int helperParticleCount = Math.min(5, baseWaypoints / 8);
       for (int i = 0; i < helperParticleCount; i++) {
         double randomProgress = 0.3 + (random.nextDouble() * 0.4);
-        if (randomProgress * params.distance < minSpawnDistance) {
+        if (randomProgress * trail.distance < minSpawnDistance) {
           continue;
         }
 
         clientLevel.addParticle(
             new DustParticleOptions(particleColors, 0.8f),
-            params.startX + (params.deltaX * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
-            params.startY + (params.deltaY * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
-            params.startZ + (params.deltaZ * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+            trail.startX + (trail.deltaX * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+            trail.startY + (trail.deltaY * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
+            trail.startZ + (trail.deltaZ * randomProgress) + (random.nextGaussian() - 0.5) * 0.12,
             (random.nextGaussian() - 0.5) * 0.002,
             0.002,
             (random.nextGaussian() - 0.5) * 0.002);

@@ -4,12 +4,12 @@
     "recipes": ["glow_sticks:glow_stick_brown_from_stained_glass_brown"]
   },
   "criteria": {
-    "has_dye": {
+    "has_stained_glass": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:brown_dye"]
+            "items": ["minecraft:brown_stained_glass"]
           }
         ]
       }
@@ -31,5 +31,5 @@
       }
     }
   },
-  "requirements": [["has_dye", "has_glow_item", "has_the_recipe"]]
+  "requirements": [["has_stained_glass", "has_glow_item", "has_the_recipe"]]
 }
