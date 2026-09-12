@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:glow_stick_ages_and_vanishes",
+  "environment": "glow_sticks:glow_stick_lifetime_vanish",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

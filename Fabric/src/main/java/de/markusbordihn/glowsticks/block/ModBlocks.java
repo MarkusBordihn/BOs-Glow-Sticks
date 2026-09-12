@@ -20,7 +20,6 @@
 package de.markusbordihn.glowsticks.block;
 
 import de.markusbordihn.glowsticks.Constants;
-import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.Registry;
@@ -31,7 +30,6 @@ import net.minecraft.world.level.block.Block;
 
 public class ModBlocks {
 
-  // Light blocks
   public static final Block GLOW_STICK_LIGHT =
     new GlowStickLightBlock(
       GlowStickBlockProperties.createLightBlockProperties("glow_stick_light"));
@@ -43,7 +41,6 @@ public class ModBlocks {
     new EnumMap<>(DyeColor.class);
 
   public static void registerBlocks() {
-    // Register light blocks
     Registry.register(
       BuiltInRegistries.BLOCK,
       Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light"),
@@ -53,11 +50,9 @@ public class ModBlocks {
       Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light_water"),
       GLOW_STICK_LIGHT_WATER);
 
-    // Register all glow stick blocks for each dye color
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
 
-      // Normal glow stick blocks
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
         dyeColor,
@@ -65,11 +60,8 @@ public class ModBlocks {
           BuiltInRegistries.BLOCK,
           Identifier.fromNamespaceAndPath(Constants.MOD_ID, blockName),
           new GlowStickBlock(
-            GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
-            dyeColor,
-            GlowSticksConfig.despawnTicks)));
+            GlowStickBlockProperties.createGlowStickBlockProperties(blockName), dyeColor)));
 
-      // Creative glow stick blocks (wall/ceiling/floor placement, never despawn)
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
         dyeColor,
@@ -77,7 +69,7 @@ public class ModBlocks {
           BuiltInRegistries.BLOCK,
           Identifier.fromNamespaceAndPath(Constants.MOD_ID, creativeBlockName),
           new CreativeGlowStickBlock(
-            GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
+            GlowStickBlockProperties.createCreativeGlowStickBlockProperties(creativeBlockName),
             dyeColor)));
     }
   }

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:light_level_fades_evenly",
+  "environment": "minecraft:default",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

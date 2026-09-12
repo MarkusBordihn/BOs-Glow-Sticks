@@ -15,7 +15,23 @@ neoForge {
 
 dependencies {
   compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.7'
+  testImplementation platform('org.junit:junit-bom:5.10.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  // moddev puts Minecraft and its log4j on the compile classpath only, so tests need it explicitly.
+  testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.25.2'
 }
+
+test {
+  useJUnitPlatform()
+  testLogging {
+    events 'failed'
+    exceptionFormat = 'full'
+  }
+}
+
+apply from: "$projectDir/../gradle/tasks/generateGlowStickLootTables.gradle"
+apply from: "$projectDir/../gradle/tasks/generateCreativeGlowStickRecipes.gradle"
 
 processResources {
   inputs.property "version", project.version

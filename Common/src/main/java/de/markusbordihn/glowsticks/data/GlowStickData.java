@@ -27,13 +27,14 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 
-public record GlowStickData(boolean activated, int step) {
+public record GlowStickData(boolean activated, int step, int age) {
 
   public static final String ID = "glow_stick_data";
   public static final String STEP_TAG = "step";
   public static final String ACTIVATED_TAG = "activated";
+  public static final String AGE_TAG = "age";
 
-  public static final GlowStickData EMPTY = new GlowStickData(false, 0);
+  public static final GlowStickData EMPTY = new GlowStickData(false, 0, 0);
   public static final Identifier STEP_PREDICATE =
     Identifier.fromNamespaceAndPath(Constants.MOD_ID, STEP_TAG);
   public static final Identifier ACTIVATED_PREDICATE =
@@ -45,7 +46,8 @@ public record GlowStickData(boolean activated, int step) {
         instance
           .group(
             Codec.BOOL.fieldOf(ACTIVATED_TAG).forGetter(GlowStickData::activated),
-            Codec.INT.fieldOf(STEP_TAG).forGetter(GlowStickData::step))
+            Codec.INT.fieldOf(STEP_TAG).forGetter(GlowStickData::step),
+            Codec.INT.optionalFieldOf(AGE_TAG, 0).forGetter(GlowStickData::age))
           .apply(instance, GlowStickData::new));
 
   public static final StreamCodec<ByteBuf, GlowStickData> STREAM_CODEC =
@@ -54,17 +56,23 @@ public record GlowStickData(boolean activated, int step) {
       GlowStickData::activated,
       ByteBufCodecs.VAR_INT,
       GlowStickData::step,
+      ByteBufCodecs.VAR_INT,
+      GlowStickData::age,
       GlowStickData::new);
 
   public GlowStickData withActivated(boolean activated) {
-    return new GlowStickData(activated, this.step);
+    return new GlowStickData(activated, this.step, this.age);
   }
 
   public GlowStickData withStep(int step) {
-    return new GlowStickData(this.activated, step);
+    return new GlowStickData(this.activated, step, this.age);
   }
 
   public GlowStickData withIncrementedStep() {
-    return new GlowStickData(this.activated, this.step + 1);
+    return new GlowStickData(this.activated, this.step + 1, this.age);
+  }
+
+  public GlowStickData withAge(int age) {
+    return new GlowStickData(this.activated, this.step, age);
   }
 }

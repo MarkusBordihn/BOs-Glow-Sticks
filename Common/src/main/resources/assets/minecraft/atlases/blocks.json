@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:directory",
+      "prefix": "block/glow_stick/",
+      "source": "item/glow_stick"
+    }
+  ]
+}

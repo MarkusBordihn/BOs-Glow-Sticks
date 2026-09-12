@@ -1,0 +1,76 @@
+import groovy.json.JsonOutput
+
+// Configuration
+ext {
+  creativeRecipeColors = [
+      "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+      "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+  ]
+  creativeRecipePath = "$projectDir/../Common/src/main/resources/data/glow_sticks/recipe"
+  creativeRecipeAdvancementPath =
+      "$projectDir/../Common/src/main/resources/data/glow_sticks/advancement/recipes/crafting"
+  creativeRecipeCondition = "glow_sticks:creative_recipe_enabled"
+}
+
+tasks.register("generateCreativeGlowStickRecipes") {
+  group = "build"
+  description = "Generates the config gated survival recipes for all creative glow sticks."
+
+  doLast {
+    def recipeDir = new File(creativeRecipePath)
+    def advancementDir = new File(creativeRecipeAdvancementPath)
+    [recipeDir, advancementDir].each { directory ->
+      if (!directory.exists()) {
+        directory.mkdirs()
+      }
+    }
+
+    // Every loader reads its own key: Forge a single "forge:condition" object, NeoForge a
+    // "neoforge:conditions" array and Fabric API a "fabric:load_conditions" array.
+    def loaderConditions = { [
+        "forge:condition"       : [type: creativeRecipeCondition],
+        "neoforge:conditions"   : [[type: creativeRecipeCondition]],
+        "fabric:load_conditions": [[condition: creativeRecipeCondition]]
+    ] }
+
+    creativeRecipeColors.each { color ->
+      def recipeId = "glow_sticks:creative_glow_stick_${color}"
+
+      new File(recipeDir, "creative_glow_stick_${color}.json").text =
+          JsonOutput.prettyPrint(JsonOutput.toJson([
+              type: "minecraft:crafting_shapeless"
+          ] + loaderConditions() + [
+              ingredients: [
+                  "glow_sticks:glow_stick_${color}",
+                  "minecraft:glowstone",
+                  "minecraft:echo_shard"
+              ],
+              result     : [id: "glow_sticks:creative_glow_stick_${color}", count: 1]
+          ]))
+
+      new File(advancementDir, "creative_glow_stick_${color}.json").text =
+          JsonOutput.prettyPrint(JsonOutput.toJson([
+              parent: "minecraft:recipes/root"
+          ] + loaderConditions() + [
+              rewards     : [recipes: [recipeId]],
+              criteria    : [
+                  has_glow_stick: [
+                      trigger   : "minecraft:inventory_changed",
+                      conditions: [items: [[items: ["glow_sticks:glow_stick_${color}"]]]]
+                  ],
+                  has_echo_shard: [
+                      trigger   : "minecraft:inventory_changed",
+                      conditions: [items: [[items: ["minecraft:echo_shard"]]]]
+                  ],
+                  has_the_recipe: [
+                      trigger   : "minecraft:recipe_unlocked",
+                      conditions: [recipe: recipeId]
+                  ]
+              ],
+              requirements: [["has_glow_stick", "has_echo_shard", "has_the_recipe"]]
+          ]))
+    }
+
+    println "✔ Generated ${creativeRecipeColors.size() * 2} creative glow stick recipe files"
+  }
+}

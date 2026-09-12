@@ -4,7 +4,9 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.client.renderer.item.properties.ModItemProperties;
 import de.markusbordihn.glowsticks.component.ModDataComponents;
 import de.markusbordihn.glowsticks.config.Config;
+import de.markusbordihn.glowsticks.crafting.CreativeRecipeCondition;
 import de.markusbordihn.glowsticks.entity.ModEntity;
+import de.markusbordihn.glowsticks.gametest.ModGameTests;
 import de.markusbordihn.glowsticks.item.ModItems;
 import de.markusbordihn.glowsticks.tabs.ModTabs;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
@@ -37,6 +39,9 @@ public class GlowSticks {
     log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
     ModDataComponents.DATA_COMPONENTS.register(modBusGroup);
 
+    log.info("{} Recipe Conditions ...", Constants.LOG_REGISTER_PREFIX);
+    CreativeRecipeCondition.register(modBusGroup);
+
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.ENTITIES.register(modBusGroup);
 
@@ -48,6 +53,9 @@ public class GlowSticks {
 
     log.info("{} Creative Tabs ...", Constants.LOG_REGISTER_PREFIX);
     ModTabs.CREATIVE_MODE_TABS.register(modBusGroup);
+
+    log.info("{} Game Tests ...", Constants.LOG_REGISTER_PREFIX);
+    ModGameTests.register(modBusGroup);
 
     if (FMLEnvironment.dist.isClient()) {
       ModItemProperties.registerItemProperties();

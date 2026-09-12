@@ -22,6 +22,7 @@ package de.markusbordihn.glowsticks.block.glowstick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,9 +36,9 @@ public class LavaInteraction {
     return blockState.is(Blocks.LAVA) || blockState.getFluidState().is(Fluids.LAVA);
   }
 
-  public static void handleLavaDestruction(Level level, BlockPos lavaPosition) {
+  public static void handleLavaDestruction(Level level, BlockPos lavaPosition, Entity source) {
     level.explode(
-      null,
+      source,
       lavaPosition.getX() + 0.5,
       lavaPosition.getY() + 0.5,
       lavaPosition.getZ() + 0.5,

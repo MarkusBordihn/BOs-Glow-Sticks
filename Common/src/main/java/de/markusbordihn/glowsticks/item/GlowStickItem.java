@@ -20,6 +20,10 @@
 package de.markusbordihn.glowsticks.item;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.block.GlowStickBlock;
+import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
+import de.markusbordihn.glowsticks.block.glowstick.PlacementSounds;
+import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
 import de.markusbordihn.glowsticks.component.DataComponents;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import de.markusbordihn.glowsticks.data.GlowStickData;
@@ -28,10 +32,14 @@ import de.markusbordihn.glowsticks.utils.ToolTips;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,8 +50,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class GlowStickItem extends Item {
 
@@ -52,50 +63,54 @@ public class GlowStickItem extends Item {
   public static final int DURATION_TICKS = ANIMATION_STEPS * 2;
   public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME;
 
+  private static final int PLACEMENT_COOLDOWN_TICKS = 4;
+
   protected final Supplier<Block> blockSupplier;
-  protected final int despawnTickRate;
   private final DyeColor dyeColor;
 
   public GlowStickItem(Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
-    this(properties, blockSupplier, dyeColor, GlowSticksConfig.despawnTicks);
-  }
-
-  public GlowStickItem(
-    Properties properties,
-    Supplier<Block> blockSupplier,
-    DyeColor dyeColor,
-    int despawnTickRate) {
     super(properties);
     this.blockSupplier = blockSupplier;
-    this.despawnTickRate = despawnTickRate;
     this.dyeColor = dyeColor;
   }
 
+  private static GlowStickData getData(final ItemStack itemStack) {
+    return itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY);
+  }
+
   public static boolean isActivated(final ItemStack stack) {
-    return stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).activated();
+    return getData(stack).activated();
   }
 
   public static void setActivated(final ItemStack stack, final boolean activated) {
-    stack.set(DataComponents.GLOW_STICK_DATA,
-      stack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY)
-        .withActivated(activated));
+    stack.set(DataComponents.GLOW_STICK_DATA, getData(stack).withActivated(activated));
   }
 
   public static int getStep(final ItemStack itemStack) {
-    return itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).step();
+    return getData(itemStack).step();
   }
 
   public static int setStep(final ItemStack itemStack, final int step) {
-    itemStack.set(DataComponents.GLOW_STICK_DATA,
-      itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA, GlowStickData.EMPTY).withStep(step));
+    itemStack.set(DataComponents.GLOW_STICK_DATA, getData(itemStack).withStep(step));
     return step;
   }
 
   public static int increaseStep(final ItemStack itemStack) {
-    GlowStickData newData = itemStack.getOrDefault(DataComponents.GLOW_STICK_DATA,
-      GlowStickData.EMPTY).withIncrementedStep();
-    itemStack.set(DataComponents.GLOW_STICK_DATA, newData);
-    return newData.step();
+    GlowStickData increasedData = getData(itemStack).withIncrementedStep();
+    itemStack.set(DataComponents.GLOW_STICK_DATA, increasedData);
+    return increasedData.step();
+  }
+
+  public static int getAge(final ItemStack itemStack) {
+    return Mth.clamp(getData(itemStack).age(), 0, BlockStateManager.MAX_AGE);
+  }
+
+  public static void setAge(final ItemStack itemStack, final int age) {
+    if (age > 0) {
+      itemStack.set(
+        DataComponents.GLOW_STICK_DATA,
+        getData(itemStack).withAge(Mth.clamp(age, 0, BlockStateManager.MAX_AGE)));
+    }
   }
 
   public static float getStepFromDataComponent(
@@ -103,6 +118,7 @@ public class GlowStickItem extends Item {
     if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
       return getStep(itemStack);
     }
+
     return 0.0F;
   }
 
@@ -111,6 +127,7 @@ public class GlowStickItem extends Item {
     if (itemStack.getItem() instanceof GlowStickItem && livingEntity != null) {
       return isActivated(itemStack) ? 1.0F : 0.0F;
     }
+
     return 0.0F;
   }
 
@@ -119,7 +136,7 @@ public class GlowStickItem extends Item {
   }
 
   public DyeColor getDyeColor() {
-    return dyeColor;
+    return this.dyeColor;
   }
 
   @Override
@@ -133,27 +150,117 @@ public class GlowStickItem extends Item {
   }
 
   @Override
+  public InteractionResult useOn(UseOnContext context) {
+    ItemStack itemStack = context.getItemInHand();
+    Player player = context.getPlayer();
+    if (player == null || isActivated(itemStack)) {
+      return InteractionResult.PASS;
+    }
+
+    Level level = context.getLevel();
+    BlockPos clickedPos = context.getClickedPos();
+    BlockState clickedState = level.getBlockState(clickedPos);
+    if (player.isShiftKeyDown() && clickedState.getBlock() instanceof GlowStickBlock) {
+      return GlowSticksConfig.allowGlowStickPickup
+        ? this.pickUpGlowStick(level, clickedPos, clickedState, player)
+        : InteractionResult.PASS;
+    }
+
+    return GlowSticksConfig.allowGlowStickBlockPlacement
+      ? this.placeGlowStick(context, level, player, itemStack)
+      : InteractionResult.PASS;
+  }
+
+  private InteractionResult pickUpGlowStick(
+    Level level, BlockPos blockPos, BlockState blockState, Player player) {
+    if (level.isClientSide()) {
+      return InteractionResult.SUCCESS;
+    }
+
+    ItemStack pickedUpStack = new ItemStack(blockState.getBlock().asItem());
+    setAge(pickedUpStack, blockState.getValue(GlowStickBlock.AGE));
+    level.removeBlock(blockPos, false);
+
+    if (!player.getInventory().add(pickedUpStack)) {
+      player.drop(pickedUpStack, false);
+    }
+    level.playSound(null, blockPos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.4F, 1.0F);
+
+    return InteractionResult.CONSUME;
+  }
+
+  private InteractionResult placeGlowStick(
+    UseOnContext context, Level level, Player player, ItemStack itemStack) {
+    Block glowStickBlock = this.blockSupplier.get();
+    if (glowStickBlock == null) {
+      return InteractionResult.PASS;
+    }
+
+    BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
+    if (!blockPlaceContext.canPlace()) {
+      return InteractionResult.PASS;
+    }
+
+    BlockPos placementPos = blockPlaceContext.getClickedPos();
+    BlockState placementState = glowStickBlock.getStateForPlacement(blockPlaceContext);
+    if (placementState == null || !placementState.canSurvive(level, placementPos)) {
+      return InteractionResult.PASS;
+    }
+
+    if (level.isClientSide()) {
+      return InteractionResult.SUCCESS;
+    }
+
+    level.setBlockAndUpdate(
+      placementPos, placementState.setValue(GlowStickBlock.AGE, getAge(itemStack)));
+    PlacementSounds.playPlacementSound(
+      level, placementPos, level.getBlockState(placementPos.below()), level.getRandom());
+    RedstoneCapable.handleBlockPlacement(level, placementPos);
+    if (player instanceof ServerPlayer serverPlayer) {
+      CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, placementPos, itemStack);
+    }
+
+    player.getCooldowns().addCooldown(itemStack, PLACEMENT_COOLDOWN_TICKS);
+    if (!player.getAbilities().instabuild) {
+      itemStack.shrink(1);
+    }
+
+    return InteractionResult.CONSUME;
+  }
+
+  @Override
   public InteractionResult use(Level level, Player player, InteractionHand hand) {
     ItemStack itemStack = player.getItemInHand(hand);
-    if (isActivated(itemStack)) {
-      if (!level.isClientSide()) {
-        GlowStickProjectile entity = getGlowStickEntity(level, player);
-        entity.setItem(itemStack);
-        entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
-        level.addFreshEntity(entity);
-        player.getCooldowns().addCooldown(itemStack, DURATION_TICKS);
-        if (!player.getAbilities().instabuild) {
-          itemStack.shrink(1);
-        }
-      }
-      setActivated(itemStack, false);
-      setStep(itemStack, 0);
-      player.awardStat(Stats.ITEM_USED.get(this));
-      return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
-    } else {
+    if (!isActivated(itemStack)) {
       player.startUsingItem(hand);
       return InteractionResult.CONSUME;
     }
+
+    if (!level.isClientSide()) {
+      GlowStickProjectile entity = this.getGlowStickEntity(level, player);
+      entity.setItem(itemStack);
+      entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+      level.addFreshEntity(entity);
+      level.playSound(
+        null,
+        player.getX(),
+        player.getY(),
+        player.getZ(),
+        SoundEvents.SNOWBALL_THROW,
+        SoundSource.NEUTRAL,
+        0.5F,
+        0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+      player.getCooldowns().addCooldown(itemStack, DURATION_TICKS);
+      if (!player.getAbilities().instabuild) {
+        itemStack.shrink(1);
+      }
+    }
+
+    setActivated(itemStack, false);
+    setStep(itemStack, 0);
+    player.awardStat(Stats.ITEM_USED.get(this));
+
+    return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
   }
 
   @Override
@@ -166,10 +273,10 @@ public class GlowStickItem extends Item {
           livingEntity.getX(),
           livingEntity.getY(),
           livingEntity.getZ(),
-          SoundEvents.TRIDENT_HIT,
+          SoundEvents.FLINTANDSTEEL_USE,
           SoundSource.NEUTRAL,
-          1.0F,
-          1.0F);
+          0.8F,
+          0.5F + level.getRandom().nextFloat() * 0.2F);
       }
       if (step > ANIMATION_STEPS) {
         setStep(itemStack, 0);
@@ -179,7 +286,12 @@ public class GlowStickItem extends Item {
 
   @Override
   public boolean releaseUsing(ItemStack itemStack, Level level, LivingEntity entity, int timeLeft) {
-    return !isActivated(itemStack);
+    if (!isActivated(itemStack)) {
+      setStep(itemStack, 0);
+      return true;
+    }
+
+    return false;
   }
 
   @Override
@@ -187,6 +299,7 @@ public class GlowStickItem extends Item {
     if (!level.isClientSide() && !isActivated(itemStack)) {
       setActivated(itemStack, true);
     }
+
     return itemStack;
   }
 
@@ -199,17 +312,40 @@ public class GlowStickItem extends Item {
     TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
       tooltipConsumer,
-      Component.translatable(TOOLTIP_PREFIX + "_" + dyeColor + ".description")
+      Component.translatable(TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
         .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
       tooltipConsumer,
       Component.translatable(TOOLTIP_PREFIX + ".usage").withStyle(ChatFormatting.YELLOW));
     ToolTips.addTooltip(
       tooltipConsumer,
-      despawnTickRate <= 0
+      GlowSticksConfig.glowStickLifetimeSeconds <= 0
         ? Component.translatable(TOOLTIP_PREFIX + ".use_infinite")
-          .withStyle(ChatFormatting.DARK_GREEN)
-        : Component.translatable(TOOLTIP_PREFIX + ".use", despawnTickRate)
+        .withStyle(ChatFormatting.DARK_GREEN)
+        : Component.translatable(
+            TOOLTIP_PREFIX + ".use", GlowSticksConfig.glowStickLifetimeSeconds / 60)
           .withStyle(ChatFormatting.GREEN));
+
+    if (GlowSticksConfig.allowGlowStickBlockPlacement) {
+      ToolTips.addTooltip(
+        tooltipConsumer,
+        Component.translatable(TOOLTIP_PREFIX + ".place").withStyle(ChatFormatting.YELLOW));
+    }
+
+    if (GlowSticksConfig.allowGlowStickPickup) {
+      ToolTips.addTooltip(
+        tooltipConsumer,
+        Component.translatable(TOOLTIP_PREFIX + ".pickup").withStyle(ChatFormatting.YELLOW));
+    }
+
+    int age = getAge(itemStack);
+    if (age > 0) {
+      ToolTips.addTooltip(
+        tooltipConsumer,
+        Component.translatable(
+            TOOLTIP_PREFIX + ".remaining",
+            Math.round((GlowSticksConfig.AGE_STEPS - age) * 100.0f / GlowSticksConfig.AGE_STEPS))
+          .withStyle(ChatFormatting.GOLD));
+    }
   }
 }

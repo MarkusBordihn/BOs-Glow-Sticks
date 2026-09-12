@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:creative_glow_stick_drops_creative_item",
+  "environment": "minecraft:default",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

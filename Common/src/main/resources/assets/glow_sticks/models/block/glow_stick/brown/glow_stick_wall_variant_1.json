@@ -1,9 +1,0 @@
-{
-  "render_type": "minecraft:translucent",
-  "parent": "glow_sticks:block/glow_stick/template/glow_stick_wall_variant_1",
-  "textures": {
-    "particle": "glow_sticks:block/glow_stick/brown_75pc",
-    "shell": "glow_sticks:block/glow_stick/brown_75pc",
-    "core": "glow_sticks:block/glow_stick/brown_100pc"
-  }
-}
