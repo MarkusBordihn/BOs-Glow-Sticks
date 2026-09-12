@@ -82,7 +82,11 @@ tasks.named("sourcesJar", Jar) {
 }
 
 tasks.named("processResources", ProcessResources) {
-  from project(":Common").sourceSets.main.resources
+  from(project(":Common").sourceSets.main.resources) {
+    filesMatching("assets/**/models/**/*.json") {
+      filter { String line -> line.replace("\"forge_data\"", "\"neoforge_data\"") }
+    }
+  }
 }
 
 tasks.withType(Test).configureEach {
@@ -105,6 +109,7 @@ if (project.hasProperty('curseforge_project_id') && project.curseforge_project_i
     mainFile.changelogType = 'markdown'
     mainFile.changelog = rootProject.file("CHANGELOG.md").text
     mainFile.releaseType = "${project.curseforge_release_type}"
+    mainFile.addEnvironment("Client", "Server")
     mainFile.addModLoader('NeoForge')
     mainFile.addGameVersion("${project.minecraft_version}")
   }

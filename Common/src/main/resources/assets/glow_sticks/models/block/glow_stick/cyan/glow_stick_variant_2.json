@@ -1,8 +1,0 @@
-{
-  "parent": "glow_sticks:block/glow_stick/template/glow_stick_variant_2",
-  "textures": {
-    "particle": "glow_sticks:block/glow_stick/cyan_75pc",
-    "shell": "glow_sticks:block/glow_stick/cyan_75pc",
-    "core": "glow_sticks:block/glow_stick/cyan_100pc"
-  }
-}

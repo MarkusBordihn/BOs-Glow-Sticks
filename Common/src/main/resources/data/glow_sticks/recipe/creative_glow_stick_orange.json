@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "forge:condition": {
+        "type": "glow_sticks:creative_recipe_enabled"
+    },
+    "neoforge:conditions": [
+        {
+            "type": "glow_sticks:creative_recipe_enabled"
+        }
+    ],
+    "fabric:load_conditions": [
+        {
+            "condition": "glow_sticks:creative_recipe_enabled"
+        }
+    ],
+    "ingredients": [
+        "glow_sticks:glow_stick_orange",
+        "minecraft:glowstone",
+        "minecraft:echo_shard"
+    ],
+    "result": {
+        "id": "glow_sticks:creative_glow_stick_orange",
+        "count": 1
+    }
+}

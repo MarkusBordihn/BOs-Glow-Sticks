@@ -1,15 +1,18 @@
 {
   "parent": "minecraft:recipes/root",
   "rewards": {
-    "recipes": ["glow_sticks:glow_stick_white_from_stained_glass_white"]
+    "recipes": [
+      "glow_sticks:glow_stick_white_from_stained_glass_white",
+      "glow_sticks:glow_stick_white_from_glass"
+    ]
   },
   "criteria": {
-    "has_dye": {
+    "has_glass": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:white_dye"]
+            "items": ["minecraft:white_stained_glass", "minecraft:glass"]
           }
         ]
       }
@@ -19,7 +22,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "glow_sticks:glow_item"
+            "items": "#glow_sticks:glow_item"
           }
         ]
       }
@@ -29,7 +32,15 @@
       "conditions": {
         "recipe": "glow_sticks:glow_stick_white_from_stained_glass_white"
       }
+    },
+    "has_the_recipe_from_glass": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "glow_sticks:glow_stick_white_from_glass"
+      }
     }
   },
-  "requirements": [["has_dye", "has_glow_item", "has_the_recipe"]]
+  "requirements": [
+    ["has_glass", "has_glow_item", "has_the_recipe", "has_the_recipe_from_glass"]
+  ]
 }

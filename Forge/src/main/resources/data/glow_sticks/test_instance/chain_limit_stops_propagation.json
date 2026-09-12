@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:chain_limit_stops_propagation",
+  "environment": "glow_sticks:glow_stick_chain_limit",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

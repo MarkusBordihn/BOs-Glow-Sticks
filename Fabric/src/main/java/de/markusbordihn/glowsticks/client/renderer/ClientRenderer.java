@@ -22,12 +22,13 @@ package de.markusbordihn.glowsticks.client.renderer;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.DyeColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +51,7 @@ public class ClientRenderer {
 
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
-        ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
+        ModEntity.getGlowStickEntity(dyeColor), GlowStickProjectileRenderer::new);
     }
   }
 
@@ -64,5 +65,15 @@ public class ClientRenderer {
 
     BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT, ChunkSectionLayer.CUTOUT);
     BlockRenderLayerMap.putBlock(ModBlocks.GLOW_STICK_LIGHT_WATER, ChunkSectionLayer.CUTOUT);
+  }
+
+  public static void registerColorHandlers() {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      int rgb = GlowStickColors.getRgb(dyeColor);
+      ColorProviderRegistry.BLOCK.register(
+        (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
+        ModBlocks.getGlowStickBlock(dyeColor),
+        ModBlocks.getCreativeGlowStickBlock(dyeColor));
+    }
   }
 }

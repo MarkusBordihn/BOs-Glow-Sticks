@@ -1,8 +1,0 @@
-{
-  "parent": "glow_sticks:item/glow_stick/glow_stick_activated",
-  "textures": {
-    "particle": "glow_sticks:item/glow_stick/yellow_50pc",
-    "shell": "glow_sticks:item/glow_stick/yellow_50pc",
-    "core": "glow_sticks:item/glow_stick/yellow_100pc"
-  }
-}

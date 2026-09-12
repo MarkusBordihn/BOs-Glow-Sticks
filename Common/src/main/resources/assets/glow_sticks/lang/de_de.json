@@ -1,10 +1,12 @@
 {
   "advancements.glow_sticks.crafting.craft_all_glow_sticks.description": "Hol dir alle 16 farbigen Leuchtstäbe.",
   "advancements.glow_sticks.crafting.craft_all_glow_sticks.title": "Hol dir alle Leuchtstäbe.",
-  "advancements.glow_sticks.crafting.craft_glow_stick.description": "Kombiniere einfach leuchtendes Zeug und Glas, um einen Leuchtstab zu erhalten.",
+  "advancements.glow_sticks.crafting.craft_glow_stick.description": "Stelle einen Leuchtstab aus leuchtendem Zeug und Glas her.",
   "advancements.glow_sticks.crafting.craft_glow_stick.title": "Fertige einen Leuchtstab an",
   "advancements.glow_sticks.crafting.root.description": "Hol etwas Licht in die dunkelsten Gegenden der Welt.",
   "advancements.glow_sticks.crafting.root.title": "Leuchtstäbe",
+  "advancements.glow_sticks.interaction.place_waypoint.description": "Platziere einen Leuchtstab und schleiche mit einem gleichfarbigen, um den Partikeln zu folgen.",
+  "advancements.glow_sticks.interaction.place_waypoint.title": "Folge dem Licht",
   "advancements.glow_sticks.interaction.share_glow_stick.description": "Im Dunkeln ist es gefährlich! Teile einen Leuchtstab mit einem Spieler.",
   "advancements.glow_sticks.interaction.share_glow_stick.title": "Teilen ist Kümmern.",
   "item.glow_sticks.creative_glow_stick_black": "Kreativer Leuchtstab (schwarz)",
@@ -59,7 +61,10 @@
   "text.glow_sticks.glow_stick_red.description": "Rot wie Redstone aber ohne Stromschlag.",
   "text.glow_sticks.glow_stick_white.description": "Leuchtet heller als ein Skelett in der Sonne.",
   "text.glow_sticks.glow_stick_yellow.description": "Scheint wie die Sonne, aber ohne Sonnenbrand.",
+  "text.glow_sticks.glow_stick.pickup": "Schleichen und benutzen, um einen platzierten Leuchtstab wieder aufzuheben.",
+  "text.glow_sticks.glow_stick.place": "Auf einen Block anwenden, um den Leuchtstab direkt zu platzieren.",
+  "text.glow_sticks.glow_stick.remaining": "Verbleibendes Leuchten: %s%%",
   "text.glow_sticks.glow_stick.usage": "Verwenden zum Aktivieren, wird dann automatisch geworfen.",
-  "text.glow_sticks.glow_stick.use": "Hat eine 1-zu-%s-Chance, bei jedem zufälligen Tick zu altern, bis er verschwindet.",
+  "text.glow_sticks.glow_stick.use": "Verblasst nach etwa %s Minuten.",
   "text.glow_sticks.glow_stick.use_infinite": "Platzierte Leuchtstäbe verblassen nicht automatisch."
 }

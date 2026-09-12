@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:creative_recipe_follows_config",
+  "environment": "minecraft:default",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

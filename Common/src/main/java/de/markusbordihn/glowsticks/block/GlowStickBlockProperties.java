@@ -41,6 +41,17 @@ public class GlowStickBlockProperties {
           Registries.BLOCK, Identifier.fromNamespaceAndPath(Constants.MOD_ID, blockId)));
   }
 
+  public static BlockBehaviour.Properties createCreativeGlowStickBlockProperties(String blockId) {
+    return BlockBehaviour.Properties.of()
+      .mapColor(MapColor.NONE)
+      .sound(SoundType.SCAFFOLDING)
+      .noOcclusion()
+      .lightLevel(CreativeGlowStickBlock::getLightLevel)
+      .setId(
+        ResourceKey.create(
+          Registries.BLOCK, Identifier.fromNamespaceAndPath(Constants.MOD_ID, blockId)));
+  }
+
   public static BlockBehaviour.Properties createLightBlockProperties(String blockId) {
     return BlockBehaviour.Properties.of()
       .mapColor(MapColor.NONE)

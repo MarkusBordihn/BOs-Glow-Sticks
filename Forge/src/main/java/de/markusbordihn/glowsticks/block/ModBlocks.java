@@ -20,7 +20,6 @@
 package de.markusbordihn.glowsticks.block;
 
 import de.markusbordihn.glowsticks.Constants;
-import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.world.item.DyeColor;
@@ -50,12 +49,10 @@ public class ModBlocks {
   protected static final Map<DyeColor, RegistryObject<Block>> CREATIVE_GLOW_STICK_BLOCKS =
     new EnumMap<>(DyeColor.class);
 
-  // Register all glow stick blocks for each dye color
   static {
     for (DyeColor dyeColor : DyeColor.values()) {
       String colorName = dyeColor.getName();
 
-      // Normal glow stick blocks
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
         dyeColor,
@@ -63,11 +60,8 @@ public class ModBlocks {
           blockName,
           () ->
             new GlowStickBlock(
-              GlowStickBlockProperties.createGlowStickBlockProperties(blockName),
-              dyeColor,
-              GlowSticksConfig.despawnTicks)));
+              GlowStickBlockProperties.createGlowStickBlockProperties(blockName), dyeColor)));
 
-      // Creative glow stick blocks (wall/ceiling/floor placement, never despawn)
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
         dyeColor,
@@ -75,7 +69,7 @@ public class ModBlocks {
           creativeBlockName,
           () ->
             new CreativeGlowStickBlock(
-              GlowStickBlockProperties.createGlowStickBlockProperties(creativeBlockName),
+              GlowStickBlockProperties.createCreativeGlowStickBlockProperties(creativeBlockName),
               dyeColor)));
     }
   }

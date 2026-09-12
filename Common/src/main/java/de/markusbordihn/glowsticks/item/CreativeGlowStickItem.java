@@ -22,16 +22,15 @@ package de.markusbordihn.glowsticks.item;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
+import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
 import de.markusbordihn.glowsticks.utils.ToolTips;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -43,7 +42,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
 
 public class CreativeGlowStickItem extends Item {
 
@@ -61,7 +59,7 @@ public class CreativeGlowStickItem extends Item {
   }
 
   public DyeColor getDyeColor() {
-    return dyeColor;
+    return this.dyeColor;
   }
 
   @Override
@@ -75,22 +73,21 @@ public class CreativeGlowStickItem extends Item {
     BlockPos clickedPos = context.getClickedPos();
     BlockState clickedState = level.getBlockState(clickedPos);
     ItemStack itemStack = context.getItemInHand();
-    if (clickedState.getBlock() instanceof GlowStickBlock existingGlowStick) {
-      return handleGlowStickReplacement(
-        level, clickedPos, clickedState, existingGlowStick, player, itemStack);
+    if (clickedState.getBlock() instanceof GlowStickBlock) {
+      return this.replaceGlowStickBlock(level, clickedPos, clickedState, player, itemStack);
     } else if (clickedState.getBlock() instanceof CreativeGlowStickBlock existingCreative) {
-      return handleCreativeGlowStickReplacement(
+      return this.handleCreativeGlowStickReplacement(
         level, clickedPos, clickedState, existingCreative, player, itemStack);
     }
 
     BlockPos placementPos = context.getClickedPos().relative(context.getClickedFace());
     BlockState targetState = level.getBlockState(placementPos);
-    if (targetState.getBlock() instanceof GlowStickBlock existingGlowStick) {
-      return handleGlowStickReplacement(
-        level, placementPos, targetState, existingGlowStick, player, itemStack);
+    if (targetState.getBlock() instanceof GlowStickBlock) {
+      return this.replaceGlowStickBlock(level, placementPos, targetState, player, itemStack);
     }
+
     if (targetState.getBlock() instanceof CreativeGlowStickBlock existingCreative) {
-      return handleCreativeGlowStickReplacement(
+      return this.handleCreativeGlowStickReplacement(
         level, placementPos, targetState, existingCreative, player, itemStack);
     }
 
@@ -98,48 +95,30 @@ public class CreativeGlowStickItem extends Item {
       return InteractionResult.FAIL;
     }
 
-    return attemptBlockPlacement(level, placementPos, context, player, itemStack);
+    return this.attemptBlockPlacement(level, placementPos, context, player, itemStack);
   }
 
   private InteractionResult attemptBlockPlacement(
-    Level level,
-    BlockPos placementPos,
-    UseOnContext context,
-    Player player,
-    ItemStack itemStack) {
-    Block glowStickBlock = blockSupplier.get();
+    Level level, BlockPos placementPos, UseOnContext context, Player player, ItemStack itemStack) {
+    Block glowStickBlock = this.blockSupplier.get();
     if (glowStickBlock == null) {
       return InteractionResult.FAIL;
     }
 
-    BlockPlaceContext placeContext = new BlockPlaceContext(context);
-    BlockPos actualPlacementPos = getPlacementPos(placeContext, placementPos);
-    BlockState proposedState = glowStickBlock.getStateForPlacement(placeContext);
-    if (proposedState == null || !canPlaceBlockAt(level, actualPlacementPos, proposedState)) {
-      spawnGlowStickItem(level, actualPlacementPos, glowStickBlock);
-    } else {
-      placeBlockAndHandleRedstone(level, actualPlacementPos, proposedState);
+    BlockState proposedState = glowStickBlock.getStateForPlacement(new BlockPlaceContext(context));
+    if (proposedState == null || !proposedState.canSurvive(level, placementPos)) {
+      return InteractionResult.FAIL;
     }
 
-    consumeItemInSurvival(player, itemStack);
+    this.placeBlockAndHandleRedstone(level, placementPos, proposedState);
+    this.consumeItemInSurvival(player, itemStack);
+
     return InteractionResult.CONSUME;
-  }
-
-  private BlockPos getPlacementPos(BlockPlaceContext context, BlockPos fallbackPlacementPos) {
-    BlockPos placementPos = context.getClickedPos();
-    if (!context.canPlace()) {
-      return placementPos.relative(context.getClickedFace());
-    }
-    return placementPos != null ? placementPos : fallbackPlacementPos;
-  }
-
-  private boolean canPlaceBlockAt(Level level, BlockPos position, BlockState blockState) {
-    return blockState.canSurvive(level, position);
   }
 
   private void placeBlockAndHandleRedstone(Level level, BlockPos position, BlockState blockState) {
     level.setBlockAndUpdate(position, blockState);
-    RedstoneCapable.handleBlockPlacement(level, position, blockState);
+    RedstoneCapable.handleBlockPlacement(level, position);
   }
 
   private InteractionResult handleCreativeGlowStickReplacement(
@@ -149,121 +128,65 @@ public class CreativeGlowStickItem extends Item {
     CreativeGlowStickBlock existingBlock,
     Player player,
     ItemStack itemStack) {
-    Block newBlock = blockSupplier.get();
+    Block newBlock = this.blockSupplier.get();
     if (!(newBlock instanceof CreativeGlowStickBlock newCreative)) {
       return InteractionResult.FAIL;
     }
 
     if (newCreative.getGlowStickColor() == existingBlock.getGlowStickColor()) {
-      replaceWithNextVariant(level, placementPos, existingState);
-      consumeItemInSurvival(player, itemStack);
+      this.replaceWithNextVariant(level, placementPos, existingState);
+      this.consumeItemInSurvival(player, itemStack);
       return InteractionResult.CONSUME;
-    } else {
-      int preservedVariant = existingState.getValue(GlowStickBlock.VARIANT);
-      Direction preservedFacing = existingState.getValue(GlowStickBlock.FACING);
-      AttachFace preservedFace = existingState.getValue(CreativeGlowStickBlock.FACE);
-      boolean preservedWaterlogged = existingState.getValue(GlowStickBlock.WATERLOGGED);
-      level.removeBlock(placementPos, false);
-      return placeBlockWithVariantAndFacing(
-        level,
-        placementPos,
-        newBlock,
-        preservedVariant,
-        preservedFacing,
-        preservedFace,
-        preservedWaterlogged,
-        player,
-        itemStack);
     }
+
+    return this.replaceGlowStickBlock(level, placementPos, existingState, player, itemStack);
   }
 
-  private InteractionResult handleGlowStickReplacement(
+  private InteractionResult replaceGlowStickBlock(
     Level level,
     BlockPos placementPos,
     BlockState existingState,
-    GlowStickBlock existingGlowStick,
     Player player,
     ItemStack itemStack) {
-    Block newGlowStickBlock = blockSupplier.get();
-    if (!(newGlowStickBlock instanceof GlowStickBlock newGlowStick)) {
+    Block blockToPlace = this.blockSupplier.get();
+    if (blockToPlace == null) {
       return InteractionResult.FAIL;
     }
 
-    if (newGlowStick.getGlowStickColor() == existingGlowStick.getGlowStickColor()) {
-      replaceWithNextVariant(level, placementPos, existingState);
-      consumeItemInSurvival(player, itemStack);
-      return InteractionResult.CONSUME;
-    } else {
-      int preservedVariant = existingState.getValue(GlowStickBlock.VARIANT);
-      Direction preservedFacing = existingState.getValue(GlowStickBlock.FACING);
-      boolean preservedWaterlogged = existingState.getValue(GlowStickBlock.WATERLOGGED);
-      level.removeBlock(placementPos, false);
-      return placeBlockWithVariantAndFacing(
-        level,
-        placementPos,
-        newGlowStickBlock,
-        preservedVariant,
-        preservedFacing,
-        null,
-        preservedWaterlogged,
-        player,
-        itemStack);
-    }
-  }
-
-  private InteractionResult placeBlockWithVariantAndFacing(
-    Level level,
-    BlockPos placementPos,
-    Block blockToPlace,
-    int variant,
-    Direction facing,
-    AttachFace face,
-    boolean waterlogged,
-    Player player,
-    ItemStack itemStack) {
     BlockState proposedState =
       blockToPlace
         .defaultBlockState()
-        .setValue(GlowStickBlock.VARIANT, variant)
-        .setValue(GlowStickBlock.FACING, facing)
-        .setValue(GlowStickBlock.WATERLOGGED, waterlogged);
+        .setValue(GlowStickBlock.FACING, existingState.getValue(GlowStickBlock.FACING));
 
-    if (face != null && blockToPlace instanceof CreativeGlowStickBlock) {
-      proposedState = proposedState.setValue(CreativeGlowStickBlock.FACE, face);
+    if (existingState.hasProperty(CreativeGlowStickBlock.VARIANT)
+      && proposedState.hasProperty(CreativeGlowStickBlock.VARIANT)) {
+      proposedState =
+        BlockStateManager.setVariant(proposedState, BlockStateManager.getVariant(existingState));
+    }
+
+    if (existingState.hasProperty(CreativeGlowStickBlock.FACE)
+      && proposedState.hasProperty(CreativeGlowStickBlock.FACE)) {
+      proposedState =
+        proposedState.setValue(
+          CreativeGlowStickBlock.FACE, existingState.getValue(CreativeGlowStickBlock.FACE));
     }
 
     proposedState = RedstoneCapable.getInitialPlacementState(proposedState, level, placementPos);
-    if (canPlaceBlockAt(level, placementPos, proposedState)) {
-      placeBlockAndHandleRedstone(level, placementPos, proposedState);
-    } else {
-      spawnGlowStickItem(level, placementPos, blockToPlace);
+    if (!proposedState.canSurvive(level, placementPos)) {
+      return InteractionResult.FAIL;
     }
 
-    consumeItemInSurvival(player, itemStack);
+    Block.dropResources(existingState, level, placementPos);
+    this.placeBlockAndHandleRedstone(level, placementPos, proposedState);
+    this.consumeItemInSurvival(player, itemStack);
+
     return InteractionResult.CONSUME;
   }
 
   private void replaceWithNextVariant(Level level, BlockPos position, BlockState existingState) {
-    int currentVariant = existingState.getValue(GlowStickBlock.VARIANT);
     level.setBlockAndUpdate(
       position,
-      existingState.setValue(
-        GlowStickBlock.VARIANT, currentVariant >= 5 ? 0 : currentVariant + 1));
-  }
-
-  private void spawnGlowStickItem(Level level, BlockPos position, Block glowStickBlock) {
-    ItemEntity itemEntity =
-      new ItemEntity(
-        level,
-        position.getX() + 0.5,
-        position.getY() + 0.5,
-        position.getZ() + 0.5,
-        new ItemStack(glowStickBlock.asItem()));
-
-    itemEntity.setDeltaMovement(
-      (level.random.nextFloat() - 0.5F) * 0.1F, 0.2F, (level.random.nextFloat() - 0.5F) * 0.1F);
-
-    level.addFreshEntity(itemEntity);
+      BlockStateManager.setVariant(existingState, BlockStateManager.getNextVariant(existingState)));
   }
 
   private void consumeItemInSurvival(Player player, ItemStack itemStack) {

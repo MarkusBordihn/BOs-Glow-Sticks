@@ -3,8 +3,10 @@ package de.markusbordihn.glowsticks;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.component.DataComponents;
 import de.markusbordihn.glowsticks.config.Config;
+import de.markusbordihn.glowsticks.crafting.CreativeRecipeCondition;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.item.ModItems;
+import de.markusbordihn.glowsticks.tabs.ModTabs;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +32,9 @@ public class GlowSticks implements ModInitializer {
     log.info("{} Data Components ...", Constants.LOG_REGISTER_PREFIX);
     DataComponents.registerGlowStickData();
 
+    log.info("{} Recipe Conditions ...", Constants.LOG_REGISTER_PREFIX);
+    CreativeRecipeCondition.register();
+
     log.info("{} Items ...", Constants.LOG_REGISTER_PREFIX);
     ModItems.registerItems();
 
@@ -38,5 +43,8 @@ public class GlowSticks implements ModInitializer {
 
     log.info("{} Entities ...", Constants.LOG_REGISTER_PREFIX);
     ModEntity.registerEntities();
+
+    log.info("{} Creative Mode Tabs ...", Constants.LOG_REGISTER_PREFIX);
+    ModTabs.registerModTabs();
   }
 }

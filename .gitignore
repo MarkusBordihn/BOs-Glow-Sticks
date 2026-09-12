@@ -31,8 +31,8 @@ forge*changelog.txt
 # VSCode
 .vscode/launch.json
 
-# Template placeholder files
-put_your_*_here
+# Ghost Reference Index
+.ghost-reference-index
 
 # Other
 .DS_Store
@@ -40,4 +40,5 @@ generated
 *.clip
 *.stackdump
 *.log
+*.log.gz
 *.bak

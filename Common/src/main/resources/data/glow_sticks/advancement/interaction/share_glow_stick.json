@@ -10,7 +10,7 @@
     "description": {
       "translate": "advancements.glow_sticks.interaction.share_glow_stick.description"
     },
-    "frame": "challenge",
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
@@ -27,7 +27,7 @@
           "distance": {"absolute": {"min": 0.1}}
         },
         "item": {
-          "tag": "glow_sticks:glow_sticks"
+          "items": "#glow_sticks:glow_sticks"
         }
       }
     }

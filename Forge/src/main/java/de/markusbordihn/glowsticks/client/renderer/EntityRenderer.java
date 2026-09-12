@@ -22,7 +22,6 @@ package de.markusbordihn.glowsticks.client.renderer;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,12 +44,11 @@ public class EntityRenderer {
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
     log.info("{} Entity Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    // Register renderer for all glow stick entity colors
     for (DyeColor dyeColor : DyeColor.values()) {
       RegistryObject<EntityType<GlowStickProjectile>> glowStickEntity =
         ModEntity.getGlowStickEntity(dyeColor);
       if (glowStickEntity != null) {
-        event.registerEntityRenderer(glowStickEntity.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(glowStickEntity.get(), GlowStickProjectileRenderer::new);
       }
     }
   }
