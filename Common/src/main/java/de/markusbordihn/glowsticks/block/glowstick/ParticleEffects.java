@@ -19,8 +19,8 @@
 
 package de.markusbordihn.glowsticks.block.glowstick;
 
-import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -37,11 +37,15 @@ public class ParticleEffects {
     BlockPos blockPos,
     RandomSource random,
     DyeColor dyeColor) {
-    if (!(level instanceof ClientLevel clientLevel) || !shouldSpawnParticles(blockState, random)) {
+    if (!(level instanceof ClientLevel clientLevel)) {
       return;
     }
 
-    int currentAge = blockState.getValue(GlowStickBlock.AGE);
+    int currentAge = BlockStateManager.getAge(blockState);
+    if (!shouldSpawnParticles(currentAge, random)) {
+      return;
+    }
+
     float ageFactor = Math.max(0.2f, 1.0f - (currentAge / 15.0f));
     float size = Math.max(0.8f, ageFactor * 1.2f);
 
@@ -53,21 +57,17 @@ public class ParticleEffects {
     }
   }
 
-  private static boolean shouldSpawnParticles(BlockState blockState, RandomSource random) {
+  private static boolean shouldSpawnParticles(int age, RandomSource random) {
     return GlowSticksConfig.spawnRandomParticles
       && random.nextInt(GlowSticksConfig.randomParticleSpawnRate) == 0
-      && blockState.getValue(GlowStickBlock.AGE) < 15;
+      && age < BlockStateManager.MAX_AGE;
   }
 
   private static int calculateAdjustedColor(DyeColor dyeColor, float brightness) {
-    int originalColor = dyeColor.getTextureDiffuseColor();
-    int red = (originalColor >> 16) & 0xFF;
-    int green = (originalColor >> 8) & 0xFF;
-    int blue = originalColor & 0xFF;
-
-    int adjustedRed = Math.min(255, (int) (red * brightness));
-    int adjustedGreen = Math.min(255, (int) (green * brightness));
-    int adjustedBlue = Math.min(255, (int) (blue * brightness));
+    int originalColor = GlowStickColors.getRgb(dyeColor);
+    int adjustedRed = Math.min(255, (int) (((originalColor >> 16) & 0xFF) * brightness));
+    int adjustedGreen = Math.min(255, (int) (((originalColor >> 8) & 0xFF) * brightness));
+    int adjustedBlue = Math.min(255, (int) ((originalColor & 0xFF) * brightness));
 
     return (adjustedRed << 16) | (adjustedGreen << 8) | adjustedBlue;
   }

@@ -1,5 +1,4 @@
 {
-  "render_type": "minecraft:cutout",
   "credit": "Made with Blockbench by Markus Bordihn",
   "textures": {
     "particle": "glow_sticks:block/transparent",

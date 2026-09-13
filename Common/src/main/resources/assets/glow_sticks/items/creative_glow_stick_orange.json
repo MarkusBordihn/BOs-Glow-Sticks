@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "glow_sticks:item/glow_stick/orange/glow_stick_step_6"
+    "model": "glow_sticks:item/glow_stick/glow_stick_activated",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -26368
+      }
+    ]
   }
 }

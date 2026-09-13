@@ -20,11 +20,15 @@
 package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
+import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.color.block.BlockTintSources;
 import net.minecraft.world.item.DyeColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +50,16 @@ public class ClientRenderer {
 
     for (DyeColor dyeColor : DyeColor.values()) {
       EntityRendererRegistry.register(
-        ModEntity.getGlowStickEntity(dyeColor), ThrownItemRenderer::new);
+        ModEntity.getGlowStickEntity(dyeColor), GlowStickProjectileRenderer::new);
+    }
+  }
+
+  public static void registerColorHandlers() {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      BlockColorRegistry.register(
+        List.of(BlockTintSources.constant(GlowStickColors.getOpaqueArgb(dyeColor))),
+        ModBlocks.getGlowStickBlock(dyeColor),
+        ModBlocks.getCreativeGlowStickBlock(dyeColor));
     }
   }
 }

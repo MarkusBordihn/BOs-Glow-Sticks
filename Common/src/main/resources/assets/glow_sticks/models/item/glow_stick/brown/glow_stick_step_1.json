@@ -1,8 +1,0 @@
-{
-  "parent": "glow_sticks:item/glow_stick/glow_stick_step_1",
-  "textures": {
-    "particle": "glow_sticks:item/glow_stick/brown_25pc",
-    "shell": "glow_sticks:item/glow_stick/brown_25pc",
-    "core": "glow_sticks:item/glow_stick/brown_50pc"
-  }
-}

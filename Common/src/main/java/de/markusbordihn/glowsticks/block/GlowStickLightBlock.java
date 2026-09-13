@@ -19,7 +19,6 @@
 
 package de.markusbordihn.glowsticks.block;
 
-import de.markusbordihn.glowsticks.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -32,15 +31,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class GlowStickLightBlock extends Block {
 
-  public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
-
   protected static final VoxelShape SHAPE_AABB = Block.box(7.5D, 7.5D, 7.5D, 8.5D, 8.5D, 8.5D);
-  private static final int TICK_TTL = 10;
+  private static final int LIFETIME_TICKS = 12;
 
   public GlowStickLightBlock(Properties properties) {
     super(properties);
@@ -48,7 +43,7 @@ public class GlowStickLightBlock extends Block {
 
   public void scheduleTick(final Level level, final BlockPos blockPos) {
     if (!level.getBlockTicks().hasScheduledTick(blockPos, this)) {
-      level.scheduleTick(blockPos, this, TICK_TTL);
+      level.scheduleTick(blockPos, this, LIFETIME_TICKS);
     }
   }
 
@@ -68,14 +63,14 @@ public class GlowStickLightBlock extends Block {
     BlockState blockState,
     LivingEntity placer,
     ItemStack itemStack) {
-    scheduleTick(level, blockPos);
+    this.scheduleTick(level, blockPos);
   }
 
   @Override
   public void tick(
     BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
     if (!level.isClientSide() && blockState.getBlock() instanceof GlowStickLightBlock) {
-      level.setBlockAndUpdate(blockPos, getExpiredState(blockState));
+      level.setBlockAndUpdate(blockPos, this.getExpiredState(blockState));
     }
   }
 

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "glow_sticks:redstone_recharges_glow_stick",
+  "environment": "glow_sticks:glow_stick_redstone_recharge",
+  "structure": "glow_sticks:gametest.3x3x3",
+  "max_ticks": 100
+}

@@ -4,12 +4,12 @@
     "recipes": ["glow_sticks:glow_stick_yellow_from_stained_glass_yellow"]
   },
   "criteria": {
-    "has_dye": {
+    "has_stained_glass": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:yellow_dye"]
+            "items": ["minecraft:yellow_stained_glass"]
           }
         ]
       }
@@ -19,7 +19,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "glow_sticks:glow_item"
+            "items": "#glow_sticks:glow_item"
           }
         ]
       }
@@ -31,5 +31,5 @@
       }
     }
   },
-  "requirements": [["has_dye", "has_glow_item", "has_the_recipe"]]
+  "requirements": [["has_stained_glass", "has_glow_item", "has_the_recipe"]]
 }

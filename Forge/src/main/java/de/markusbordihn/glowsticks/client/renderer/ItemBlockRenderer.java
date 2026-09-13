@@ -20,14 +20,22 @@
 package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.block.ModBlocks;
+import de.markusbordihn.glowsticks.item.GlowStickColors;
+import java.util.List;
+import net.minecraft.client.color.block.BlockTintSources;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class ItemBlockRenderer {
 
   public static final Logger log = LogManager.getLogger(Constants.LOG_NAME);
@@ -38,5 +46,19 @@ public class ItemBlockRenderer {
   @SubscribeEvent
   public static void registerItemRenderer(final FMLClientSetupEvent event) {
     log.info("{} Item Block Renderer Setup ...", Constants.LOG_REGISTER_PREFIX);
+  }
+
+  @SubscribeEvent
+  public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
+    for (DyeColor dyeColor : DyeColor.values()) {
+      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+      RegistryObject<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
+      if (glowStickBlock != null && creativeGlowStickBlock != null) {
+        event.register(
+          List.of(BlockTintSources.constant(GlowStickColors.getOpaqueArgb(dyeColor))),
+          glowStickBlock.get(),
+          creativeGlowStickBlock.get());
+      }
+    }
   }
 }
