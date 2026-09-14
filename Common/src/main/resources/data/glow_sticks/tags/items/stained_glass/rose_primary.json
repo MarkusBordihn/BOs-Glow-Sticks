@@ -3,6 +3,10 @@
   "values": [
     "minecraft:red_stained_glass",
     {
+      "id": "#forge:glass/red",
+      "required": false
+    },
+    {
       "id": "dye_depot:rose_stained_glass",
       "required": false
     }

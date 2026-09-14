@@ -54,7 +54,7 @@ tasks.register("generateGlowStickRecipes") {
       if (color == "white") {
         def glassRecipeId = "glow_sticks:glow_stick_white_from_glass"
         rewardedRecipes += glassRecipeId
-        criteria.has_glass = inventoryChanged([items: ["minecraft:glass"]])
+        criteria.has_glass = inventoryChanged([tag: "glow_sticks:glass_blocks"])
         criteria.has_the_recipe_from_glass = recipeUnlocked(glassRecipeId)
       }
 

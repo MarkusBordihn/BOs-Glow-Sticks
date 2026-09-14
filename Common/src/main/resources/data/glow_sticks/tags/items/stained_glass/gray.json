@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "minecraft:gray_stained_glass"
+    "minecraft:gray_stained_glass",
+    {
+      "id": "#forge:glass/gray",
+      "required": false
+    }
   ]
 }

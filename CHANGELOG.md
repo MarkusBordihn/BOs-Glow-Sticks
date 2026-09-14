@@ -13,7 +13,7 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - Fixed the crafting advancements not triggering for the 16 new glow stick colors.
 - Fixed falling glow sticks staying dark until they landed on the ground.
 - Changed "Get all glow sticks" to require all 32 colors instead of the first 16.
-- Changed all glow stick recipes to accept stained glass and glass panes from other mods.
+- Changed all glow stick recipes to accept glass, glass panes and glowstone dust from other mods.
 - Changed already placed glow sticks to restart with a full lifetime after the update.
 - Changed redstone control to always recharge glow sticks and freeze their lifetime.
 - Removed `glowStickRedstoneFreezesLifetime` and `glowStickRedstoneRecharges`.

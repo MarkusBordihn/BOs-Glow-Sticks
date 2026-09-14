@@ -14,10 +14,14 @@ tasks.register("generateGlowStickTags") {
     // Optional entries are vanilla 1.20.1 syntax, so one tag file works on Forge and Fabric.
     def optional = { id -> [id: id as String, required: false] }
 
+    // Forge is the only loader with a glass tag per color. The c: convention only offers
+    // c:dyed/<color>, which also contains wool, carpet and beds and is unusable as an ingredient.
+    def moddedStainedGlass = { color -> [optional("#forge:glass/${color}")] }
+
     vanillaGlowStickColors.each { color ->
       writeGlowStickJson(new File(stainedGlassTagDir, "${color}.json"), [
           replace: false,
-          values : ["minecraft:${color}_stained_glass" as String]
+          values : ["minecraft:${color}_stained_glass" as String] + moddedStainedGlass(color)
       ])
     }
 
@@ -30,12 +34,20 @@ tasks.register("generateGlowStickTags") {
         writeGlowStickJson(new File(stainedGlassTagDir, "${color}_${slot}.json"), [
             replace: false,
             values : ["minecraft:${vanillaColor}_stained_glass" as String] +
+                moddedStainedGlass(vanillaColor) +
                 extendedStainedGlassNamespaces.collect { namespace ->
                   optional("${namespace}:${color}_stained_glass")
                 }
         ])
       }
     }
+
+    writeGlowStickJson(new File(itemTagDir, "glass_blocks.json"), [
+        replace: false,
+        values : ["minecraft:glass",
+                  optional("#forge:glass/colorless"),
+                  optional("#c:glass_blocks/colorless")]
+    ])
 
     writeGlowStickJson(new File(itemTagDir, "glass_panes.json"), [
         replace: false,
@@ -56,7 +68,7 @@ tasks.register("generateGlowStickTags") {
           ])
         }
 
-    println "✔ Generated ${vanillaGlowStickColors.size() + extendedGlowStickColors.size() * 2 + 3} " +
+    println "✔ Generated ${vanillaGlowStickColors.size() + extendedGlowStickColors.size() * 2 + 4} " +
         "glow stick item tag files"
   }
 }

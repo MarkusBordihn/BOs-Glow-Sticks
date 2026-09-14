@@ -1,13 +1,13 @@
 {
   "replace": false,
   "values": [
-    "minecraft:white_stained_glass",
+    "minecraft:glass",
     {
-      "id": "#forge:glass/white",
+      "id": "#forge:glass/colorless",
       "required": false
     },
     {
-      "id": "dye_depot:mint_stained_glass",
+      "id": "#c:glass_blocks/colorless",
       "required": false
     }
   ]

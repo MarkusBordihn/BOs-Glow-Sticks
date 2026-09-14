@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "minecraft:orange_stained_glass"
+    "minecraft:orange_stained_glass",
+    {
+      "id": "#forge:glass/orange",
+      "required": false
+    }
   ]
 }
