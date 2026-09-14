@@ -1,0 +1,106 @@
+// Only the per color wrapper files are generated. The shared geometry under
+// assets/glow_sticks/models/{block,item}/glow_stick/ is hand tuned and stays hand written.
+tasks.register("generateGlowStickColorVariants") {
+  group = "build"
+  description = "Generates the blockstates and item model definitions for all glow stick colors."
+
+  doLast {
+    def blockStateDir = new File("$glowStickAssetPath/blockstates")
+    def itemDefinitionDir = new File("$glowStickAssetPath/items")
+    [blockStateDir, itemDefinitionDir].each { directory ->
+      if (!directory.exists()) {
+        directory.mkdirs()
+      }
+    }
+
+    def facingRotations = [north: 270, east: 0, south: 90, west: 180]
+    def wallRotations = [north: 0, east: 90, south: 180, west: 270]
+
+    def rotated = { model, rotationY, rotationX ->
+      def variant = [model: "glow_sticks:block/glow_stick/${model}" as String]
+      if (rotationY != 0) {
+        variant.y = rotationY
+      }
+      if (rotationX != 0) {
+        variant.x = rotationX
+      }
+      return variant
+    }
+
+    def glowStickBlockState = {
+      def variants = [:]
+      facingRotations.each { facing, rotationY ->
+        variants["facing=${facing}" as String] =
+            (1..5).collect { variant -> rotated("glow_stick_variant_${variant}", rotationY, 0) }
+      }
+      return [variants: variants]
+    }
+
+    def creativeGlowStickBlockState = {
+      def variants = [:]
+      (0..5).each { variant ->
+        facingRotations.each { facing, rotationY ->
+          variants["face=floor,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_variant_${variant}", rotationY, 0)
+        }
+        wallRotations.each { facing, rotationY ->
+          variants["face=wall,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_wall_variant_${variant}", rotationY, 0)
+        }
+        facingRotations.each { facing, rotationY ->
+          variants["face=ceiling,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_variant_${variant}", rotationY, 180)
+        }
+      }
+      return [variants: variants]
+    }
+
+    // Item tinting is data driven since 1.21.4, the color is a constant tint of the shared model.
+    def tintedModel = { model, opaqueArgb ->
+      [
+          type : "minecraft:model",
+          model: "glow_sticks:item/glow_stick/${model}" as String,
+          tints: [[type: "minecraft:constant", value: opaqueArgb]]
+      ]
+    }
+
+    def glowStickItemDefinition = { opaqueArgb ->
+      [model: [
+          type    : "minecraft:condition",
+          property: "glow_sticks:activated",
+          on_false: [
+              type    : "minecraft:range_dispatch",
+              property: "glow_sticks:step",
+              index   : 1,
+              scale   : 1.0,
+              fallback: tintedModel("glow_stick", opaqueArgb),
+              entries : (1..6).collect { step ->
+                [threshold: step, model: tintedModel("glow_stick_step_${step}", opaqueArgb)]
+              }
+          ],
+          on_true : tintedModel("glow_stick_activated", opaqueArgb)
+      ]]
+    }
+
+    def creativeGlowStickItemDefinition = { opaqueArgb ->
+      [model: tintedModel("glow_stick_activated", opaqueArgb)]
+    }
+
+    glowStickColors.each { color ->
+      def opaqueArgb = glowStickColorOpaqueArgb[color]
+
+      writeGlowStickJson(new File(blockStateDir, "glow_stick_${color}.json"), glowStickBlockState())
+      writeGlowStickJson(
+          new File(blockStateDir, "creative_glow_stick_${color}.json"),
+          creativeGlowStickBlockState())
+      writeGlowStickJson(
+          new File(itemDefinitionDir, "glow_stick_${color}.json"),
+          glowStickItemDefinition(opaqueArgb))
+      writeGlowStickJson(
+          new File(itemDefinitionDir, "creative_glow_stick_${color}.json"),
+          creativeGlowStickItemDefinition(opaqueArgb))
+    }
+
+    println "✔ Generated ${glowStickColors.size() * 4} glow stick blockstate and item model files"
+  }
+}

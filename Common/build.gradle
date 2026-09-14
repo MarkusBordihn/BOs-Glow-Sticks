@@ -19,6 +19,10 @@ dependencies {
   testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.25.2'
 }
 
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath +=
+    sourceSets.main.compileClasspath + sourceSets.main.runtimeClasspath
+
 test {
   useJUnitPlatform()
   testLogging {
@@ -27,8 +31,14 @@ test {
   }
 }
 
-apply from: "$projectDir/../gradle/tasks/generateGlowStickLootTables.gradle"
+apply from: "$projectDir/../gradle/tasks/glowStickColors.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickColorVariants.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickDynamicLights.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickTags.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickRecipes.gradle"
 apply from: "$projectDir/../gradle/tasks/generateCreativeGlowStickRecipes.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickLootTables.gradle"
+apply from: "$projectDir/../gradle/tasks/generateGlowStickAssets.gradle"
 
 processResources {
   inputs.property "version", project.version

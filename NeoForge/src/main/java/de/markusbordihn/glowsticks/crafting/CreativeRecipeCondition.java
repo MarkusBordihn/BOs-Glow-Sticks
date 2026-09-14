@@ -31,10 +31,10 @@ public record CreativeRecipeCondition() implements ICondition {
 
   public static final String NAME = "creative_recipe_enabled";
   public static final MapCodec<CreativeRecipeCondition> CODEC =
-      MapCodec.unit(CreativeRecipeCondition::new);
+    MapCodec.unit(CreativeRecipeCondition::new);
 
   private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS =
-      DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, Constants.MOD_ID);
+    DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, Constants.MOD_ID);
 
   public static void register(final IEventBus modEventBus) {
     CONDITION_CODECS.register(NAME, () -> CODEC);

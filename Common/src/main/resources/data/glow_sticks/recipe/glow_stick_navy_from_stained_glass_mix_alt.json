@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "|A|",
+    "|+|",
+    "|B|"
+  ],
+  "key": {
+    "A": "#glow_sticks:stained_glass/navy_secondary",
+    "B": "#glow_sticks:stained_glass/navy_primary",
+    "|": "#glow_sticks:glass_panes",
+    "+": "#glow_sticks:glow_item"
+  },
+  "result": {
+    "id": "glow_sticks:glow_stick_navy",
+    "count": 8
+  }
+}

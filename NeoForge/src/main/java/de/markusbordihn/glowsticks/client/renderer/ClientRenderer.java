@@ -23,11 +23,10 @@ import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -49,14 +48,14 @@ public class ClientRenderer {
 
     event.enqueueWork(
       () -> {
-        for (DyeColor dyeColor : DyeColor.values()) {
-          DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+        for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+          DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(glowStickColor);
           if (glowStickBlock != null) {
             ItemBlockRenderTypes.setRenderLayer(
               glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
           }
           DeferredBlock<Block> creativeGlowStickBlock =
-            ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            ModBlocks.getCreativeGlowStickBlock(glowStickColor);
           if (creativeGlowStickBlock != null) {
             ItemBlockRenderTypes.setRenderLayer(
               creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
@@ -71,10 +70,11 @@ public class ClientRenderer {
   }
 
   public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      int rgb = GlowStickColors.getRgb(dyeColor);
-      DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-      DeferredBlock<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      int rgb = glowStickColor.getRgb();
+      DeferredBlock<Block> glowStickBlock = ModBlocks.getGlowStickBlock(glowStickColor);
+      DeferredBlock<Block> creativeGlowStickBlock =
+        ModBlocks.getCreativeGlowStickBlock(glowStickColor);
       if (glowStickBlock != null && creativeGlowStickBlock != null) {
         event.register(
           (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
@@ -87,9 +87,9 @@ public class ClientRenderer {
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    for (DyeColor dyeColor : DyeColor.values()) {
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
       DeferredHolder<EntityType<?>, EntityType<GlowStickProjectile>> glowStickEntity =
-        ModEntity.getGlowStickEntity(dyeColor);
+        ModEntity.getGlowStickEntity(glowStickColor);
       if (glowStickEntity != null) {
         event.registerEntityRenderer(glowStickEntity.get(), GlowStickProjectileRenderer::new);
       }

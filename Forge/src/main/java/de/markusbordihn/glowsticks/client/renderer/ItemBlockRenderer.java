@@ -21,10 +21,9 @@ package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -49,14 +48,14 @@ public class ItemBlockRenderer {
 
     event.enqueueWork(
       () -> {
-        for (DyeColor dyeColor : DyeColor.values()) {
-          RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
+        for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+          RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(glowStickColor);
           if (glowStickBlock != null) {
             ItemBlockRenderTypes.setRenderLayer(
               glowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
           }
           RegistryObject<Block> creativeGlowStickBlock =
-            ModBlocks.getCreativeGlowStickBlock(dyeColor);
+            ModBlocks.getCreativeGlowStickBlock(glowStickColor);
           if (creativeGlowStickBlock != null) {
             ItemBlockRenderTypes.setRenderLayer(
               creativeGlowStickBlock.get(), ChunkSectionLayer.TRANSLUCENT);
@@ -72,10 +71,11 @@ public class ItemBlockRenderer {
 
   @SubscribeEvent
   public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      int rgb = GlowStickColors.getRgb(dyeColor);
-      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-      RegistryObject<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      int rgb = glowStickColor.getRgb();
+      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(glowStickColor);
+      RegistryObject<Block> creativeGlowStickBlock =
+        ModBlocks.getCreativeGlowStickBlock(glowStickColor);
       if (glowStickBlock != null && creativeGlowStickBlock != null) {
         event.register(
           (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,

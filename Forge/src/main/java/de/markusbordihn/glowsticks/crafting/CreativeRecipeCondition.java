@@ -32,10 +32,10 @@ public record CreativeRecipeCondition() implements ICondition {
 
   public static final String NAME = "creative_recipe_enabled";
   public static final MapCodec<CreativeRecipeCondition> CODEC =
-      MapCodec.unit(CreativeRecipeCondition::new);
+    MapCodec.unit(CreativeRecipeCondition::new);
 
   private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_CODECS =
-      DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, Constants.MOD_ID);
+    DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, Constants.MOD_ID);
 
   public static void register(final BusGroup modBusGroup) {
     CONDITION_CODECS.register(NAME, () -> CODEC);

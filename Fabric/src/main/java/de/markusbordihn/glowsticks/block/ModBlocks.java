@@ -20,12 +20,12 @@
 package de.markusbordihn.glowsticks.block;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 
 public class ModBlocks {
@@ -36,9 +36,10 @@ public class ModBlocks {
   public static final Block GLOW_STICK_LIGHT_WATER =
     new GlowStickLightWaterBlock(
       GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water"));
-  protected static final Map<DyeColor, Block> GLOW_STICK_BLOCKS = new EnumMap<>(DyeColor.class);
-  protected static final Map<DyeColor, Block> CREATIVE_GLOW_STICK_BLOCKS =
-    new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, Block> GLOW_STICK_BLOCKS =
+    new EnumMap<>(GlowStickColor.class);
+  protected static final Map<GlowStickColor, Block> CREATIVE_GLOW_STICK_BLOCKS =
+    new EnumMap<>(GlowStickColor.class);
 
   public static void registerBlocks() {
     Registry.register(
@@ -50,35 +51,35 @@ public class ModBlocks {
       Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_light_water"),
       GLOW_STICK_LIGHT_WATER);
 
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
 
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
-        dyeColor,
+        glowStickColor,
         Registry.register(
           BuiltInRegistries.BLOCK,
           Identifier.fromNamespaceAndPath(Constants.MOD_ID, blockName),
           new GlowStickBlock(
-            GlowStickBlockProperties.createGlowStickBlockProperties(blockName), dyeColor)));
+            GlowStickBlockProperties.createGlowStickBlockProperties(blockName), glowStickColor)));
 
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
-        dyeColor,
+        glowStickColor,
         Registry.register(
           BuiltInRegistries.BLOCK,
           Identifier.fromNamespaceAndPath(Constants.MOD_ID, creativeBlockName),
           new CreativeGlowStickBlock(
             GlowStickBlockProperties.createCreativeGlowStickBlockProperties(creativeBlockName),
-            dyeColor)));
+            glowStickColor)));
     }
   }
 
-  public static Block getGlowStickBlock(final DyeColor dyeColor) {
-    return GLOW_STICK_BLOCKS.get(dyeColor);
+  public static Block getGlowStickBlock(final GlowStickColor glowStickColor) {
+    return GLOW_STICK_BLOCKS.get(glowStickColor);
   }
 
-  public static Block getCreativeGlowStickBlock(final DyeColor dyeColor) {
-    return CREATIVE_GLOW_STICK_BLOCKS.get(dyeColor);
+  public static Block getCreativeGlowStickBlock(final GlowStickColor glowStickColor) {
+    return CREATIVE_GLOW_STICK_BLOCKS.get(glowStickColor);
   }
 }

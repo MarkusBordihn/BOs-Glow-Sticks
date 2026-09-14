@@ -10,13 +10,14 @@ public class SmokeTest {
 
   private static final String STRUCTURE = "glow_sticks:gametest.3x3x3";
   private static final int MAX_TICKS = 100;
+  private static final int EXTENDED_MAX_TICKS = 200;
 
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
   public void testModRegistered(GameTestHelper helper) {
     GameTestHelpers.assertTrue(
-        helper,
-        "Mod " + Constants.MOD_ID + " is not available!",
-        FabricLoader.getInstance().isModLoaded(Constants.MOD_ID));
+      helper,
+      "Mod " + Constants.MOD_ID + " is not available!",
+      FabricLoader.getInstance().isModLoaded(Constants.MOD_ID));
   }
 
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
@@ -30,25 +31,25 @@ public class SmokeTest {
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_LIFETIME_VANISH)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_LIFETIME_VANISH)
   public void testGlowStickAgesAndVanishes(GameTestHelper helper) {
     GlowStickTests.testGlowStickAgesAndVanishes(helper);
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_LIFETIME_ZERO)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_LIFETIME_ZERO)
   public void testGlowStickNeverDespawnsWithZeroLifetime(GameTestHelper helper) {
     GlowStickTests.testGlowStickNeverDespawnsWithZeroLifetime(helper);
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_LIFETIME_DROPS)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_LIFETIME_DROPS)
   public void testGlowStickDropsOnDespawnWhenEnabled(GameTestHelper helper) {
     GlowStickTests.testGlowStickDropsOnDespawnWhenEnabled(helper);
   }
@@ -79,6 +80,41 @@ public class SmokeTest {
   }
 
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickLightsUpWithoutRedstone(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightsUpWithoutRedstone(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickLightDimsWithAge(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightDimsWithAge(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testRedstoneSignalLightsGlowStickFully(GameTestHelper helper) {
+    GlowStickTests.testRedstoneSignalLightsGlowStickFully(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testUnpoweredRedstoneTurnsGlowStickOff(GameTestHelper helper) {
+    GlowStickTests.testUnpoweredRedstoneTurnsGlowStickOff(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = EXTENDED_MAX_TICKS)
+  public void testGlowStickLightFollowsEverySignalStrength(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightFollowsEverySignalStrength(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(GameTestHelper helper) {
+    GlowStickTests.testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testCreativeGlowStickFollowsRedstone(GameTestHelper helper) {
+    GlowStickTests.testCreativeGlowStickFollowsRedstone(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
   public void testRedstoneChainWithoutSignal(GameTestHelper helper) {
     GlowStickTests.testRedstoneChainWithoutSignal(helper);
   }
@@ -89,25 +125,25 @@ public class SmokeTest {
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_REDSTONE_FREEZE)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_REDSTONE_FREEZE)
   public void testRedstoneFreezesLifetime(GameTestHelper helper) {
     GlowStickTests.testRedstoneFreezesLifetime(helper);
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_REDSTONE_RECHARGE)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_REDSTONE_RECHARGE)
   public void testRedstoneRechargesGlowStick(GameTestHelper helper) {
     GlowStickTests.testRedstoneRechargesGlowStick(helper);
   }
 
   @GameTest(
-      structure = STRUCTURE,
-      maxTicks = MAX_TICKS,
-      environment = TestEnvironments.GLOW_STICK_CHAIN_LIMIT)
+    structure = STRUCTURE,
+    maxTicks = MAX_TICKS,
+    environment = TestEnvironments.GLOW_STICK_CHAIN_LIMIT)
   public void testChainLimitStopsPropagation(GameTestHelper helper) {
     GlowStickTests.testChainLimitStopsPropagation(helper);
   }

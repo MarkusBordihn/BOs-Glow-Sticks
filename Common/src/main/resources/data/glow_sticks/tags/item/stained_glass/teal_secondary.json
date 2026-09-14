@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:green_stained_glass",
+    {
+      "id": "#forge:glass/green",
+      "required": false
+    },
+    {
+      "id": "dye_depot:teal_stained_glass",
+      "required": false
+    }
+  ]
+}

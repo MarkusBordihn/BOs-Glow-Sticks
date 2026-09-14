@@ -53,8 +53,8 @@ class ConfigValueParsingTest {
     properties.setProperty("glowStickLifetimeSeconds", "999999");
 
     assertEquals(
-        86400,
-        Config.parseConfigRangedValue(properties, "glowStickLifetimeSeconds", 2160, 0, 86400));
+      86400,
+      Config.parseConfigRangedValue(properties, "glowStickLifetimeSeconds", 2160, 0, 86400));
     assertEquals("86400", properties.getProperty("glowStickLifetimeSeconds"));
   }
 
@@ -95,7 +95,7 @@ class ConfigValueParsingTest {
     Properties unmodifiedProperties = (Properties) properties.clone();
 
     assertEquals(
-        600, Config.parseConfigRangedValue(properties, "glowStickLifetimeSeconds", 2160, 0, 86400));
+      600, Config.parseConfigRangedValue(properties, "glowStickLifetimeSeconds", 2160, 0, 86400));
     assertEquals(unmodifiedProperties, properties);
   }
 }

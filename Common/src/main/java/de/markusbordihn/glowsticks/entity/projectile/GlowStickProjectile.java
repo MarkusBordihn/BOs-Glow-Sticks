@@ -24,7 +24,7 @@ import de.markusbordihn.glowsticks.block.GlowStickLightBlock;
 import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
 import de.markusbordihn.glowsticks.block.glowstick.PlacementSounds;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,7 +34,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,7 +52,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
 
   private static final int LIFETIME_TICKS = 650;
   protected final Supplier<Block> lightWaterBlock;
-  protected final DyeColor dyeColor;
+  protected final GlowStickColor glowStickColor;
   protected final Supplier<Item> defaultItem;
   protected final Supplier<Block> lightBlock;
   protected final Supplier<Block> defaultBlock;
@@ -63,13 +62,13 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
   public GlowStickProjectile(
     EntityType<? extends GlowStickProjectile> entityType,
     Level level,
-    DyeColor dyeColor,
+    GlowStickColor glowStickColor,
     Supplier<Block> block,
     Supplier<Item> item,
     Supplier<Block> light,
     Supplier<Block> lightWater) {
     super(entityType, level);
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
     this.defaultBlock = block;
     this.defaultItem = item;
     this.lightBlock = light;
@@ -84,50 +83,28 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     EntityType<? extends GlowStickProjectile> entityType,
     Level level,
     LivingEntity thrower,
-    DyeColor dyeColor,
+    GlowStickColor glowStickColor,
     Supplier<Block> block,
     Supplier<Item> item,
     Supplier<Block> light,
     Supplier<Block> lightWater) {
     super(entityType, thrower, level, new ItemStack(item.get()));
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
     this.defaultBlock = block;
     this.defaultDirection = thrower.getDirection().getOpposite();
     this.defaultItem = item;
     this.lightBlock = light;
     this.lightWaterBlock = lightWater;
+    this.setItem(new ItemStack(item.get()));
   }
 
-  public GlowStickProjectile(
-    EntityType<? extends GlowStickProjectile> entityType,
-    Level level,
-    double x,
-    double y,
-    double z,
-    DyeColor dyeColor,
-    Supplier<Block> block,
-    Supplier<Item> item,
-    Supplier<Block> light,
-    Supplier<Block> lightWater) {
-    super(entityType, x, y, z, level, new ItemStack(item.get()));
-    this.dyeColor = dyeColor;
-    this.defaultBlock = block;
-    this.defaultItem = item;
-    this.lightBlock = light;
-    this.lightWaterBlock = lightWater;
-  }
-
-  public DyeColor getDyeColor() {
-    return this.dyeColor;
+  public GlowStickColor getGlowStickColor() {
+    return this.glowStickColor;
   }
 
   @Override
   protected Item getDefaultItem() {
-    if (this.defaultItem != null) {
-      return this.defaultItem.get();
-    }
-
-    return Items.STICK;
+    return this.defaultItem == null ? Items.AIR : this.defaultItem.get();
   }
 
   private boolean canPlaceBlock(final BlockState blockState, final BlockPos blockPos) {
@@ -224,7 +201,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
         && targetState.getFluidState().getAmount() >= FluidState.AMOUNT_FULL;
 
     this.level().setBlockAndUpdate(placePos, this.createProjectileGlowStickState(isWater));
-    RedstoneCapable.handleBlockPlacement(this.level(), placePos);
+    RedstoneCapable.recomputeChain(this.level(), placePos);
   }
 
   private BlockState createProjectileGlowStickState(boolean isWater) {
@@ -279,7 +256,7 @@ public class GlowStickProjectile extends ThrowableItemProjectile {
     if (this.ticks % 2 == 0) {
       this.level()
         .addParticle(
-          new DustParticleOptions(GlowStickColors.getRgb(this.dyeColor), 0.8F),
+          new DustParticleOptions(this.glowStickColor.getRgb(), 0.8F),
           this.getX() - deltaMovement.x * 0.5,
           this.getY() - deltaMovement.y * 0.5,
           this.getZ() - deltaMovement.z * 0.5,

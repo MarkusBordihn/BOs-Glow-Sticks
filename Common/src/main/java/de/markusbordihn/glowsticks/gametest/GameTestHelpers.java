@@ -7,7 +7,8 @@ import net.minecraft.world.level.block.Block;
 
 public class GameTestHelpers {
 
-  private GameTestHelpers() {}
+  private GameTestHelpers() {
+  }
 
   public static void assertTrue(GameTestHelper helper, String message, boolean condition) {
     if (condition) {

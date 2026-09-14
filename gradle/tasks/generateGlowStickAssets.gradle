@@ -1,0 +1,11 @@
+tasks.register("generateGlowStickAssets") {
+  group = "build"
+  description = "Runs every glow stick asset and data generator."
+
+  dependsOn "generateGlowStickColorVariants",
+      "generateGlowStickDynamicLights",
+      "generateGlowStickTags",
+      "generateGlowStickRecipes",
+      "generateCreativeGlowStickRecipes",
+      "generateGlowStickLootTables"
+}

@@ -21,23 +21,22 @@ package de.markusbordihn.glowsticks.block;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
+import de.markusbordihn.glowsticks.block.glowstick.FallingLightTrail;
 import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
 import de.markusbordihn.glowsticks.block.glowstick.ParticleEffects;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
+import de.markusbordihn.glowsticks.block.glowstick.RegisteredItemReference;
 import de.markusbordihn.glowsticks.block.glowstick.WaypointNavigation;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -64,10 +63,8 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
   public static final Property<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-  public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
-  public static final IntegerProperty REDSTONE_CONTROL =
-    IntegerProperty.create(
-      "redstone_control", RedstoneCapable.UNCONTROLLED, RedstoneCapable.MAX_CONTROL_VALUE);
+  public static final IntegerProperty LEVEL =
+    IntegerProperty.create("level", 0, RedstoneCapable.MAX_LEVEL);
 
   public static final MapCodec<GlowStickBlock> CODEC =
     RecordCodecBuilder.mapCodec(
@@ -75,17 +72,21 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
         instance
           .group(
             propertiesCodec(),
-            DyeColor.CODEC.fieldOf("dye_color").forGetter(block -> block.dyeColor))
+            GlowStickColor.CODEC
+              .fieldOf("glow_stick_color")
+              .forGetter(block -> block.glowStickColor))
           .apply(instance, GlowStickBlock::new));
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);
 
   private static final int PLACEMENT_TICK_DELAY = 2;
 
-  private final DyeColor dyeColor;
+  private final GlowStickColor glowStickColor;
+  private final RegisteredItemReference itemReference;
 
-  public GlowStickBlock(Properties properties, DyeColor dyeColor) {
+  public GlowStickBlock(Properties properties, GlowStickColor glowStickColor) {
     super(properties);
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
+    this.itemReference = new RegisteredItemReference("glow_stick_" + glowStickColor.getName());
     this.registerDefaultState(BlockStateManager.createInitialBlockState(this));
   }
 
@@ -93,15 +94,13 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     return BlockStateManager.calculateLightLevel(blockState);
   }
 
-  public DyeColor getGlowStickColor() {
-    return this.dyeColor;
+  public GlowStickColor getGlowStickColor() {
+    return this.glowStickColor;
   }
 
   @Override
   public Item asItem() {
-    Identifier identifier =
-      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "glow_stick_" + this.dyeColor.getName());
-    return BuiltInRegistries.ITEM.getValue(identifier);
+    return this.itemReference.get();
   }
 
   @Override
@@ -137,7 +136,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
 
   @Override
   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-    builder.add(AGE, FACING, WATERLOGGED, REDSTONE_CONTROL);
+    builder.add(LEVEL, FACING, WATERLOGGED);
   }
 
   @Override
@@ -191,6 +190,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     if (isFree(serverLevel.getBlockState(blockPos.below()))
       && blockPos.getY() >= serverLevel.getMinY()) {
       FallingBlockEntity.fall(serverLevel, blockPos, blockState);
+      FallingLightTrail.placeTrail(serverLevel, blockPos);
       return;
     }
 
@@ -219,15 +219,16 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
       && isFree(serverLevel.getBlockState(blockPos.below()))
       && blockPos.getY() >= serverLevel.getMinY()) {
       FallingBlockEntity.fall(serverLevel, blockPos, blockState);
+      FallingLightTrail.placeTrail(serverLevel, blockPos);
       return;
     }
 
-    RedstoneCapable.handleNeighborChange(level, blockPos);
+    RedstoneCapable.recomputeChain(level, blockPos);
   }
 
   @Override
   public int getDustColor(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-    return this.dyeColor.getTextureDiffuseColor();
+    return this.glowStickColor.getOpaqueArgb();
   }
 
   @Override
@@ -239,8 +240,9 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
       return;
     }
 
-    ParticleEffects.handleParticleAnimation(blockState, level, blockPos, random, this.dyeColor);
-    WaypointNavigation.handleWaypointParticles(clientLevel, blockPos, random, this.dyeColor);
+    ParticleEffects.handleParticleAnimation(
+      blockState, clientLevel, blockPos, random, this.glowStickColor);
+    WaypointNavigation.handleWaypointParticles(clientLevel, blockPos, random, this.glowStickColor);
   }
 
   @Override
@@ -251,7 +253,7 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     LivingEntity placer,
     ItemStack itemStack) {
     super.setPlacedBy(level, blockPos, blockState, placer, itemStack);
-    RedstoneCapable.handleBlockPlacement(level, blockPos);
+    RedstoneCapable.recomputeChain(level, blockPos);
   }
 
   @Override

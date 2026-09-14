@@ -31,11 +31,11 @@ import net.minecraft.resources.RegistryOps;
 public record CreativeRecipeCondition() implements ResourceCondition {
 
   public static final Identifier ID =
-      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "creative_recipe_enabled");
+    Identifier.fromNamespaceAndPath(Constants.MOD_ID, "creative_recipe_enabled");
   public static final MapCodec<CreativeRecipeCondition> CODEC =
-      MapCodec.unit(CreativeRecipeCondition::new);
+    MapCodec.unit(CreativeRecipeCondition::new);
   public static final ResourceConditionType<CreativeRecipeCondition> TYPE =
-      ResourceConditionType.create(ID, CODEC);
+    ResourceConditionType.create(ID, CODEC);
 
   public static void register() {
     ResourceConditions.register(TYPE);
