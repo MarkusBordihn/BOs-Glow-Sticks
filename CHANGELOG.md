@@ -7,6 +7,21 @@ All notable changes to this project will be documented in this file.
 This change log includes the summarized changes.
 For the full changelog, please go to the [GitHub History][history] instead.
 
+### 7.5.0
+
+- Fixed #9 by using the stained glass from dye mods like Dye Depot for the new glow stick colors.
+- Fixed the crafting advancements not triggering for the 16 new glow stick colors.
+- Fixed falling glow sticks staying dark until they landed on the ground.
+- Changed "Get all glow sticks" to require all 32 colors instead of the first 16.
+- Changed all glow stick recipes to accept stained glass and glass panes from other mods.
+- Changed already placed glow sticks to restart with a full lifetime after the update.
+- Changed redstone control to always recharge glow sticks and freeze their lifetime.
+- Removed `glowStickRedstoneFreezesLifetime` and `glowStickRedstoneRecharges`.
+- Added 16 new glow stick colors, craftable from two different vanilla stained glass colors.
+- Added a short fading light trail behind falling and thrown glow sticks.
+- Improved the waypoint search performance while sneaking with a glow stick in hand.
+- Improved the memory usage and loading times for worlds with many placed glow sticks.
+
 ### 7.4.0
 
 - Fixed #7 by granting the crafting advancements only for actually crafted glow sticks.

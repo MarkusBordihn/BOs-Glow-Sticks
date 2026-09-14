@@ -22,7 +22,7 @@ package de.markusbordihn.glowsticks.client.renderer;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,18 +50,20 @@ public class ClientRenderer {
     ResourceLocation activated =
         new ResourceLocation(Constants.MOD_ID, GlowStickItem.TAG_ACTIVATED);
 
-    for (DyeColor dyeColor : DyeColor.values()) {
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
       ItemProperties.register(
-          ModItems.getGlowStickItem(dyeColor), animationStep, ClientRenderer::getStepFromTag);
+          ModItems.getGlowStickItem(glowStickColor), animationStep, ClientRenderer::getStepFromTag);
       ItemProperties.register(
-          ModItems.getGlowStickItem(dyeColor), activated, ClientRenderer::getActivatedFromTag);
+          ModItems.getGlowStickItem(glowStickColor),
+          activated,
+          ClientRenderer::getActivatedFromTag);
     }
 
-    for (DyeColor dyeColor : DyeColor.values()) {
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
       BlockRenderLayerMap.INSTANCE.putBlock(
-          ModBlocks.getGlowStickBlock(dyeColor), RenderType.translucent());
+          ModBlocks.getGlowStickBlock(glowStickColor), RenderType.translucent());
       BlockRenderLayerMap.INSTANCE.putBlock(
-          ModBlocks.getCreativeGlowStickBlock(dyeColor), RenderType.translucent());
+          ModBlocks.getCreativeGlowStickBlock(glowStickColor), RenderType.translucent());
     }
 
     BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GLOW_STICK_LIGHT, RenderType.cutoutMipped());
@@ -71,16 +72,16 @@ public class ClientRenderer {
   }
 
   public static void registerColorHandlers() {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      int rgb = GlowStickColors.getRgb(dyeColor);
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      int rgb = glowStickColor.getRgb();
       ColorProviderRegistry.BLOCK.register(
           (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
-          ModBlocks.getGlowStickBlock(dyeColor),
-          ModBlocks.getCreativeGlowStickBlock(dyeColor));
+          ModBlocks.getGlowStickBlock(glowStickColor),
+          ModBlocks.getCreativeGlowStickBlock(glowStickColor));
       ColorProviderRegistry.ITEM.register(
           (itemStack, tintIndex) -> rgb,
-          ModItems.getGlowStickItem(dyeColor),
-          ModItems.getCreativeGlowStickItem(dyeColor));
+          ModItems.getGlowStickItem(glowStickColor),
+          ModItems.getCreativeGlowStickItem(glowStickColor));
     }
   }
 
@@ -103,9 +104,9 @@ public class ClientRenderer {
   public static void registerRenderers() {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    for (DyeColor dyeColor : DyeColor.values()) {
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
       EntityRendererRegistry.register(
-          ModEntity.getGlowStickEntity(dyeColor), GlowStickProjectileRenderer::new);
+          ModEntity.getGlowStickEntity(glowStickColor), GlowStickProjectileRenderer::new);
     }
   }
 }

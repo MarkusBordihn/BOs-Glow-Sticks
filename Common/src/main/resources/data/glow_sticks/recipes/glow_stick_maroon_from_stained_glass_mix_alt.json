@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "|A|",
+    "|+|",
+    "|B|"
+  ],
+  "key": {
+    "A": {
+      "tag": "glow_sticks:stained_glass/maroon_secondary"
+    },
+    "B": {
+      "tag": "glow_sticks:stained_glass/maroon_primary"
+    },
+    "|": {
+      "tag": "glow_sticks:glass_panes"
+    },
+    "+": {
+      "tag": "glow_sticks:glow_item"
+    }
+  },
+  "result": {
+    "item": "glow_sticks:glow_stick_maroon",
+    "count": 8
+  }
+}

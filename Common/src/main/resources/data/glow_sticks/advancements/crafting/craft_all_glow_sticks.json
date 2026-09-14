@@ -19,6 +19,42 @@
     "experience": 100
   },
   "criteria": {
+    "glow_stick_amber": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_amber_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_amber_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_amber_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_aqua": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_aqua_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_aqua_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_aqua_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_beige": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_beige_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_beige_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_beige_from_stained_glass_mix_alt"
+      }
+    },
     "glow_stick_black": {
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
@@ -37,10 +73,46 @@
         "recipe_id": "glow_sticks:glow_stick_brown_from_stained_glass_brown"
       }
     },
+    "glow_stick_coral": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_coral_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_coral_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_coral_from_stained_glass_mix_alt"
+      }
+    },
     "glow_stick_cyan": {
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
         "recipe_id": "glow_sticks:glow_stick_cyan_from_stained_glass_cyan"
+      }
+    },
+    "glow_stick_forest": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_forest_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_forest_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_forest_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_ginger": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_ginger_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_ginger_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_ginger_from_stained_glass_mix_alt"
       }
     },
     "glow_stick_gray": {
@@ -53,6 +125,18 @@
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
         "recipe_id": "glow_sticks:glow_stick_green_from_stained_glass_green"
+      }
+    },
+    "glow_stick_indigo": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_indigo_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_indigo_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_indigo_from_stained_glass_mix_alt"
       }
     },
     "glow_stick_light_blue": {
@@ -79,6 +163,54 @@
         "recipe_id": "glow_sticks:glow_stick_magenta_from_stained_glass_magenta"
       }
     },
+    "glow_stick_maroon": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_maroon_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_maroon_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_maroon_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_mint": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_mint_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_mint_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_mint_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_navy": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_navy_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_navy_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_navy_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_olive": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_olive_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_olive_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_olive_from_stained_glass_mix_alt"
+      }
+    },
     "glow_stick_orange": {
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
@@ -103,6 +235,66 @@
         "recipe_id": "glow_sticks:glow_stick_red_from_stained_glass_red"
       }
     },
+    "glow_stick_rose": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_rose_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_rose_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_rose_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_slate": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_slate_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_slate_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_slate_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_tan": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_tan_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_tan_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_tan_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_teal": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_teal_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_teal_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_teal_from_stained_glass_mix_alt"
+      }
+    },
+    "glow_stick_verdant": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_verdant_from_stained_glass_mix"
+      }
+    },
+    "glow_stick_verdant_alt": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "glow_sticks:glow_stick_verdant_from_stained_glass_mix_alt"
+      }
+    },
     "glow_stick_white": {
       "trigger": "minecraft:recipe_crafted",
       "conditions": {
@@ -123,21 +315,118 @@
     }
   },
   "requirements": [
-    ["glow_stick_black"],
-    ["glow_stick_blue"],
-    ["glow_stick_brown"],
-    ["glow_stick_cyan"],
-    ["glow_stick_gray"],
-    ["glow_stick_green"],
-    ["glow_stick_light_blue"],
-    ["glow_stick_light_gray"],
-    ["glow_stick_lime"],
-    ["glow_stick_magenta"],
-    ["glow_stick_orange"],
-    ["glow_stick_pink"],
-    ["glow_stick_purple"],
-    ["glow_stick_red"],
-    ["glow_stick_white", "glow_stick_white_from_glass"],
-    ["glow_stick_yellow"]
+    [
+      "glow_stick_amber",
+      "glow_stick_amber_alt"
+    ],
+    [
+      "glow_stick_aqua",
+      "glow_stick_aqua_alt"
+    ],
+    [
+      "glow_stick_beige",
+      "glow_stick_beige_alt"
+    ],
+    [
+      "glow_stick_black"
+    ],
+    [
+      "glow_stick_blue"
+    ],
+    [
+      "glow_stick_brown"
+    ],
+    [
+      "glow_stick_coral",
+      "glow_stick_coral_alt"
+    ],
+    [
+      "glow_stick_cyan"
+    ],
+    [
+      "glow_stick_forest",
+      "glow_stick_forest_alt"
+    ],
+    [
+      "glow_stick_ginger",
+      "glow_stick_ginger_alt"
+    ],
+    [
+      "glow_stick_gray"
+    ],
+    [
+      "glow_stick_green"
+    ],
+    [
+      "glow_stick_indigo",
+      "glow_stick_indigo_alt"
+    ],
+    [
+      "glow_stick_light_blue"
+    ],
+    [
+      "glow_stick_light_gray"
+    ],
+    [
+      "glow_stick_lime"
+    ],
+    [
+      "glow_stick_magenta"
+    ],
+    [
+      "glow_stick_maroon",
+      "glow_stick_maroon_alt"
+    ],
+    [
+      "glow_stick_mint",
+      "glow_stick_mint_alt"
+    ],
+    [
+      "glow_stick_navy",
+      "glow_stick_navy_alt"
+    ],
+    [
+      "glow_stick_olive",
+      "glow_stick_olive_alt"
+    ],
+    [
+      "glow_stick_orange"
+    ],
+    [
+      "glow_stick_pink"
+    ],
+    [
+      "glow_stick_purple"
+    ],
+    [
+      "glow_stick_red"
+    ],
+    [
+      "glow_stick_rose",
+      "glow_stick_rose_alt"
+    ],
+    [
+      "glow_stick_slate",
+      "glow_stick_slate_alt"
+    ],
+    [
+      "glow_stick_tan",
+      "glow_stick_tan_alt"
+    ],
+    [
+      "glow_stick_teal",
+      "glow_stick_teal_alt"
+    ],
+    [
+      "glow_stick_verdant",
+      "glow_stick_verdant_alt"
+    ],
+    [
+      "glow_stick_white",
+      "glow_stick_white_from_glass"
+    ],
+    [
+      "glow_stick_yellow"
+    ]
   ]
 }

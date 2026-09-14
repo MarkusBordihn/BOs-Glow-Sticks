@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:pink_stained_glass",
+    {
+      "id": "dye_depot:rose_stained_glass",
+      "required": false
+    }
+  ]
+}

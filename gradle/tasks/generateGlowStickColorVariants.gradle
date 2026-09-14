@@ -1,0 +1,87 @@
+// Only the per color wrapper files are generated. The shared geometry under
+// assets/glow_sticks/models/{block,item}/glow_stick/ is hand tuned and stays hand written.
+tasks.register("generateGlowStickColorVariants") {
+  group = "build"
+  description = "Generates the blockstates and item models for all glow stick colors."
+
+  doLast {
+    def blockStateDir = new File("$glowStickAssetPath/blockstates")
+    def itemModelDir = new File("$glowStickAssetPath/models/item")
+    [blockStateDir, itemModelDir].each { directory ->
+      if (!directory.exists()) {
+        directory.mkdirs()
+      }
+    }
+
+    def facingRotations = [north: 270, east: 0, south: 90, west: 180]
+    def wallRotations = [north: 0, east: 90, south: 180, west: 270]
+
+    def rotated = { model, rotationY, rotationX ->
+      def variant = [model: "glow_sticks:block/glow_stick/${model}" as String]
+      if (rotationY != 0) {
+        variant.y = rotationY
+      }
+      if (rotationX != 0) {
+        variant.x = rotationX
+      }
+      return variant
+    }
+
+    def glowStickBlockState = {
+      def variants = [:]
+      facingRotations.each { facing, rotationY ->
+        variants["facing=${facing}" as String] =
+            (1..5).collect { variant -> rotated("glow_stick_variant_${variant}", rotationY, 0) }
+      }
+      return [variants: variants]
+    }
+
+    def creativeGlowStickBlockState = {
+      def variants = [:]
+      (0..5).each { variant ->
+        facingRotations.each { facing, rotationY ->
+          variants["face=floor,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_variant_${variant}", rotationY, 0)
+        }
+        wallRotations.each { facing, rotationY ->
+          variants["face=wall,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_wall_variant_${variant}", rotationY, 0)
+        }
+        facingRotations.each { facing, rotationY ->
+          variants["face=ceiling,facing=${facing},variant=${variant}" as String] =
+              rotated("glow_stick_variant_${variant}", rotationY, 180)
+        }
+      }
+      return [variants: variants]
+    }
+
+    // Overrides live in the per color item model; vanilla does not reliably inherit them.
+    def glowStickItemModel = {
+      def overrides = [[
+          predicate: ["glow_sticks:activated": 1],
+          model    : "glow_sticks:item/glow_stick/glow_stick_activated"
+      ]]
+      (1..6).each { step ->
+        overrides << [
+            predicate: ["glow_sticks:step": step],
+            model    : "glow_sticks:item/glow_stick/glow_stick_step_${step}" as String
+        ]
+      }
+      return [parent: "glow_sticks:item/glow_stick/glow_stick", overrides: overrides]
+    }
+
+    def creativeGlowStickItemModel = [parent: "glow_sticks:item/glow_stick/glow_stick_activated"]
+
+    glowStickColors.each { color ->
+      writeGlowStickJson(new File(blockStateDir, "glow_stick_${color}.json"), glowStickBlockState())
+      writeGlowStickJson(
+          new File(blockStateDir, "creative_glow_stick_${color}.json"),
+          creativeGlowStickBlockState())
+      writeGlowStickJson(new File(itemModelDir, "glow_stick_${color}.json"), glowStickItemModel())
+      writeGlowStickJson(
+          new File(itemModelDir, "creative_glow_stick_${color}.json"), creativeGlowStickItemModel)
+    }
+
+    println "✔ Generated ${glowStickColors.size() * 4} glow stick blockstate and item model files"
+  }
+}

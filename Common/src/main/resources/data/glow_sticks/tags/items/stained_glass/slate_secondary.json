@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:light_gray_stained_glass",
+    {
+      "id": "dye_depot:slate_stained_glass",
+      "required": false
+    }
+  ]
+}

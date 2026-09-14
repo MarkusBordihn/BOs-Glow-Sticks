@@ -22,7 +22,6 @@ package de.markusbordihn.glowsticks.item;
 import de.markusbordihn.glowsticks.Constants;
 import java.util.EnumMap;
 import java.util.Map;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,34 +32,34 @@ public class ModItems {
   public static final DeferredRegister<Item> ITEMS =
       DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
 
-  protected static final Map<DyeColor, RegistryObject<Item>> GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, RegistryObject<Item>> GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
-  protected static final Map<DyeColor, RegistryObject<Item>> CREATIVE_GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, RegistryObject<Item>> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
   static {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
       GLOW_STICK_ITEMS.put(
-          dyeColor,
+          glowStickColor,
           ITEMS.register(
               "glow_stick_" + colorName,
-              () -> new GlowStickItemWrapper(new Item.Properties(), dyeColor)));
+              () -> new GlowStickItemWrapper(new Item.Properties(), glowStickColor)));
 
       CREATIVE_GLOW_STICK_ITEMS.put(
-          dyeColor,
+          glowStickColor,
           ITEMS.register(
               "creative_glow_stick_" + colorName,
-              () -> new CreativeGlowStickItemWrapper(new Item.Properties(), dyeColor)));
+              () -> new CreativeGlowStickItemWrapper(new Item.Properties(), glowStickColor)));
     }
   }
 
-  public static RegistryObject<Item> getGlowStickItem(final DyeColor dyeColor) {
-    return GLOW_STICK_ITEMS.get(dyeColor);
+  public static RegistryObject<Item> getGlowStickItem(final GlowStickColor glowStickColor) {
+    return GLOW_STICK_ITEMS.get(glowStickColor);
   }
 
-  public static RegistryObject<Item> getCreativeGlowStickItem(final DyeColor dyeColor) {
-    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
+  public static RegistryObject<Item> getCreativeGlowStickItem(final GlowStickColor glowStickColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(glowStickColor);
   }
 }

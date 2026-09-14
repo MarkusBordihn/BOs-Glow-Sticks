@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "glow_sticks:glow_stick_navy_from_stained_glass_mix",
+      "glow_sticks:glow_stick_navy_from_stained_glass_mix_alt"
+    ]
+  },
+  "criteria": {
+    "has_stained_glass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "glow_sticks:stained_glass/navy_primary"
+          }
+        ]
+      }
+    },
+    "has_glow_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "glow_sticks:glow_item"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "glow_sticks:glow_stick_navy_from_stained_glass_mix"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_stained_glass",
+      "has_glow_item",
+      "has_the_recipe"
+    ]
+  ]
+}

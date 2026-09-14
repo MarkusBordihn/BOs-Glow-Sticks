@@ -22,6 +22,7 @@ package de.markusbordihn.glowsticks.entity;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.ModItems;
 import java.util.EnumMap;
 import java.util.Map;
@@ -32,31 +33,30 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 
 public class ModEntity {
 
-  protected static final Map<DyeColor, EntityType<GlowStickProjectile>> GLOW_STICK_ENTITIES =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, EntityType<GlowStickProjectile>> GLOW_STICK_ENTITIES =
+      new EnumMap<>(GlowStickColor.class);
 
   protected ModEntity() {}
 
   public static void registerEntities() {
-    // Register all glow stick entities for each dye color
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
 
       EntityType<GlowStickProjectile> glowStickEntity =
           FabricEntityTypeBuilder.<GlowStickProjectile>create(
                   MobCategory.MISC,
-                  (entityType, level) -> createGlowStickProjectile(entityType, level, dyeColor))
+                  (entityType, level) ->
+                      createGlowStickProjectile(entityType, level, glowStickColor))
               .dimensions(EntityDimensions.fixed(0.25F, 0.25F))
               .trackRangeChunks(4)
               .trackedUpdateRate(10)
               .build();
 
-      GLOW_STICK_ENTITIES.put(dyeColor, glowStickEntity);
+      GLOW_STICK_ENTITIES.put(glowStickColor, glowStickEntity);
       Registry.register(
           BuiltInRegistries.ENTITY_TYPE,
           new ResourceLocation(Constants.MOD_ID, "glow_stick_" + colorName),
@@ -64,20 +64,21 @@ public class ModEntity {
     }
   }
 
-  public static EntityType<GlowStickProjectile> getGlowStickEntity(final DyeColor dyeColor) {
-    return GLOW_STICK_ENTITIES.get(dyeColor);
+  public static EntityType<GlowStickProjectile> getGlowStickEntity(
+      final GlowStickColor glowStickColor) {
+    return GLOW_STICK_ENTITIES.get(glowStickColor);
   }
 
   private static GlowStickProjectile createGlowStickProjectile(
       final EntityType<? extends GlowStickProjectile> entityType,
       final Level level,
-      final DyeColor dyeColor) {
+      final GlowStickColor glowStickColor) {
     return new GlowStickProjectile(
         entityType,
         level,
-        dyeColor,
-        () -> ModBlocks.getGlowStickBlock(dyeColor),
-        () -> ModItems.getGlowStickItem(dyeColor),
+        glowStickColor,
+        () -> ModBlocks.getGlowStickBlock(glowStickColor),
+        () -> ModItems.getGlowStickItem(glowStickColor),
         () -> ModBlocks.GLOW_STICK_LIGHT,
         () -> ModBlocks.GLOW_STICK_LIGHT_WATER);
   }

@@ -1,0 +1,62 @@
+tasks.register("generateGlowStickTags") {
+  group = "build"
+  description = "Generates the item tags for all glow stick colors and their ingredients."
+
+  doLast {
+    def itemTagDir = new File("$glowStickDataPath/tags/items")
+    def stainedGlassTagDir = new File(itemTagDir, "stained_glass")
+    [itemTagDir, stainedGlassTagDir].each { directory ->
+      if (!directory.exists()) {
+        directory.mkdirs()
+      }
+    }
+
+    // Optional entries are vanilla 1.20.1 syntax, so one tag file works on Forge and Fabric.
+    def optional = { id -> [id: id as String, required: false] }
+
+    vanillaGlowStickColors.each { color ->
+      writeGlowStickJson(new File(stainedGlassTagDir, "${color}.json"), [
+          replace: false,
+          values : ["minecraft:${color}_stained_glass" as String]
+      ])
+    }
+
+    // One tag per slot of the two color recipe. Each carries its vanilla glass, so the tag is never
+    // empty and the recipe needs no loader condition, plus the matching glass of every dye mod, so
+    // an installed mod also allows crafting the color from two of its own panes.
+    extendedGlowStickColors.each { color ->
+      def glassPair = extendedGlowStickColorGlassPairs[color]
+      [primary: glassPair[0], secondary: glassPair[1]].each { slot, vanillaColor ->
+        writeGlowStickJson(new File(stainedGlassTagDir, "${color}_${slot}.json"), [
+            replace: false,
+            values : ["minecraft:${vanillaColor}_stained_glass" as String] +
+                extendedStainedGlassNamespaces.collect { namespace ->
+                  optional("${namespace}:${color}_stained_glass")
+                }
+        ])
+      }
+    }
+
+    writeGlowStickJson(new File(itemTagDir, "glass_panes.json"), [
+        replace: false,
+        values : ["minecraft:glass_pane"] +
+            vanillaGlowStickColors.sort(false).collect { color ->
+              "minecraft:${color}_stained_glass_pane" as String
+            } +
+            [optional("#forge:glass_panes"), optional("#c:glass_panes")]
+    ])
+
+    ["glow_stick": "glow_sticks", "creative_glow_stick": "creative_glow_sticks"]
+        .each { itemPrefix, tagName ->
+          writeGlowStickJson(new File(itemTagDir, "${tagName}.json"), [
+              replace: false,
+              values : glowStickColors.sort(false).collect { color ->
+                "glow_sticks:${itemPrefix}_${color}" as String
+              }
+          ])
+        }
+
+    println "✔ Generated ${vanillaGlowStickColors.size() + extendedGlowStickColors.size() * 2 + 3} " +
+        "glow stick item tag files"
+  }
+}

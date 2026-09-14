@@ -32,7 +32,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -48,17 +47,17 @@ public class CreativeGlowStickItem extends Item {
   public static final String TOOLTIP_PREFIX = Constants.TEXT_PREFIX + NAME;
 
   private final Supplier<Block> blockSupplier;
-  private final DyeColor dyeColor;
+  private final GlowStickColor glowStickColor;
 
   public CreativeGlowStickItem(
-      Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
+      Properties properties, Supplier<Block> blockSupplier, GlowStickColor glowStickColor) {
     super(properties);
     this.blockSupplier = blockSupplier;
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
   }
 
-  public DyeColor getDyeColor() {
-    return this.dyeColor;
+  public GlowStickColor getGlowStickColor() {
+    return this.glowStickColor;
   }
 
   @Override
@@ -121,7 +120,7 @@ public class CreativeGlowStickItem extends Item {
 
   private void placeBlockAndHandleRedstone(Level level, BlockPos position, BlockState blockState) {
     level.setBlockAndUpdate(position, blockState);
-    RedstoneCapable.handleBlockPlacement(level, position);
+    RedstoneCapable.recomputeChain(level, position);
   }
 
   private InteractionResult handleCreativeGlowStickReplacement(
@@ -208,7 +207,8 @@ public class CreativeGlowStickItem extends Item {
       ItemStack itemStack, Level level, List<Component> tooltipList, TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
         tooltipList,
-        Component.translatable(GlowStickItem.TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
+        Component.translatable(
+                GlowStickItem.TOOLTIP_PREFIX + "_" + this.glowStickColor.getName() + ".description")
             .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
         tooltipList,

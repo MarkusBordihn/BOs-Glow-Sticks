@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:yellow_stained_glass",
+    {
+      "id": "dye_depot:amber_stained_glass",
+      "required": false
+    }
+  ]
+}

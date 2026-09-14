@@ -1,7 +1,9 @@
 {
   "parent": "minecraft:recipes/root",
   "rewards": {
-    "recipes": ["glow_sticks:glow_stick_magenta_from_stained_glass_magenta"]
+    "recipes": [
+      "glow_sticks:glow_stick_magenta_from_stained_glass_magenta"
+    ]
   },
   "criteria": {
     "has_stained_glass": {
@@ -9,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:magenta_stained_glass"]
+            "tag": "glow_sticks:stained_glass/magenta"
           }
         ]
       }
@@ -31,5 +33,11 @@
       }
     }
   },
-  "requirements": [["has_stained_glass", "has_glow_item", "has_the_recipe"]]
+  "requirements": [
+    [
+      "has_stained_glass",
+      "has_glow_item",
+      "has_the_recipe"
+    ]
+  ]
 }

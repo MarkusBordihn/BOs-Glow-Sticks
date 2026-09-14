@@ -42,8 +42,13 @@ public class GlowStickLightBlock extends Block {
   }
 
   public void scheduleTick(final Level level, final BlockPos blockPos) {
+    this.scheduleTick(level, blockPos, 0);
+  }
+
+  public void scheduleTick(
+      final Level level, final BlockPos blockPos, final int additionalLifetimeTicks) {
     if (!level.getBlockTicks().hasScheduledTick(blockPos, this)) {
-      level.scheduleTick(blockPos, this, LIFETIME_TICKS);
+      level.scheduleTick(blockPos, this, LIFETIME_TICKS + additionalLifetimeTicks);
     }
   }
 
@@ -69,17 +74,13 @@ public class GlowStickLightBlock extends Block {
   @Override
   public void tick(
       BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
-    if (!level.isClientSide && blockState.getBlock() instanceof GlowStickLightBlock) {
-      level.setBlockAndUpdate(blockPos, this.getExpiredState(blockState));
-    }
+    level.setBlockAndUpdate(blockPos, this.getExpiredState(blockState));
   }
 
   @Override
   public void randomTick(
       BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
-    if (blockState.getBlock() instanceof GlowStickLightBlock) {
-      this.scheduleTick(serverLevel, blockPos);
-    }
+    this.scheduleTick(serverLevel, blockPos);
   }
 
   protected BlockState getExpiredState(BlockState blockState) {

@@ -19,19 +19,17 @@
 
 package de.markusbordihn.glowsticks.block;
 
-import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
 import de.markusbordihn.glowsticks.block.glowstick.ParticleEffects;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
+import de.markusbordihn.glowsticks.block.glowstick.RegisteredItemReference;
 import de.markusbordihn.glowsticks.block.glowstick.WaypointNavigation;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -59,6 +57,9 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
   public static final IntegerProperty VARIANT =
       IntegerProperty.create(
           "variant", BlockStateManager.MIN_VARIANT, BlockStateManager.MAX_VARIANT);
+  public static final IntegerProperty REDSTONE_CONTROL =
+      IntegerProperty.create(
+          "redstone_control", RedstoneCapable.UNCONTROLLED, RedstoneCapable.MAX_CONTROL_VALUE);
 
   private static final VoxelShape SHAPE_FLOOR = Block.box(2, 0, 2, 14, 2, 14);
   private static final VoxelShape SHAPE_CEILING = Block.box(2, 14, 2, 14, 16, 14);
@@ -67,11 +68,14 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
   private static final VoxelShape SHAPE_WALL_EAST = Block.box(14, 2, 2, 16, 14, 14);
   private static final VoxelShape SHAPE_WALL_WEST = Block.box(0, 2, 2, 2, 14, 14);
 
-  private final DyeColor dyeColor;
+  private final GlowStickColor glowStickColor;
+  private final RegisteredItemReference itemReference;
 
-  public CreativeGlowStickBlock(Properties properties, DyeColor dyeColor) {
+  public CreativeGlowStickBlock(Properties properties, GlowStickColor glowStickColor) {
     super(properties);
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
+    this.itemReference =
+        new RegisteredItemReference("creative_glow_stick_" + glowStickColor.getName());
     this.registerDefaultState(
         this.stateDefinition
             .any()
@@ -79,21 +83,20 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
             .setValue(GlowStickBlock.FACING, Direction.NORTH)
             .setValue(VARIANT, 1)
             .setValue(GlowStickBlock.WATERLOGGED, false)
-            .setValue(GlowStickBlock.REDSTONE_CONTROL, RedstoneCapable.UNCONTROLLED));
+            .setValue(REDSTONE_CONTROL, RedstoneCapable.UNCONTROLLED));
   }
 
   public static int getLightLevel(BlockState blockState) {
     return BlockStateManager.calculateCreativeLightLevel(blockState);
   }
 
-  public DyeColor getGlowStickColor() {
-    return this.dyeColor;
+  public GlowStickColor getGlowStickColor() {
+    return this.glowStickColor;
   }
 
   @Override
   public Item asItem() {
-    return BuiltInRegistries.ITEM.get(
-        new ResourceLocation(Constants.MOD_ID, "creative_glow_stick_" + this.dyeColor.getName()));
+    return this.itemReference.get();
   }
 
   private Direction getConnectedDirection(BlockState state) {
@@ -146,7 +149,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
     }
 
     if (state.getValue(GlowStickBlock.WATERLOGGED)) {
-      level.scheduleTick(pos, Fluids.WATER, 5);
+      level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
     }
 
     return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
@@ -154,12 +157,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
 
   @Override
   protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-    builder.add(
-        FACE,
-        GlowStickBlock.FACING,
-        VARIANT,
-        GlowStickBlock.WATERLOGGED,
-        GlowStickBlock.REDSTONE_CONTROL);
+    builder.add(FACE, GlowStickBlock.FACING, VARIANT, GlowStickBlock.WATERLOGGED, REDSTONE_CONTROL);
   }
 
   @Override
@@ -181,7 +179,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       BlockPos neighborPos,
       boolean isMoving) {
     super.neighborChanged(blockState, level, blockPos, neighborBlock, neighborPos, isMoving);
-    RedstoneCapable.handleNeighborChange(level, blockPos);
+    RedstoneCapable.recomputeChain(level, blockPos);
   }
 
   @Override
@@ -193,8 +191,9 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       return;
     }
 
-    ParticleEffects.handleParticleAnimation(blockState, level, blockPos, random, this.dyeColor);
-    WaypointNavigation.handleWaypointParticles(clientLevel, blockPos, random, this.dyeColor);
+    ParticleEffects.handleParticleAnimation(
+        blockState, clientLevel, blockPos, random, this.glowStickColor);
+    WaypointNavigation.handleWaypointParticles(clientLevel, blockPos, random, this.glowStickColor);
   }
 
   @Override
@@ -205,7 +204,7 @@ public class CreativeGlowStickBlock extends Block implements SimpleWaterloggedBl
       LivingEntity placer,
       ItemStack itemStack) {
     super.setPlacedBy(level, blockPos, blockState, placer, itemStack);
-    RedstoneCapable.handleBlockPlacement(level, blockPos);
+    RedstoneCapable.recomputeChain(level, blockPos);
   }
 
   @Override

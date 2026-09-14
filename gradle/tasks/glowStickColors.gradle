@@ -1,0 +1,51 @@
+import groovy.json.JsonOutput
+
+// Single source of truth for the glow stick colors, mirrored by GlowStickColor.java.
+ext {
+  vanillaGlowStickColors = [
+      "white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray",
+      "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"
+  ]
+  extendedGlowStickColors = [
+      "maroon", "rose", "coral", "indigo", "navy", "slate", "olive", "amber",
+      "beige", "teal", "mint", "aqua", "verdant", "forest", "ginger", "tan"
+  ]
+  glowStickColors = vanillaGlowStickColors + extendedGlowStickColors
+
+  // Two vanilla stained glass colors per extended color, so every color stays craftable without a
+  // dye mod. Every pair is unique and none of them matches a single color recipe.
+  extendedGlowStickColorGlassPairs = [
+      maroon : ["red", "brown"],
+      rose   : ["red", "pink"],
+      coral  : ["orange", "pink"],
+      indigo : ["blue", "purple"],
+      navy   : ["blue", "black"],
+      slate  : ["blue", "light_gray"],
+      olive  : ["green", "yellow"],
+      amber  : ["yellow", "orange"],
+      beige  : ["yellow", "white"],
+      teal   : ["cyan", "green"],
+      mint   : ["lime", "white"],
+      aqua   : ["cyan", "light_blue"],
+      verdant: ["green", "black"],
+      forest : ["green", "lime"],
+      ginger : ["orange", "brown"],
+      tan    : ["brown", "white"]
+  ]
+
+  // Mods publishing <namespace>:<color>_stained_glass for the extended colors. All entries are
+  // referenced optionally, so a missing mod leaves the tag empty instead of breaking the datapack.
+  extendedStainedGlassNamespaces = ["dye_depot"]
+
+  glowStickAssetPath = "$projectDir/../Common/src/main/resources/assets/glow_sticks"
+  glowStickDataPath = "$projectDir/../Common/src/main/resources/data/glow_sticks"
+
+  // JsonOutput.prettyPrint indents with four spaces and omits the trailing newline, the checked in
+  // resources use two spaces and a trailing newline.
+  writeGlowStickJson = { File file, content ->
+    file.text = JsonOutput.prettyPrint(JsonOutput.toJson(content))
+        .replaceAll(/(?m)^((?: {4})+)/) { match, indent -> " " * indent.length().intdiv(2) }
+        .replaceAll(/\[\s+\]/, "[]")
+        .replaceAll(/(?m)[ ]+$/, "") + "\n"
+  }
+}

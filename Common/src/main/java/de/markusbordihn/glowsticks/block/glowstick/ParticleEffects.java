@@ -20,13 +20,11 @@
 package de.markusbordihn.glowsticks.block.glowstick;
 
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
 
@@ -34,24 +32,19 @@ public class ParticleEffects {
 
   public static void handleParticleAnimation(
       BlockState blockState,
-      Level level,
+      ClientLevel clientLevel,
       BlockPos blockPos,
       RandomSource random,
-      DyeColor dyeColor) {
-    if (!(level instanceof ClientLevel clientLevel)) {
-      return;
-    }
-
+      GlowStickColor glowStickColor) {
     int currentAge = BlockStateManager.getAge(blockState);
     if (!shouldSpawnParticles(currentAge, random)) {
       return;
     }
 
-    float ageFactor = Math.max(0.2f, 1.0f - (currentAge / 15.0f));
+    float ageFactor = Math.max(0.2f, 1.0f - ((float) currentAge / BlockStateManager.MAX_AGE));
     float size = Math.max(0.8f, ageFactor * 1.2f);
 
-    Vector3f adjustedColors =
-        calculateAdjustedColors(GlowStickColors.getRgbComponents(dyeColor), ageFactor);
+    Vector3f adjustedColors = calculateAdjustedColors(glowStickColor.getRgbComponents(), ageFactor);
     spawnMainParticle(clientLevel, blockPos, random, adjustedColors, size);
 
     if (currentAge <= 5 && random.nextInt(3) == 0) {
