@@ -27,6 +27,11 @@ dependencies {
   if (project.hasProperty('fabric_xaeros_minimap_mod') && project.fabric_xaeros_minimap_mod) {
     modRuntimeOnly("curse.maven:xaeros_minimap-263420:${project.fabric_xaeros_minimap_mod}")
   }
+
+  // Fabric only on purpose, so the Forge and NeoForge clients can be tested without a dye mod (#9).
+  if (project.hasProperty('fabric_dye_depot_mod') && project.fabric_dye_depot_mod) {
+    modRuntimeOnly("curse.maven:dye_depot-988504:${project.fabric_dye_depot_mod}")
+  }
 }
 
 loom {

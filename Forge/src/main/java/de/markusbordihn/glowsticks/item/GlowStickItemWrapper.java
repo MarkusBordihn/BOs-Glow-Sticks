@@ -23,25 +23,24 @@ import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.ModEntity;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class GlowStickItemWrapper extends GlowStickItem {
 
-  public GlowStickItemWrapper(Properties properties, DyeColor dyeColor) {
-    super(properties, () -> ModBlocks.getGlowStickBlock(dyeColor).get(), dyeColor);
+  public GlowStickItemWrapper(Properties properties, GlowStickColor glowStickColor) {
+    super(properties, () -> ModBlocks.getGlowStickBlock(glowStickColor).get(), glowStickColor);
   }
 
   @Override
   public GlowStickProjectile getGlowStickEntity(Level level, LivingEntity entity) {
     return new GlowStickProjectile(
-        ModEntity.getGlowStickEntity(getDyeColor()).get(),
+        ModEntity.getGlowStickEntity(getGlowStickColor()).get(),
         level,
         entity,
-        getDyeColor(),
-        ModBlocks.getGlowStickBlock(getDyeColor()),
-        ModItems.getGlowStickItem(getDyeColor()),
+        getGlowStickColor(),
+        ModBlocks.getGlowStickBlock(getGlowStickColor()),
+        ModItems.getGlowStickItem(getGlowStickColor()),
         ModBlocks.GLOW_STICK_LIGHT,
         ModBlocks.GLOW_STICK_LIGHT_WATER);
   }

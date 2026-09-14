@@ -68,6 +68,41 @@ public class SmokeTest {
   }
 
   @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testGlowStickLightsUpWithoutRedstone(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightsUpWithoutRedstone(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testGlowStickLightDimsWithAge(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightDimsWithAge(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testRedstoneSignalLightsGlowStickFully(GameTestHelper helper) {
+    GlowStickTests.testRedstoneSignalLightsGlowStickFully(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testUnpoweredRedstoneTurnsGlowStickOff(GameTestHelper helper) {
+    GlowStickTests.testUnpoweredRedstoneTurnsGlowStickOff(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3", timeoutTicks = 200)
+  public void testGlowStickLightFollowsEverySignalStrength(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightFollowsEverySignalStrength(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(GameTestHelper helper) {
+    GlowStickTests.testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
+  public void testCreativeGlowStickFollowsRedstone(GameTestHelper helper) {
+    GlowStickTests.testCreativeGlowStickFollowsRedstone(helper);
+  }
+
+  @GameTest(template = "glow_sticks:gametest.3x3x3")
   public void testRedstoneChainWithoutSignal(GameTestHelper helper) {
     GlowStickTests.testRedstoneChainWithoutSignal(helper);
   }

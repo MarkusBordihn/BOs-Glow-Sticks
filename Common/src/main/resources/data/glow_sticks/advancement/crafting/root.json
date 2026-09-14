@@ -21,7 +21,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "glow_sticks:glow_item"
+            "items": "#glow_sticks:glow_item"
           }
         ]
       }

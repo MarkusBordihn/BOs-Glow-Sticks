@@ -22,7 +22,6 @@ package de.markusbordihn.glowsticks.item;
 import de.markusbordihn.glowsticks.Constants;
 import java.util.EnumMap;
 import java.util.Map;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -31,34 +30,34 @@ public class ModItems {
 
   public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Constants.MOD_ID);
 
-  protected static final Map<DyeColor, DeferredItem<Item>> GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, DeferredItem<Item>> GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
-  protected static final Map<DyeColor, DeferredItem<Item>> CREATIVE_GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, DeferredItem<Item>> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
   static {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
       GLOW_STICK_ITEMS.put(
-          dyeColor,
+          glowStickColor,
           ITEMS.register(
               "glow_stick_" + colorName,
-              () -> new GlowStickItemWrapper(new Item.Properties(), dyeColor)));
+              () -> new GlowStickItemWrapper(new Item.Properties(), glowStickColor)));
 
       CREATIVE_GLOW_STICK_ITEMS.put(
-          dyeColor,
+          glowStickColor,
           ITEMS.register(
               "creative_glow_stick_" + colorName,
-              () -> new CreativeGlowStickItemWrapper(new Item.Properties(), dyeColor)));
+              () -> new CreativeGlowStickItemWrapper(new Item.Properties(), glowStickColor)));
     }
   }
 
-  public static DeferredItem<Item> getGlowStickItem(final DyeColor dyeColor) {
-    return GLOW_STICK_ITEMS.get(dyeColor);
+  public static DeferredItem<Item> getGlowStickItem(final GlowStickColor glowStickColor) {
+    return GLOW_STICK_ITEMS.get(glowStickColor);
   }
 
-  public static DeferredItem<Item> getCreativeGlowStickItem(final DyeColor dyeColor) {
-    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
+  public static DeferredItem<Item> getCreativeGlowStickItem(final GlowStickColor glowStickColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(glowStickColor);
   }
 }

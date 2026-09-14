@@ -21,6 +21,7 @@ package de.markusbordihn.glowsticks.gametest;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
+import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
 import de.markusbordihn.glowsticks.block.glowstick.RedstoneCapable;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
@@ -29,6 +30,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.gametest.framework.GameTestSequence;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -37,6 +39,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -59,6 +62,14 @@ public class GlowStickTests {
   private static final BlockPos CHAIN_START_POS = new BlockPos(1, 1, 0);
   private static final BlockPos CHAIN_MIDDLE_POS = new BlockPos(1, 1, 1);
   private static final BlockPos CHAIN_END_POS = new BlockPos(1, 1, 2);
+  private static final BlockPos[] GLOW_STICK_CHAMBER_WALLS = {
+    new BlockPos(1, 0, 1),
+    new BlockPos(1, 2, 1),
+    new BlockPos(0, 1, 1),
+    new BlockPos(2, 1, 1),
+    new BlockPos(1, 1, 0),
+    new BlockPos(1, 1, 2)
+  };
   private static final int AGE_BEFORE_PICKUP = 5;
 
   protected GlowStickTests() {}
@@ -95,7 +106,7 @@ public class GlowStickTests {
             GameTestHelpers.assertTrue(
                 helper,
                 "A freshly placed glow stick lost a lifetime step right after placement!",
-                helper.getBlockState(GLOW_STICK_POS).getValue(GlowStickBlock.AGE) == 0));
+                BlockStateManager.getAge(helper.getBlockState(GLOW_STICK_POS)) == 0));
   }
 
   public static void testGlowStickAgesAndVanishes(GameTestHelper helper) {
@@ -133,7 +144,7 @@ public class GlowStickTests {
           GameTestHelpers.assertCondition(
               helper,
               "Glow stick aged although its lifetime is disabled!",
-              blockState.is(glowStickBlock) && blockState.getValue(GlowStickBlock.AGE) == 0);
+              blockState.is(glowStickBlock) && BlockStateManager.getAge(blockState) == 0);
           GameTestHelpers.assertTrue(
               helper,
               "Glow stick still has a despawn tick scheduled!",
@@ -196,20 +207,164 @@ public class GlowStickTests {
     GameTestHelpers.assertCondition(
         helper,
         "The light level does not fade in even steps!",
-        freshState.setValue(GlowStickBlock.AGE, 7).getLightEmission() == 8
-            && freshState.setValue(GlowStickBlock.AGE, 14).getLightEmission() == 1);
+        BlockStateManager.withAge(freshState, 7).getLightEmission() == 8
+            && BlockStateManager.withAge(freshState, 14).getLightEmission() == 1);
     GameTestHelpers.assertCondition(
         helper,
         "A fully faded glow stick is not dimmed to the lowest light level!",
-        freshState.setValue(GlowStickBlock.AGE, 15).getLightEmission() == 1);
+        BlockStateManager.withAge(freshState, 15).getLightEmission() == 1);
     GameTestHelpers.assertTrue(
         helper,
         "A controlled glow stick does not follow its redstone power!",
-        freshState
-                .setValue(
-                    GlowStickBlock.REDSTONE_CONTROL, RedstoneCapable.encodeControlState(true, 9))
+        RedstoneCapable.withControlValue(freshState, RedstoneCapable.encodeControlState(true, 9))
                 .getLightEmission()
             == 9);
+  }
+
+  public static void testGlowStickLightsUpWithoutRedstone(GameTestHelper helper) {
+    sealGlowStickChamber(helper);
+    helper.setBlock(GLOW_STICK_POS, getGlowStickBlock());
+
+    helper
+        .startSequence()
+        .thenWaitUntil(
+            () -> {
+              BlockState blockState = helper.getBlockState(GLOW_STICK_POS);
+              GameTestHelpers.assertCondition(
+                  helper,
+                  "A glow stick without any redstone reported itself as controlled!",
+                  !RedstoneCapable.isControlled(blockState)
+                      && BlockStateManager.getAge(blockState) == 0);
+              assertBlockLight(helper, 15, "A fresh glow stick");
+            })
+        .thenSucceed();
+  }
+
+  public static void testGlowStickLightDimsWithAge(GameTestHelper helper) {
+    Block glowStickBlock = getGlowStickBlock();
+    sealGlowStickChamber(helper);
+    helper.setBlock(
+        GLOW_STICK_POS, BlockStateManager.withAge(glowStickBlock.defaultBlockState(), 10));
+
+    helper
+        .startSequence()
+        .thenWaitUntil(() -> assertBlockLight(helper, 5, "An aged glow stick"))
+        .thenSucceed();
+  }
+
+  public static void testRedstoneSignalLightsGlowStickFully(GameTestHelper helper) {
+    Block glowStickBlock = getGlowStickBlock();
+    sealGlowStickChamber(helper);
+    helper.setBlock(
+        GLOW_STICK_POS, BlockStateManager.withAge(glowStickBlock.defaultBlockState(), 12));
+    helper.setBlock(REDSTONE_POS, Blocks.REDSTONE_BLOCK);
+
+    helper
+        .startSequence()
+        .thenWaitUntil(
+            () -> {
+              BlockState blockState = helper.getBlockState(GLOW_STICK_POS);
+              GameTestHelpers.assertCondition(
+                  helper,
+                  "A glow stick next to a redstone block did not receive its signal!",
+                  RedstoneCapable.isControlled(blockState)
+                      && RedstoneCapable.getPower(blockState) == 15);
+              assertBlockLight(helper, 15, "A fully powered glow stick");
+            })
+        .thenSucceed();
+  }
+
+  public static void testUnpoweredRedstoneTurnsGlowStickOff(GameTestHelper helper) {
+    sealGlowStickChamber(helper);
+    helper.setBlock(GLOW_STICK_POS, getGlowStickBlock());
+    helper.setBlock(REDSTONE_POS, Blocks.TARGET);
+
+    helper
+        .startSequence()
+        .thenWaitUntil(
+            () -> {
+              BlockState blockState = helper.getBlockState(GLOW_STICK_POS);
+              GameTestHelpers.assertCondition(
+                  helper,
+                  "A glow stick next to an unpowered redstone source was not controlled by it!",
+                  RedstoneCapable.isControlled(blockState)
+                      && !RedstoneCapable.isPowered(blockState));
+              assertBlockLight(helper, 0, "An unpowered glow stick");
+            })
+        .thenSucceed();
+  }
+
+  public static void testGlowStickLightFollowsEverySignalStrength(GameTestHelper helper) {
+    sealGlowStickChamber(helper);
+    helper.setBlock(GLOW_STICK_POS, getGlowStickBlock());
+
+    GameTestSequence sequence = helper.startSequence();
+    for (int signal = 0; signal <= RedstoneCapable.MAX_SIGNAL; signal++) {
+      int expectedSignal = signal;
+      sequence
+          .thenExecute(() -> setControlledBySignal(helper, expectedSignal))
+          .thenWaitUntil(
+              () ->
+                  assertBlockLight(
+                      helper,
+                      expectedSignal,
+                      "A glow stick controlled with signal " + expectedSignal));
+    }
+
+    sequence.thenSucceed();
+  }
+
+  public static void testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(GameTestHelper helper) {
+    Block glowStickBlock = getGlowStickBlock();
+    sealGlowStickChamber(helper);
+    helper.setBlock(
+        GLOW_STICK_POS, BlockStateManager.withAge(glowStickBlock.defaultBlockState(), 14));
+    helper.setBlock(REDSTONE_POS, Blocks.REDSTONE_BLOCK);
+
+    helper
+        .startSequence()
+        .thenExecute(
+            () ->
+                GameTestHelpers.assertCondition(
+                    helper,
+                    "A glow stick next to a redstone block did not receive its signal!",
+                    RedstoneCapable.getPower(helper.getBlockState(GLOW_STICK_POS)) == 15))
+        .thenExecute(() -> helper.setBlock(REDSTONE_POS, Blocks.STONE))
+        .thenWaitUntil(
+            () -> {
+              BlockState blockState = helper.getBlockState(GLOW_STICK_POS);
+              GameTestHelpers.assertCondition(
+                  helper,
+                  "A glow stick stayed controlled after its redstone source was removed!",
+                  !RedstoneCapable.isControlled(blockState)
+                      && BlockStateManager.getAge(blockState) == 0);
+              assertBlockLight(helper, 15, "A released glow stick");
+            })
+        .thenSucceed();
+  }
+
+  public static void testCreativeGlowStickFollowsRedstone(GameTestHelper helper) {
+    sealGlowStickChamber(helper);
+    helper.setBlock(GLOW_STICK_POS, getBlock("creative_glow_stick_white"));
+
+    helper
+        .startSequence()
+        .thenWaitUntil(() -> assertBlockLight(helper, 15, "A creative glow stick without redstone"))
+        .thenExecute(() -> helper.setBlock(REDSTONE_POS, Blocks.TARGET))
+        .thenWaitUntil(
+            () ->
+                assertBlockLight(
+                    helper, 0, "A creative glow stick next to an unpowered redstone source"))
+        .thenExecute(() -> helper.setBlock(REDSTONE_POS, Blocks.REDSTONE_BLOCK))
+        .thenWaitUntil(
+            () -> {
+              GameTestHelpers.assertCondition(
+                  helper,
+                  "A creative glow stick did not receive the full redstone signal!",
+                  RedstoneCapable.getPower(helper.getBlockState(GLOW_STICK_POS)) == 15);
+              assertBlockLight(helper, 15, "A fully powered creative glow stick");
+            })
+        .thenSucceed();
   }
 
   public static void testRedstoneChainReleasedWhenSourceRemoved(GameTestHelper helper) {
@@ -240,7 +395,7 @@ public class GlowStickTests {
     placeSupportedGlowStick(
         helper,
         CHAIN_START_POS,
-        glowStickBlock.defaultBlockState().setValue(GlowStickBlock.AGE, AGE_BEFORE_PICKUP));
+        BlockStateManager.withAge(glowStickBlock.defaultBlockState(), AGE_BEFORE_PICKUP));
     helper.setBlock(CHAIN_SOURCE_POS, Blocks.LEVER);
 
     helper.runAfterDelay(
@@ -251,9 +406,9 @@ public class GlowStickTests {
           GameTestHelpers.assertTrue(
               helper,
               "A wired but unpowered glow stick kept aging!",
-              RedstoneCapable.isControlled(blockState)
-                  && !RedstoneCapable.isPowered(blockState)
-                  && blockState.getValue(GlowStickBlock.AGE) == AGE_BEFORE_PICKUP);
+              blockState.is(glowStickBlock)
+                  && RedstoneCapable.isControlled(blockState)
+                  && !RedstoneCapable.isPowered(blockState));
         });
   }
 
@@ -262,9 +417,7 @@ public class GlowStickTests {
     GlowSticksConfig.glowStickLifetimeSeconds = 1;
     Block glowStickBlock = getGlowStickBlock();
     placeSupportedGlowStick(
-        helper,
-        CHAIN_START_POS,
-        glowStickBlock.defaultBlockState().setValue(GlowStickBlock.AGE, 10));
+        helper, CHAIN_START_POS, BlockStateManager.withAge(glowStickBlock.defaultBlockState(), 10));
     helper.setBlock(CHAIN_SOURCE_POS, Blocks.REDSTONE_BLOCK);
 
     helper.runAfterDelay(
@@ -274,7 +427,7 @@ public class GlowStickTests {
           GameTestHelpers.assertTrue(
               helper,
               "A powered glow stick did not recharge back to full brightness!",
-              helper.getBlockState(CHAIN_START_POS).getValue(GlowStickBlock.AGE) == 0);
+              BlockStateManager.getAge(helper.getBlockState(CHAIN_START_POS)) == 0);
         });
   }
 
@@ -311,7 +464,7 @@ public class GlowStickTests {
         helper,
         "Using a glow stick on a block did not place it with its remaining lifetime!",
         placedState.is(glowStickBlock)
-            && placedState.getValue(GlowStickBlock.AGE) == AGE_BEFORE_PICKUP
+            && BlockStateManager.getAge(placedState) == AGE_BEFORE_PICKUP
             && itemStack.getCount() == 1);
   }
 
@@ -339,7 +492,7 @@ public class GlowStickTests {
     helper.setBlock(GLOW_STICK_POS, Blocks.STONE);
     helper.setBlock(
         UPPER_GLOW_STICK_POS,
-        glowStickBlock.defaultBlockState().setValue(GlowStickBlock.AGE, AGE_BEFORE_PICKUP));
+        BlockStateManager.withAge(glowStickBlock.defaultBlockState(), AGE_BEFORE_PICKUP));
     helper.setBlock(GLOW_STICK_POS, Blocks.AIR);
 
     helper.runAfterDelay(
@@ -350,7 +503,7 @@ public class GlowStickTests {
               helper,
               "A fallen glow stick did not keep its remaining lifetime!",
               landedState.is(glowStickBlock)
-                  && landedState.getValue(GlowStickBlock.AGE) == AGE_BEFORE_PICKUP);
+                  && BlockStateManager.getAge(landedState) == AGE_BEFORE_PICKUP);
         });
   }
 
@@ -376,7 +529,7 @@ public class GlowStickTests {
     helper.setBlock(SUPPORT_POS, Blocks.STONE);
     helper.setBlock(
         GLOW_STICK_POS,
-        glowStickBlock.defaultBlockState().setValue(GlowStickBlock.AGE, AGE_BEFORE_PICKUP));
+        BlockStateManager.withAge(glowStickBlock.defaultBlockState(), AGE_BEFORE_PICKUP));
 
     Player player = helper.makeMockPlayer(GameType.SURVIVAL);
     player.setShiftKeyDown(true);
@@ -435,10 +588,42 @@ public class GlowStickTests {
     helper.setBlock(GLOW_STICK_POS, glowStickBlock);
   }
 
+  private static void sealGlowStickChamber(GameTestHelper helper) {
+    for (BlockPos chamberWallPos : GLOW_STICK_CHAMBER_WALLS) {
+      helper.setBlock(chamberWallPos, Blocks.STONE);
+    }
+  }
+
   private static void placeSupportedGlowStick(
       GameTestHelper helper, BlockPos blockPos, BlockState blockState) {
     helper.setBlock(blockPos.below(), Blocks.STONE);
     helper.setBlock(blockPos, blockState);
+  }
+
+  private static void setControlledBySignal(GameTestHelper helper, int signal) {
+    helper.setBlock(
+        GLOW_STICK_POS,
+        RedstoneCapable.withControlValue(
+            helper.getBlockState(GLOW_STICK_POS),
+            RedstoneCapable.encodeControlState(true, signal)));
+  }
+
+  private static int getBlockLight(GameTestHelper helper, BlockPos blockPos) {
+    return helper.getLevel().getBrightness(LightLayer.BLOCK, helper.absolutePos(blockPos));
+  }
+
+  private static void assertBlockLight(
+      GameTestHelper helper, int expectedBlockLight, String glowStickDescription) {
+    int blockLight = getBlockLight(helper, GLOW_STICK_POS);
+    GameTestHelpers.assertCondition(
+        helper,
+        glowStickDescription
+            + " lights up with "
+            + blockLight
+            + " instead of "
+            + expectedBlockLight
+            + "!",
+        blockLight == expectedBlockLight);
   }
 
   private static void useOnBlock(GameTestHelper helper, Player player, BlockPos blockPos) {

@@ -25,26 +25,25 @@ import java.util.Map;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 
 public class ModItems {
 
-  protected static final Map<DyeColor, Item> GLOW_STICK_ITEMS = new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, Item> GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
-  protected static final Map<DyeColor, Item> CREATIVE_GLOW_STICK_ITEMS =
-      new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, Item> CREATIVE_GLOW_STICK_ITEMS =
+      new EnumMap<>(GlowStickColor.class);
 
   public static void registerItems() {
-    // Register all glow stick items for each dye color
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
-      Item glowStickItem = new GlowStickItemWrapper(new Item.Properties(), dyeColor);
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
+      Item glowStickItem = new GlowStickItemWrapper(new Item.Properties(), glowStickColor);
       Item creativeGlowStickItem =
-          new CreativeGlowStickItemWrapper(new Item.Properties(), dyeColor);
+          new CreativeGlowStickItemWrapper(new Item.Properties(), glowStickColor);
 
-      GLOW_STICK_ITEMS.put(dyeColor, glowStickItem);
-      CREATIVE_GLOW_STICK_ITEMS.put(dyeColor, creativeGlowStickItem);
+      GLOW_STICK_ITEMS.put(glowStickColor, glowStickItem);
+      CREATIVE_GLOW_STICK_ITEMS.put(glowStickColor, creativeGlowStickItem);
 
       Registry.register(
           BuiltInRegistries.ITEM,
@@ -59,11 +58,11 @@ public class ModItems {
     }
   }
 
-  public static Item getGlowStickItem(final DyeColor dyeColor) {
-    return GLOW_STICK_ITEMS.get(dyeColor);
+  public static Item getGlowStickItem(final GlowStickColor glowStickColor) {
+    return GLOW_STICK_ITEMS.get(glowStickColor);
   }
 
-  public static Item getCreativeGlowStickItem(final DyeColor dyeColor) {
-    return CREATIVE_GLOW_STICK_ITEMS.get(dyeColor);
+  public static Item getCreativeGlowStickItem(final GlowStickColor glowStickColor) {
+    return CREATIVE_GLOW_STICK_ITEMS.get(glowStickColor);
   }
 }

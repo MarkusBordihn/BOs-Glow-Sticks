@@ -3,7 +3,7 @@
   "pattern": ["|#|", "|+|", "|#|"],
   "key": {
     "#": {
-      "item": "minecraft:glass"
+      "tag": "glow_sticks:glass_blocks"
     },
     "|": {
       "tag": "glow_sticks:glass_panes"

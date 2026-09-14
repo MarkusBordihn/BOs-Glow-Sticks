@@ -43,14 +43,30 @@ public class BlockStateManager {
     return block
         .getStateDefinition()
         .any()
-        .setValue(GlowStickBlock.AGE, 0)
+        .setValue(GlowStickBlock.LEVEL, 0)
         .setValue(GlowStickBlock.FACING, Direction.NORTH)
-        .setValue(GlowStickBlock.WATERLOGGED, false)
-        .setValue(GlowStickBlock.REDSTONE_CONTROL, RedstoneCapable.UNCONTROLLED);
+        .setValue(GlowStickBlock.WATERLOGGED, false);
   }
 
   public static int getAge(BlockState blockState) {
-    return blockState.hasProperty(GlowStickBlock.AGE) ? blockState.getValue(GlowStickBlock.AGE) : 0;
+    if (!blockState.hasProperty(GlowStickBlock.LEVEL)) {
+      return 0;
+    }
+
+    int level = blockState.getValue(GlowStickBlock.LEVEL);
+    if (level >= RedstoneCapable.CONTROLLED_LEVEL_OFFSET) {
+      return MAX_AGE - RedstoneCapable.getPower(blockState);
+    }
+
+    return level;
+  }
+
+  public static BlockState withAge(BlockState blockState, int age) {
+    if (!blockState.hasProperty(GlowStickBlock.LEVEL) || RedstoneCapable.isControlled(blockState)) {
+      return blockState;
+    }
+
+    return blockState.setValue(GlowStickBlock.LEVEL, Mth.clamp(age, 0, MAX_AGE));
   }
 
   public static int getVariant(BlockState blockState) {
@@ -126,16 +142,11 @@ public class BlockStateManager {
 
     block.scheduleDespawnTick(serverLevel, blockPos);
 
-    int currentAge = blockState.getValue(GlowStickBlock.AGE);
     if (RedstoneCapable.isControlled(blockState)) {
-      if (GlowSticksConfig.glowStickRedstoneRecharges && RedstoneCapable.isPowered(blockState)) {
-        setAge(blockState, serverLevel, blockPos, currentAge - 1);
-      } else if (!GlowSticksConfig.glowStickRedstoneFreezesLifetime && currentAge < MAX_AGE) {
-        setAge(blockState, serverLevel, blockPos, currentAge + 1);
-      }
       return;
     }
 
+    int currentAge = blockState.getValue(GlowStickBlock.LEVEL);
     if (currentAge >= MAX_AGE) {
       serverLevel.destroyBlock(blockPos, GlowSticksConfig.glowStickDropsOnDespawn);
       return;
@@ -146,13 +157,12 @@ public class BlockStateManager {
 
   private static void setAge(
       BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, int age) {
-    int normalizedAge = Mth.clamp(age, 0, MAX_AGE);
-    if (normalizedAge == blockState.getValue(GlowStickBlock.AGE)) {
+    BlockState agedBlockState = withAge(blockState, age);
+    if (agedBlockState == blockState) {
       return;
     }
 
-    serverLevel.setBlock(
-        blockPos, blockState.setValue(GlowStickBlock.AGE, normalizedAge), Block.UPDATE_CLIENTS);
+    serverLevel.setBlock(blockPos, agedBlockState, Block.UPDATE_CLIENTS);
   }
 
   public static int calculateLightLevel(BlockState blockState) {
@@ -160,7 +170,7 @@ public class BlockStateManager {
       return RedstoneCapable.getPower(blockState);
     }
 
-    return Mth.clamp(MAX_AGE - blockState.getValue(GlowStickBlock.AGE), 1, MAX_AGE);
+    return Mth.clamp(MAX_AGE - blockState.getValue(GlowStickBlock.LEVEL), 1, MAX_AGE);
   }
 
   public static int calculateCreativeLightLevel(BlockState blockState) {

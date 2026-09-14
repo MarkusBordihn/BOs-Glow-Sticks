@@ -27,7 +27,7 @@
           "distance": {"absolute": {"min": 0.1}}
         },
         "item": {
-          "tag": "glow_sticks:glow_sticks"
+          "items": "#glow_sticks:glow_sticks"
         }
       }
     }

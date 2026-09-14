@@ -23,24 +23,19 @@ import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.data.GlowStickData;
 import de.markusbordihn.glowsticks.entity.ModEntity;
-import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,31 +50,24 @@ public class ClientRenderer {
 
     event.enqueueWork(
         () -> {
-          for (DyeColor dyeColor : DyeColor.values()) {
-            RegistryObject<Item> glowStickItem = ModItems.getGlowStickItem(dyeColor);
-            if (glowStickItem != null) {
-              ItemProperties.register(
-                  glowStickItem.get(),
-                  GlowStickData.STEP_PREDICATE,
-                  GlowStickItem::getStepFromDataComponent);
-              ItemProperties.register(
-                  glowStickItem.get(),
-                  GlowStickData.ACTIVATED_PREDICATE,
-                  GlowStickItem::getActivatedFromDataComponent);
-            }
+          for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+            Item glowStickItem = ModItems.getGlowStickItem(glowStickColor).get();
+            ItemProperties.register(
+                glowStickItem,
+                GlowStickData.STEP_PREDICATE,
+                GlowStickItem::getStepFromDataComponent);
+            ItemProperties.register(
+                glowStickItem,
+                GlowStickData.ACTIVATED_PREDICATE,
+                GlowStickItem::getActivatedFromDataComponent);
           }
 
-          for (DyeColor dyeColor : DyeColor.values()) {
-            RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-            if (glowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(glowStickBlock.get(), RenderType.translucent());
-            }
-            RegistryObject<Block> creativeGlowStickBlock =
-                ModBlocks.getCreativeGlowStickBlock(dyeColor);
-            if (creativeGlowStickBlock != null) {
-              ItemBlockRenderTypes.setRenderLayer(
-                  creativeGlowStickBlock.get(), RenderType.translucent());
-            }
+          for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+            ItemBlockRenderTypes.setRenderLayer(
+                ModBlocks.getGlowStickBlock(glowStickColor).get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(
+                ModBlocks.getCreativeGlowStickBlock(glowStickColor).get(),
+                RenderType.translucent());
           }
 
           ItemBlockRenderTypes.setRenderLayer(
@@ -91,29 +79,23 @@ public class ClientRenderer {
 
   @SubscribeEvent
   public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      int rgb = GlowStickColors.getRgb(dyeColor);
-      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-      RegistryObject<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
-      if (glowStickBlock != null && creativeGlowStickBlock != null) {
-        event.register(
-            (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
-            glowStickBlock.get(),
-            creativeGlowStickBlock.get());
-      }
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      int rgb = glowStickColor.getRgb();
+      event.register(
+          (blockState, blockAndTintGetter, blockPos, tintIndex) -> rgb,
+          ModBlocks.getGlowStickBlock(glowStickColor).get(),
+          ModBlocks.getCreativeGlowStickBlock(glowStickColor).get());
     }
   }
 
   @SubscribeEvent
   public static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      int opaqueArgb = GlowStickColors.getOpaqueArgb(dyeColor);
-      RegistryObject<Item> glowStickItem = ModItems.getGlowStickItem(dyeColor);
-      RegistryObject<Item> creativeGlowStickItem = ModItems.getCreativeGlowStickItem(dyeColor);
-      if (glowStickItem != null && creativeGlowStickItem != null) {
-        event.register(
-            (itemStack, tintIndex) -> opaqueArgb, glowStickItem.get(), creativeGlowStickItem.get());
-      }
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      int opaqueArgb = glowStickColor.getOpaqueArgb();
+      event.register(
+          (itemStack, tintIndex) -> opaqueArgb,
+          ModItems.getGlowStickItem(glowStickColor).get(),
+          ModItems.getCreativeGlowStickItem(glowStickColor).get());
     }
   }
 
@@ -121,12 +103,9 @@ public class ClientRenderer {
   public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
     log.info("{} Client Renderer ...", Constants.LOG_REGISTER_PREFIX);
 
-    for (DyeColor dyeColor : DyeColor.values()) {
-      RegistryObject<EntityType<GlowStickProjectile>> glowStickEntity =
-          ModEntity.getGlowStickEntity(dyeColor);
-      if (glowStickEntity != null) {
-        event.registerEntityRenderer(glowStickEntity.get(), GlowStickProjectileRenderer::new);
-      }
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      event.registerEntityRenderer(
+          ModEntity.getGlowStickEntity(glowStickColor).get(), GlowStickProjectileRenderer::new);
     }
   }
 }

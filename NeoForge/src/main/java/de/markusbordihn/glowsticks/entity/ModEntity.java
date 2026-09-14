@@ -22,6 +22,7 @@ package de.markusbordihn.glowsticks.entity;
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
 import de.markusbordihn.glowsticks.entity.projectile.GlowStickProjectile;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.ModItems;
 import java.util.EnumMap;
 import java.util.Map;
@@ -29,7 +30,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -40,20 +40,20 @@ public class ModEntity {
       DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Constants.MOD_ID);
 
   protected static final Map<
-          DyeColor, DeferredHolder<EntityType<?>, EntityType<GlowStickProjectile>>>
-      GLOW_STICK_ENTITIES = new EnumMap<>(DyeColor.class);
+          GlowStickColor, DeferredHolder<EntityType<?>, EntityType<GlowStickProjectile>>>
+      GLOW_STICK_ENTITIES = new EnumMap<>(GlowStickColor.class);
 
   static {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
       GLOW_STICK_ENTITIES.put(
-          dyeColor,
+          glowStickColor,
           ENTITIES.register(
               "glow_stick_" + colorName,
               () ->
                   EntityType.Builder.<GlowStickProjectile>of(
                           (entityType, level) ->
-                              createGlowStickProjectile(entityType, level, dyeColor),
+                              createGlowStickProjectile(entityType, level, glowStickColor),
                           MobCategory.MISC)
                       .sized(0.25F, 0.25F)
                       .clientTrackingRange(4)
@@ -68,20 +68,20 @@ public class ModEntity {
   protected ModEntity() {}
 
   public static DeferredHolder<EntityType<?>, EntityType<GlowStickProjectile>> getGlowStickEntity(
-      final DyeColor dyeColor) {
-    return GLOW_STICK_ENTITIES.get(dyeColor);
+      final GlowStickColor glowStickColor) {
+    return GLOW_STICK_ENTITIES.get(glowStickColor);
   }
 
   private static GlowStickProjectile createGlowStickProjectile(
       final EntityType<? extends GlowStickProjectile> entityType,
       final Level level,
-      final DyeColor dyeColor) {
+      final GlowStickColor glowStickColor) {
     return new GlowStickProjectile(
         entityType,
         level,
-        dyeColor,
-        () -> ModBlocks.getGlowStickBlock(dyeColor).get(),
-        () -> ModItems.getGlowStickItem(dyeColor).get(),
+        glowStickColor,
+        () -> ModBlocks.getGlowStickBlock(glowStickColor).get(),
+        () -> ModItems.getGlowStickItem(glowStickColor).get(),
         ModBlocks.GLOW_STICK_LIGHT,
         ModBlocks.GLOW_STICK_LIGHT_WATER);
   }

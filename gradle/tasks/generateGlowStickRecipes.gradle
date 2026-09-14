@@ -1,0 +1,110 @@
+tasks.register("generateGlowStickRecipes") {
+  group = "build"
+  description = "Generates the survival recipes and recipe advancements for all glow stick colors."
+
+  doLast {
+    def recipeDir = new File("$glowStickDataPath/recipe")
+    def advancementDir = new File("$glowStickDataPath/advancement/recipes/crafting")
+    [recipeDir, advancementDir].each { directory ->
+      if (!directory.exists()) {
+        directory.mkdirs()
+      }
+    }
+
+    def stainedGlassTag = { color -> "glow_sticks:stained_glass/${color}" as String }
+
+    // ItemPredicate lost its "tag" field in 1.21, tags are now a "#" prefixed entry of "items".
+    def taggedItems = { tag -> [items: "#${tag}" as String] }
+
+    def inventoryChanged = { itemPredicate ->
+      [trigger: "minecraft:inventory_changed", conditions: [items: [itemPredicate]]]
+    }
+    def recipeUnlocked = { recipeId ->
+      [trigger: "minecraft:recipe_unlocked", conditions: [recipe: recipeId]]
+    }
+
+    def writeRecipe = { fileName, recipe ->
+      writeGlowStickJson(new File(recipeDir, "${fileName}.json"), recipe)
+    }
+    def writeAdvancement = { fileName, advancement ->
+      writeGlowStickJson(new File(advancementDir, "${fileName}.json"), advancement)
+    }
+
+    vanillaGlowStickColors.each { color ->
+      writeRecipe("glow_stick_${color}_from_stained_glass_${color}", [
+          type   : "minecraft:crafting_shaped",
+          pattern: ["|#|", "|+|", "|#|"],
+          key    : [
+              "#": [tag: stainedGlassTag(color)],
+              "|": [tag: "glow_sticks:glass_panes"],
+              "+": [tag: "glow_sticks:glow_item"]
+          ],
+          result : [id: "glow_sticks:glow_stick_${color}" as String, count: 8]
+      ])
+    }
+
+    vanillaGlowStickColors.each { color ->
+      def recipeId = "glow_sticks:glow_stick_${color}_from_stained_glass_${color}"
+      def criteria = [
+          has_stained_glass: inventoryChanged(taggedItems(stainedGlassTag(color))),
+          has_glow_item    : inventoryChanged(taggedItems("glow_sticks:glow_item")),
+          has_the_recipe   : recipeUnlocked(recipeId)
+      ]
+      def rewardedRecipes = [recipeId]
+
+      // glow_stick_white_from_glass.json is a hand written one off and unlocks with the same
+      // advancement, so plain glass and its recipe need their own criteria.
+      if (color == "white") {
+        def glassRecipeId = "glow_sticks:glow_stick_white_from_glass"
+        rewardedRecipes += glassRecipeId
+        criteria.has_glass = inventoryChanged(taggedItems("glow_sticks:glass_blocks"))
+        criteria.has_the_recipe_from_glass = recipeUnlocked(glassRecipeId)
+      }
+
+      writeAdvancement("glow_stick_${color}", [
+          parent      : "minecraft:recipes/root",
+          rewards     : [recipes: rewardedRecipes],
+          criteria    : criteria,
+          requirements: [criteria.keySet() as List]
+      ])
+    }
+
+    extendedGlowStickColors.each { color ->
+      def mixRecipeIds = []
+
+      // Vanilla has no mirroring across rows, so both orders need their own recipe.
+      [["primary", "secondary", "mix"], ["secondary", "primary", "mix_alt"]]
+          .each { topSlot, bottomSlot, suffix ->
+            def recipeName = "glow_stick_${color}_from_stained_glass_${suffix}"
+            mixRecipeIds += "glow_sticks:${recipeName}" as String
+
+            writeRecipe(recipeName, [
+                type   : "minecraft:crafting_shaped",
+                pattern: ["|A|", "|+|", "|B|"],
+                key    : [
+                    "A": [tag: stainedGlassTag("${color}_${topSlot}")],
+                    "B": [tag: stainedGlassTag("${color}_${bottomSlot}")],
+                    "|": [tag: "glow_sticks:glass_panes"],
+                    "+": [tag: "glow_sticks:glow_item"]
+                ],
+                result : [id: "glow_sticks:glow_stick_${color}" as String, count: 8]
+            ])
+          }
+
+      def criteria = [
+          has_stained_glass: inventoryChanged(taggedItems(stainedGlassTag("${color}_primary"))),
+          has_glow_item    : inventoryChanged(taggedItems("glow_sticks:glow_item")),
+          has_the_recipe   : recipeUnlocked(mixRecipeIds[0])
+      ]
+      writeAdvancement("glow_stick_${color}", [
+          parent      : "minecraft:recipes/root",
+          rewards     : [recipes: mixRecipeIds],
+          criteria    : criteria,
+          requirements: [criteria.keySet() as List]
+      ])
+    }
+
+    println "✔ Generated ${vanillaGlowStickColors.size() + extendedGlowStickColors.size() * 2} " +
+        "glow stick recipes and ${glowStickColors.size()} advancements"
+  }
+}

@@ -17,6 +17,14 @@
     "minecraft:purple_stained_glass_pane",
     "minecraft:red_stained_glass_pane",
     "minecraft:white_stained_glass_pane",
-    "minecraft:yellow_stained_glass_pane"
+    "minecraft:yellow_stained_glass_pane",
+    {
+      "id": "#forge:glass_panes",
+      "required": false
+    },
+    {
+      "id": "#c:glass_panes",
+      "required": false
+    }
   ]
 }

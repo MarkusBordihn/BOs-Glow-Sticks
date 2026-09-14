@@ -1,9 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": ["|#|", "|+|", "|#|"],
+  "pattern": [
+    "|#|",
+    "|+|",
+    "|#|"
+  ],
   "key": {
     "#": {
-      "item": "minecraft:yellow_stained_glass"
+      "tag": "glow_sticks:stained_glass/yellow"
     },
     "|": {
       "tag": "glow_sticks:glass_panes"
