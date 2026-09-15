@@ -10,6 +10,7 @@ public class SmokeTest {
 
   private static final String STRUCTURE = "glow_sticks:gametest.3x3x3";
   private static final int MAX_TICKS = 100;
+  private static final int EXTENDED_MAX_TICKS = 200;
 
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
   public void testModRegistered(GameTestHelper helper) {
@@ -76,6 +77,41 @@ public class SmokeTest {
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
   public void testGlowStickPlacedInWaterIsWaterlogged(GameTestHelper helper) {
     GlowStickTests.testGlowStickPlacedInWaterIsWaterlogged(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickLightsUpWithoutRedstone(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightsUpWithoutRedstone(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickLightDimsWithAge(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightDimsWithAge(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testRedstoneSignalLightsGlowStickFully(GameTestHelper helper) {
+    GlowStickTests.testRedstoneSignalLightsGlowStickFully(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testUnpoweredRedstoneTurnsGlowStickOff(GameTestHelper helper) {
+    GlowStickTests.testUnpoweredRedstoneTurnsGlowStickOff(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = EXTENDED_MAX_TICKS)
+  public void testGlowStickLightFollowsEverySignalStrength(GameTestHelper helper) {
+    GlowStickTests.testGlowStickLightFollowsEverySignalStrength(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(GameTestHelper helper) {
+    GlowStickTests.testGlowStickKeepsBrightnessWhenRedstoneIsRemoved(helper);
+  }
+
+  @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)
+  public void testCreativeGlowStickFollowsRedstone(GameTestHelper helper) {
+    GlowStickTests.testCreativeGlowStickFollowsRedstone(helper);
   }
 
   @GameTest(structure = STRUCTURE, maxTicks = MAX_TICKS)

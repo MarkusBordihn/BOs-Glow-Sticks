@@ -38,17 +38,53 @@ public class RedstoneCapable {
   public static final int UNCONTROLLED = 0;
   public static final int MAX_SIGNAL = 15;
   public static final int MAX_CONTROL_VALUE = MAX_SIGNAL + 1;
+  public static final int CONTROLLED_LEVEL_OFFSET = BlockStateManager.MAX_AGE + 1;
+  public static final int MAX_LEVEL = CONTROLLED_LEVEL_OFFSET + MAX_SIGNAL;
 
   public static int encodeControlState(boolean isControlled, int signal) {
     return isControlled ? Mth.clamp(signal, 0, MAX_SIGNAL) + 1 : UNCONTROLLED;
   }
 
+  public static int getControlValue(BlockState blockState) {
+    if (blockState.hasProperty(CreativeGlowStickBlock.REDSTONE_CONTROL)) {
+      return blockState.getValue(CreativeGlowStickBlock.REDSTONE_CONTROL);
+    }
+
+    if (!blockState.hasProperty(GlowStickBlock.LEVEL)) {
+      return UNCONTROLLED;
+    }
+
+    int level = blockState.getValue(GlowStickBlock.LEVEL);
+    return level < CONTROLLED_LEVEL_OFFSET ? UNCONTROLLED : level - CONTROLLED_LEVEL_OFFSET + 1;
+  }
+
+  public static BlockState withControlValue(BlockState blockState, int controlValue) {
+    if (blockState.hasProperty(CreativeGlowStickBlock.REDSTONE_CONTROL)) {
+      return blockState.setValue(CreativeGlowStickBlock.REDSTONE_CONTROL, controlValue);
+    }
+
+    if (!blockState.hasProperty(GlowStickBlock.LEVEL)) {
+      return blockState;
+    }
+
+    if (controlValue != UNCONTROLLED) {
+      return blockState.setValue(GlowStickBlock.LEVEL, CONTROLLED_LEVEL_OFFSET + controlValue - 1);
+    }
+
+    if (!isControlled(blockState)) {
+      return blockState;
+    }
+
+    return blockState.setValue(
+      GlowStickBlock.LEVEL, BlockStateManager.MAX_AGE - getPower(blockState));
+  }
+
   public static boolean isControlled(BlockState blockState) {
-    return blockState.getValue(GlowStickBlock.REDSTONE_CONTROL) != UNCONTROLLED;
+    return getControlValue(blockState) != UNCONTROLLED;
   }
 
   public static int getPower(BlockState blockState) {
-    return Math.max(0, blockState.getValue(GlowStickBlock.REDSTONE_CONTROL) - 1);
+    return Math.max(0, getControlValue(blockState) - 1);
   }
 
   public static boolean isPowered(BlockState blockState) {
@@ -67,14 +103,6 @@ public class RedstoneCapable {
       }
     }
     return level.getBestNeighborSignal(blockPos) > 0;
-  }
-
-  public static void handleNeighborChange(Level level, BlockPos blockPos) {
-    recomputeChain(level, blockPos);
-  }
-
-  public static void handleBlockPlacement(Level level, BlockPos blockPos) {
-    recomputeChain(level, blockPos);
   }
 
   public static void recomputeChain(Level level, BlockPos originPos) {
@@ -133,20 +161,17 @@ public class RedstoneCapable {
     }
 
     int controlValue = encodeControlState(isControlled, power);
-    if (blockState.getValue(GlowStickBlock.REDSTONE_CONTROL) == controlValue) {
+    if (getControlValue(blockState) == controlValue) {
       return;
     }
 
-    level.setBlock(
-      blockPos,
-      blockState.setValue(GlowStickBlock.REDSTONE_CONTROL, controlValue),
-      Block.UPDATE_CLIENTS);
+    level.setBlock(blockPos, withControlValue(blockState, controlValue), Block.UPDATE_CLIENTS);
   }
 
   public static BlockState getInitialPlacementState(
     BlockState defaultState, Level level, BlockPos blockPos) {
-    return defaultState.setValue(
-      GlowStickBlock.REDSTONE_CONTROL,
+    return withControlValue(
+      defaultState,
       encodeControlState(
         hasRedstoneCapableNeighbor(level, blockPos), level.getBestNeighborSignal(blockPos)));
   }

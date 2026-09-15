@@ -38,6 +38,26 @@ public final class ModGameTests {
       "glow_stick_placed_in_water_is_waterlogged",
       () -> GlowStickTests::testGlowStickPlacedInWaterIsWaterlogged);
     TEST_FUNCTIONS.register(
+      "glow_stick_lights_up_without_redstone",
+      () -> GlowStickTests::testGlowStickLightsUpWithoutRedstone);
+    TEST_FUNCTIONS.register(
+      "glow_stick_light_dims_with_age", () -> GlowStickTests::testGlowStickLightDimsWithAge);
+    TEST_FUNCTIONS.register(
+      "redstone_signal_lights_glow_stick_fully",
+      () -> GlowStickTests::testRedstoneSignalLightsGlowStickFully);
+    TEST_FUNCTIONS.register(
+      "unpowered_redstone_turns_glow_stick_off",
+      () -> GlowStickTests::testUnpoweredRedstoneTurnsGlowStickOff);
+    TEST_FUNCTIONS.register(
+      "glow_stick_light_follows_every_signal_strength",
+      () -> GlowStickTests::testGlowStickLightFollowsEverySignalStrength);
+    TEST_FUNCTIONS.register(
+      "glow_stick_keeps_brightness_when_redstone_is_removed",
+      () -> GlowStickTests::testGlowStickKeepsBrightnessWhenRedstoneIsRemoved);
+    TEST_FUNCTIONS.register(
+      "creative_glow_stick_follows_redstone",
+      () -> GlowStickTests::testCreativeGlowStickFollowsRedstone);
+    TEST_FUNCTIONS.register(
       "redstone_chain_without_signal", () -> GlowStickTests::testRedstoneChainWithoutSignal);
     TEST_FUNCTIONS.register(
       "redstone_chain_released_when_source_removed",

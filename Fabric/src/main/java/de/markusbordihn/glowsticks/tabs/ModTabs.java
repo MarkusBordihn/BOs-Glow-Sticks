@@ -20,13 +20,13 @@
 package de.markusbordihn.glowsticks.tabs;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.ModItems;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,13 +35,13 @@ public class ModTabs {
 
   public static final CreativeModeTab GLOW_STICKS_TAB =
     FabricCreativeModeTab.builder()
-      .icon(() -> new ItemStack(ModItems.getGlowStickItem(DyeColor.WHITE)))
+      .icon(() -> new ItemStack(ModItems.getGlowStickItem(GlowStickColor.WHITE)))
       .title(Component.translatable("itemGroup." + Constants.MOD_ID + ".tab"))
       .displayItems(
         (displayContext, entries) -> {
-          for (DyeColor dyeColor : DyeColor.values()) {
-            entries.accept(ModItems.getGlowStickItem(dyeColor));
-            entries.accept(ModItems.getCreativeGlowStickItem(dyeColor));
+          for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+            entries.accept(ModItems.getGlowStickItem(glowStickColor));
+            entries.accept(ModItems.getCreativeGlowStickItem(glowStickColor));
           }
         })
       .build();

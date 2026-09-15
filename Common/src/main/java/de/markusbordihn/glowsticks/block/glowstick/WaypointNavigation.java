@@ -23,7 +23,7 @@ import de.markusbordihn.glowsticks.block.CreativeGlowStickBlock;
 import de.markusbordihn.glowsticks.block.GlowStickBlock;
 import de.markusbordihn.glowsticks.config.GlowSticksConfig;
 import de.markusbordihn.glowsticks.item.CreativeGlowStickItem;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import de.markusbordihn.glowsticks.item.GlowStickItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -33,7 +33,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -44,19 +43,22 @@ public class WaypointNavigation {
   private static final int SEARCH_INTERVAL_TICKS = 10;
   private static final double MIN_WAYPOINT_DISTANCE_SQUARED = 6.0;
   private static long lastSearchTick = 0;
-  private static DyeColor cachedSearchColor = null;
+  private static GlowStickColor cachedSearchColor = null;
   private static BlockPos cachedNearestGlowStick = null;
   private static ResourceKey<Level> cachedSearchDimension = null;
 
   public static void handleWaypointParticles(
-    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
+    ClientLevel clientLevel,
+    BlockPos blockPos,
+    RandomSource random,
+    GlowStickColor glowStickColor) {
     if (shouldSpawnWaypointParticles(clientLevel, blockPos, glowStickColor)) {
       spawnWaypointParticles(clientLevel, blockPos, random, glowStickColor);
     }
   }
 
   private static boolean shouldSpawnWaypointParticles(
-    ClientLevel clientLevel, BlockPos blockPos, DyeColor glowStickColor) {
+    ClientLevel clientLevel, BlockPos blockPos, GlowStickColor glowStickColor) {
     if (!GlowSticksConfig.spawnWaypointParticles) {
       return false;
     }
@@ -66,8 +68,8 @@ public class WaypointNavigation {
       return false;
     }
 
-    DyeColor heldColor = getHeldGlowStickColor(player);
-    if (heldColor == null || heldColor != glowStickColor) {
+    GlowStickColor heldColor = getHeldGlowStickColor(player);
+    if (heldColor != glowStickColor) {
       return false;
     }
 
@@ -87,74 +89,49 @@ public class WaypointNavigation {
   }
 
   private static BlockPos findNearestGlowStick(
-    ClientLevel clientLevel, LocalPlayer player, DyeColor targetColor) {
-    BlockPos playerPos = player.blockPosition();
+    ClientLevel clientLevel, LocalPlayer player, GlowStickColor targetColor) {
     int horizontalRadius = GlowSticksConfig.waypointSearchRadius;
     int verticalRadius = GlowSticksConfig.waypointVerticalSearchRadius;
-    BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+    ShellSearch shellSearch = new ShellSearch(clientLevel, player.blockPosition(), targetColor);
 
     for (int shellRadius = 1;
       shellRadius <= Math.max(horizontalRadius, verticalRadius);
       shellRadius++) {
-      BlockPos nearestOfShell =
-        findInShell(
-          clientLevel,
-          playerPos,
-          checkPos,
-          targetColor,
-          shellRadius,
-          horizontalRadius,
-          verticalRadius);
-      if (nearestOfShell != null) {
-        return nearestOfShell;
+      searchShell(shellSearch, shellRadius, horizontalRadius, verticalRadius);
+      if (shellSearch.nearest != null) {
+        return shellSearch.nearest;
       }
     }
 
     return null;
   }
 
-  private static BlockPos findInShell(
-    ClientLevel clientLevel,
-    BlockPos playerPos,
-    BlockPos.MutableBlockPos checkPos,
-    DyeColor targetColor,
-    int shellRadius,
-    int horizontalRadius,
-    int verticalRadius) {
+  private static void searchShell(
+    ShellSearch shellSearch, int shellRadius, int horizontalRadius, int verticalRadius) {
     int horizontalLimit = Math.min(shellRadius, horizontalRadius);
     int verticalLimit = Math.min(shellRadius, verticalRadius);
 
-    BlockPos nearest = null;
-    double nearestDistanceSquared = Double.MAX_VALUE;
-
     for (int offsetY = -verticalLimit; offsetY <= verticalLimit; offsetY++) {
-      for (int offsetX = -horizontalLimit; offsetX <= horizontalLimit; offsetX++) {
-        boolean fullRow = Math.abs(offsetX) == shellRadius || Math.abs(offsetY) == shellRadius;
-        for (int offsetZ = -horizontalLimit; offsetZ <= horizontalLimit; offsetZ++) {
-          if (!fullRow && Math.abs(offsetZ) != shellRadius) {
-            continue;
+      if (Math.abs(offsetY) == shellRadius) {
+        for (int offsetX = -horizontalLimit; offsetX <= horizontalLimit; offsetX++) {
+          for (int offsetZ = -horizontalLimit; offsetZ <= horizontalLimit; offsetZ++) {
+            shellSearch.check(offsetX, offsetY, offsetZ);
           }
-
-          checkPos.set(
-            playerPos.getX() + offsetX, playerPos.getY() + offsetY, playerPos.getZ() + offsetZ);
-          double distanceSquared = playerPos.distSqr(checkPos);
-          if (distanceSquared < MIN_WAYPOINT_DISTANCE_SQUARED
-            || distanceSquared >= nearestDistanceSquared
-            || !clientLevel.isLoaded(checkPos)
-            || !matchesGlowStickColor(clientLevel.getBlockState(checkPos), targetColor)) {
-            continue;
-          }
-
-          nearestDistanceSquared = distanceSquared;
-          nearest = checkPos.immutable();
+        }
+      } else if (horizontalLimit == shellRadius) {
+        for (int offsetZ = -shellRadius; offsetZ <= shellRadius; offsetZ++) {
+          shellSearch.check(-shellRadius, offsetY, offsetZ);
+          shellSearch.check(shellRadius, offsetY, offsetZ);
+        }
+        for (int offsetX = 1 - shellRadius; offsetX < shellRadius; offsetX++) {
+          shellSearch.check(offsetX, offsetY, -shellRadius);
+          shellSearch.check(offsetX, offsetY, shellRadius);
         }
       }
     }
-
-    return nearest;
   }
 
-  private static boolean matchesGlowStickColor(BlockState blockState, DyeColor targetColor) {
+  private static boolean matchesGlowStickColor(BlockState blockState, GlowStickColor targetColor) {
     Block block = blockState.getBlock();
     if (block instanceof GlowStickBlock glowStickBlock) {
       return glowStickBlock.getGlowStickColor() == targetColor;
@@ -166,8 +143,8 @@ public class WaypointNavigation {
     return false;
   }
 
-  private static DyeColor getHeldGlowStickColor(LocalPlayer player) {
-    DyeColor mainHandColor = getGlowStickColor(player.getMainHandItem());
+  private static GlowStickColor getHeldGlowStickColor(LocalPlayer player) {
+    GlowStickColor mainHandColor = getGlowStickColor(player.getMainHandItem());
     if (mainHandColor != null) {
       return mainHandColor;
     }
@@ -175,19 +152,22 @@ public class WaypointNavigation {
     return getGlowStickColor(player.getOffhandItem());
   }
 
-  private static DyeColor getGlowStickColor(ItemStack itemStack) {
+  private static GlowStickColor getGlowStickColor(ItemStack itemStack) {
     if (itemStack.getItem() instanceof GlowStickItem glowStickItem) {
-      return glowStickItem.getDyeColor();
+      return glowStickItem.getGlowStickColor();
     }
     if (itemStack.getItem() instanceof CreativeGlowStickItem creativeGlowStickItem) {
-      return creativeGlowStickItem.getDyeColor();
+      return creativeGlowStickItem.getGlowStickColor();
     }
 
     return null;
   }
 
   private static void spawnWaypointParticles(
-    ClientLevel clientLevel, BlockPos blockPos, RandomSource random, DyeColor glowStickColor) {
+    ClientLevel clientLevel,
+    BlockPos blockPos,
+    RandomSource random,
+    GlowStickColor glowStickColor) {
     LocalPlayer player = Minecraft.getInstance().player;
     if (player == null) {
       return;
@@ -201,8 +181,8 @@ public class WaypointNavigation {
     spawnWaypointTrail(clientLevel, random, calculateWaypointColor(glowStickColor), trail);
   }
 
-  private static int calculateWaypointColor(DyeColor glowStickColor) {
-    float[] baseColors = GlowStickColors.getRgbComponents(glowStickColor);
+  private static int calculateWaypointColor(GlowStickColor glowStickColor) {
+    float[] baseColors = glowStickColor.getRgbComponents();
     float colorMultiplier =
       Math.max(baseColors[0], Math.max(baseColors[1], baseColors[2])) > 0.3f ? 1.8f : 2.5f;
 
@@ -340,6 +320,41 @@ public class WaypointNavigation {
         (random.nextGaussian() - 0.5) * 0.002,
         0.002,
         (random.nextGaussian() - 0.5) * 0.002);
+    }
+  }
+
+  private static final class ShellSearch {
+
+    private final ClientLevel clientLevel;
+    private final BlockPos playerPos;
+    private final GlowStickColor targetColor;
+    private final BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+    private BlockPos nearest = null;
+    private double nearestDistanceSquared = Double.MAX_VALUE;
+
+    private ShellSearch(ClientLevel clientLevel, BlockPos playerPos, GlowStickColor targetColor) {
+      this.clientLevel = clientLevel;
+      this.playerPos = playerPos;
+      this.targetColor = targetColor;
+    }
+
+    private void check(int offsetX, int offsetY, int offsetZ) {
+      this.checkPos.set(
+        this.playerPos.getX() + offsetX,
+        this.playerPos.getY() + offsetY,
+        this.playerPos.getZ() + offsetZ);
+
+      double distanceSquared = this.playerPos.distSqr(this.checkPos);
+      if (distanceSquared < MIN_WAYPOINT_DISTANCE_SQUARED
+        || distanceSquared >= this.nearestDistanceSquared
+        || !this.clientLevel.isLoaded(this.checkPos)
+        || !matchesGlowStickColor(
+        this.clientLevel.getBlockState(this.checkPos), this.targetColor)) {
+        return;
+      }
+
+      this.nearestDistanceSquared = distanceSquared;
+      this.nearest = this.checkPos.immutable();
     }
   }
 

@@ -37,9 +37,7 @@ public class GlowSticksConfig extends Config {
           The glow stick fades over 16 evenly spaced steps and vanishes at the end. Default: 2160 (36 min)
           A value of 0 means glow sticks never fade and never despawn.
         - glowStickDropsOnDespawn: Whether a glow stick drops its item when its lifetime runs out.
-        - glowStickRedstoneFreezesLifetime: Whether glow sticks next to redstone stop aging, even while
-          unpowered. Useful for permanent builds, disable this for a stricter survival balance.
-        - glowStickRedstoneRecharges: Whether powered glow sticks slowly recharge back to full brightness.
+          Glow sticks next to redstone follow the signal strength, stop aging and never despawn.
         - glowStickChainLimit: How many connected glow sticks a single redstone signal can control.
           A value of 0 disables chains, so only glow sticks touching redstone directly are controlled.
       
@@ -60,13 +58,14 @@ public class GlowSticksConfig extends Config {
 
   public static final int AGE_STEPS = 16;
   private static final String LEGACY_DESPAWN_TICKS_KEY = "despawnTicks";
+  private static final String[] LEGACY_REDSTONE_KEYS = {
+    "glowStickRedstoneFreezesLifetime", "glowStickRedstoneRecharges"
+  };
   private static final int LEGACY_RANDOM_TICK_SECONDS = 68;
   private static final int MAX_LIFETIME_SECONDS = 86400;
 
   public static int glowStickLifetimeSeconds = 2160;
   public static boolean glowStickDropsOnDespawn = false;
-  public static boolean glowStickRedstoneFreezesLifetime = true;
-  public static boolean glowStickRedstoneRecharges = true;
   public static int glowStickChainLimit = 64;
   public static boolean allowGlowStickBlockPlacement = true;
   public static boolean allowGlowStickPickup = true;
@@ -113,12 +112,21 @@ public class GlowSticksConfig extends Config {
     properties.remove(LEGACY_DESPAWN_TICKS_KEY);
   }
 
+  static void removeLegacyRedstoneKeys(final Properties properties) {
+    for (String legacyKey : LEGACY_REDSTONE_KEYS) {
+      if (properties.remove(legacyKey) != null) {
+        log.info("Removed obsolete config entry {}", legacyKey);
+      }
+    }
+  }
+
   public static void parseConfigFile() {
     File configFile = getConfigFile(CONFIG_FILE_NAME);
     Properties properties = readConfigFile(configFile);
     Properties unmodifiedProperties = (Properties) properties.clone();
 
     migrateLegacyDespawnTicks(properties);
+    removeLegacyRedstoneKeys(properties);
 
     glowStickLifetimeSeconds =
       parseConfigRangedValue(
@@ -129,11 +137,6 @@ public class GlowSticksConfig extends Config {
         MAX_LIFETIME_SECONDS);
     glowStickDropsOnDespawn =
       parseConfigValue(properties, "glowStickDropsOnDespawn", glowStickDropsOnDespawn);
-    glowStickRedstoneFreezesLifetime =
-      parseConfigValue(
-        properties, "glowStickRedstoneFreezesLifetime", glowStickRedstoneFreezesLifetime);
-    glowStickRedstoneRecharges =
-      parseConfigValue(properties, "glowStickRedstoneRecharges", glowStickRedstoneRecharges);
     glowStickChainLimit =
       parseConfigMinValue(properties, "glowStickChainLimit", glowStickChainLimit, 0);
     allowGlowStickBlockPlacement =

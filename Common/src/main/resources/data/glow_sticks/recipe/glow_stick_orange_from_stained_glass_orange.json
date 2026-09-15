@@ -1,9 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "pattern": ["|#|", "|+|", "|#|"],
+  "pattern": [
+    "|#|",
+    "|+|",
+    "|#|"
+  ],
   "key": {
-    "#": "minecraft:orange_stained_glass",
+    "#": "#glow_sticks:stained_glass/orange",
     "|": "#glow_sticks:glass_panes",
     "+": "#glow_sticks:glow_item"
   },

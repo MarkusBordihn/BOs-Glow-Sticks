@@ -21,10 +21,9 @@ package de.markusbordihn.glowsticks.client.renderer;
 
 import de.markusbordihn.glowsticks.Constants;
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import de.markusbordihn.glowsticks.item.GlowStickColors;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import java.util.List;
 import net.minecraft.client.color.block.BlockTintSources;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -50,12 +49,13 @@ public class ItemBlockRenderer {
 
   @SubscribeEvent
   public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(dyeColor);
-      RegistryObject<Block> creativeGlowStickBlock = ModBlocks.getCreativeGlowStickBlock(dyeColor);
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      RegistryObject<Block> glowStickBlock = ModBlocks.getGlowStickBlock(glowStickColor);
+      RegistryObject<Block> creativeGlowStickBlock =
+        ModBlocks.getCreativeGlowStickBlock(glowStickColor);
       if (glowStickBlock != null && creativeGlowStickBlock != null) {
         event.register(
-          List.of(BlockTintSources.constant(GlowStickColors.getOpaqueArgb(dyeColor))),
+          List.of(BlockTintSources.constant(glowStickColor.getOpaqueArgb())),
           glowStickBlock.get(),
           creativeGlowStickBlock.get());
       }

@@ -44,7 +44,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -66,12 +65,13 @@ public class GlowStickItem extends Item {
   private static final int PLACEMENT_COOLDOWN_TICKS = 4;
 
   protected final Supplier<Block> blockSupplier;
-  private final DyeColor dyeColor;
+  private final GlowStickColor glowStickColor;
 
-  public GlowStickItem(Properties properties, Supplier<Block> blockSupplier, DyeColor dyeColor) {
+  public GlowStickItem(
+    Properties properties, Supplier<Block> blockSupplier, GlowStickColor glowStickColor) {
     super(properties);
     this.blockSupplier = blockSupplier;
-    this.dyeColor = dyeColor;
+    this.glowStickColor = glowStickColor;
   }
 
   private static GlowStickData getData(final ItemStack itemStack) {
@@ -135,8 +135,8 @@ public class GlowStickItem extends Item {
     throw new UnsupportedOperationException("GlowStickItem.getGlowStickEntity() not implemented!");
   }
 
-  public DyeColor getDyeColor() {
-    return this.dyeColor;
+  public GlowStickColor getGlowStickColor() {
+    return this.glowStickColor;
   }
 
   @Override
@@ -178,7 +178,7 @@ public class GlowStickItem extends Item {
     }
 
     ItemStack pickedUpStack = new ItemStack(blockState.getBlock().asItem());
-    setAge(pickedUpStack, blockState.getValue(GlowStickBlock.AGE));
+    setAge(pickedUpStack, BlockStateManager.getAge(blockState));
     level.removeBlock(blockPos, false);
 
     if (!player.getInventory().add(pickedUpStack)) {
@@ -212,10 +212,10 @@ public class GlowStickItem extends Item {
     }
 
     level.setBlockAndUpdate(
-      placementPos, placementState.setValue(GlowStickBlock.AGE, getAge(itemStack)));
+      placementPos, BlockStateManager.withAge(placementState, getAge(itemStack)));
     PlacementSounds.playPlacementSound(
       level, placementPos, level.getBlockState(placementPos.below()), level.getRandom());
-    RedstoneCapable.handleBlockPlacement(level, placementPos);
+    RedstoneCapable.recomputeChain(level, placementPos);
     if (player instanceof ServerPlayer serverPlayer) {
       CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, placementPos, itemStack);
     }
@@ -312,7 +312,7 @@ public class GlowStickItem extends Item {
     TooltipFlag tooltipFlag) {
     ToolTips.addTooltip(
       tooltipConsumer,
-      Component.translatable(TOOLTIP_PREFIX + "_" + this.dyeColor + ".description")
+      Component.translatable(TOOLTIP_PREFIX + "_" + this.glowStickColor.getName() + ".description")
         .withStyle(ChatFormatting.GRAY));
     ToolTips.addTooltip(
       tooltipConsumer,

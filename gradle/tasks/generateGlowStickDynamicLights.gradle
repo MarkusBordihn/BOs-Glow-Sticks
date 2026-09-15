@@ -1,0 +1,26 @@
+tasks.register("generateGlowStickDynamicLights") {
+  group = "build"
+  description = "Generates the LambDynamicLights item entries for all glow stick colors."
+
+  doLast {
+    def dynamicLightDir = new File("$glowStickAssetPath/dynamiclights/item")
+    if (!dynamicLightDir.exists()) {
+      dynamicLightDir.mkdirs()
+    }
+
+    def dynamicLight = { itemName ->
+      [item: "glow_sticks:${itemName}" as String, luminance: 15, water_sensitive: false]
+    }
+
+    glowStickColors.each { color ->
+      writeGlowStickJson(
+          new File(dynamicLightDir, "glow_stick_${color}.json"),
+          dynamicLight("glow_stick_${color}"))
+      writeGlowStickJson(
+          new File(dynamicLightDir, "creative_glow_stick_${color}.json"),
+          dynamicLight("creative_glow_stick_${color}"))
+    }
+
+    println "✔ Generated ${glowStickColors.size() * 2} glow stick dynamic light files"
+  }
+}
