@@ -20,11 +20,10 @@
 package de.markusbordihn.glowsticks.item;
 
 import de.markusbordihn.glowsticks.block.ModBlocks;
-import net.minecraft.world.item.DyeColor;
 
 public class CreativeGlowStickItemWrapper extends CreativeGlowStickItem {
 
-  public CreativeGlowStickItemWrapper(Properties properties, DyeColor dyeColor) {
-    super(properties, () -> ModBlocks.getCreativeGlowStickBlock(dyeColor), dyeColor);
+  public CreativeGlowStickItemWrapper(Properties properties, GlowStickColor glowStickColor) {
+    super(properties, () -> ModBlocks.getCreativeGlowStickBlock(glowStickColor), glowStickColor);
   }
 }

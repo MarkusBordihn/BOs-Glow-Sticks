@@ -20,9 +20,9 @@
 package de.markusbordihn.glowsticks.block;
 
 import de.markusbordihn.glowsticks.Constants;
+import de.markusbordihn.glowsticks.item.GlowStickColor;
 import java.util.EnumMap;
 import java.util.Map;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -43,41 +43,42 @@ public class ModBlocks {
       () ->
         new GlowStickLightWaterBlock(
           GlowStickBlockProperties.createLightBlockProperties("glow_stick_light_water")));
-  protected static final Map<DyeColor, DeferredBlock<Block>> GLOW_STICK_BLOCKS =
-    new EnumMap<>(DyeColor.class);
-  protected static final Map<DyeColor, DeferredBlock<Block>> CREATIVE_GLOW_STICK_BLOCKS =
-    new EnumMap<>(DyeColor.class);
+  protected static final Map<GlowStickColor, DeferredBlock<Block>> GLOW_STICK_BLOCKS =
+    new EnumMap<>(GlowStickColor.class);
+  protected static final Map<GlowStickColor, DeferredBlock<Block>> CREATIVE_GLOW_STICK_BLOCKS =
+    new EnumMap<>(GlowStickColor.class);
 
   static {
-    for (DyeColor dyeColor : DyeColor.values()) {
-      String colorName = dyeColor.getName();
+    for (GlowStickColor glowStickColor : GlowStickColor.values()) {
+      String colorName = glowStickColor.getName();
 
       String blockName = "glow_stick_" + colorName;
       GLOW_STICK_BLOCKS.put(
-        dyeColor,
+        glowStickColor,
         BLOCKS.register(
           blockName,
           () ->
             new GlowStickBlock(
-              GlowStickBlockProperties.createGlowStickBlockProperties(blockName), dyeColor)));
+              GlowStickBlockProperties.createGlowStickBlockProperties(blockName), glowStickColor)));
 
       String creativeBlockName = "creative_glow_stick_" + colorName;
       CREATIVE_GLOW_STICK_BLOCKS.put(
-        dyeColor,
+        glowStickColor,
         BLOCKS.register(
           creativeBlockName,
           () ->
             new CreativeGlowStickBlock(
               GlowStickBlockProperties.createCreativeGlowStickBlockProperties(creativeBlockName),
-              dyeColor)));
+              glowStickColor)));
     }
   }
 
-  public static DeferredBlock<Block> getGlowStickBlock(final DyeColor dyeColor) {
-    return GLOW_STICK_BLOCKS.get(dyeColor);
+  public static DeferredBlock<Block> getGlowStickBlock(final GlowStickColor glowStickColor) {
+    return GLOW_STICK_BLOCKS.get(glowStickColor);
   }
 
-  public static DeferredBlock<Block> getCreativeGlowStickBlock(final DyeColor dyeColor) {
-    return CREATIVE_GLOW_STICK_BLOCKS.get(dyeColor);
+  public static DeferredBlock<Block> getCreativeGlowStickBlock(
+    final GlowStickColor glowStickColor) {
+    return CREATIVE_GLOW_STICK_BLOCKS.get(glowStickColor);
   }
 }

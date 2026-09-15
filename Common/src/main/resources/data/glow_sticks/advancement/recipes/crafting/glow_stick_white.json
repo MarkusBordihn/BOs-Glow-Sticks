@@ -7,12 +7,12 @@
     ]
   },
   "criteria": {
-    "has_glass": {
+    "has_stained_glass": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": ["minecraft:white_stained_glass", "minecraft:glass"]
+            "items": "#glow_sticks:stained_glass/white"
           }
         ]
       }
@@ -33,6 +33,16 @@
         "recipe": "glow_sticks:glow_stick_white_from_stained_glass_white"
       }
     },
+    "has_glass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#glow_sticks:glass_blocks"
+          }
+        ]
+      }
+    },
     "has_the_recipe_from_glass": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
@@ -41,6 +51,12 @@
     }
   },
   "requirements": [
-    ["has_glass", "has_glow_item", "has_the_recipe", "has_the_recipe_from_glass"]
+    [
+      "has_stained_glass",
+      "has_glow_item",
+      "has_the_recipe",
+      "has_glass",
+      "has_the_recipe_from_glass"
+    ]
   ]
 }

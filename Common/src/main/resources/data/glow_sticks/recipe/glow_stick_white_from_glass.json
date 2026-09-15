@@ -3,7 +3,7 @@
   "category": "misc",
   "pattern": ["|#|", "|+|", "|#|"],
   "key": {
-    "#": "minecraft:glass",
+    "#": "#glow_sticks:glass_blocks",
     "|": "#glow_sticks:glass_panes",
     "+": "#glow_sticks:glow_item"
   },

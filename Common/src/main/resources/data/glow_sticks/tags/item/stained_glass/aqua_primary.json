@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:cyan_stained_glass",
+    {
+      "id": "dye_depot:aqua_stained_glass",
+      "required": false
+    }
+  ]
+}

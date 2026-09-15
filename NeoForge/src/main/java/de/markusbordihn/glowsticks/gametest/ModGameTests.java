@@ -30,6 +30,7 @@ public final class ModGameTests {
   private static final Identifier STRUCTURE = Identifier.parse("glow_sticks:gametest.3x3x3");
   private static final String DEFAULT_ENVIRONMENT = "glow_sticks:default";
   private static final int MAX_TICKS = 100;
+  private static final int EXTENDED_MAX_TICKS = 200;
 
   static {
     register("mod_registered", SmokeTest::testModRegistered);
@@ -56,6 +57,26 @@ public final class ModGameTests {
     register(
       "glow_stick_placed_in_water_is_waterlogged",
       GlowStickTests::testGlowStickPlacedInWaterIsWaterlogged);
+    register(
+      "glow_stick_lights_up_without_redstone",
+      GlowStickTests::testGlowStickLightsUpWithoutRedstone);
+    register("glow_stick_light_dims_with_age", GlowStickTests::testGlowStickLightDimsWithAge);
+    register(
+      "redstone_signal_lights_glow_stick_fully",
+      GlowStickTests::testRedstoneSignalLightsGlowStickFully);
+    register(
+      "unpowered_redstone_turns_glow_stick_off",
+      GlowStickTests::testUnpoweredRedstoneTurnsGlowStickOff);
+    register(
+      "glow_stick_light_follows_every_signal_strength",
+      GlowStickTests::testGlowStickLightFollowsEverySignalStrength,
+      EXTENDED_MAX_TICKS);
+    register(
+      "glow_stick_keeps_brightness_when_redstone_is_removed",
+      GlowStickTests::testGlowStickKeepsBrightnessWhenRedstoneIsRemoved);
+    register(
+      "creative_glow_stick_follows_redstone",
+      GlowStickTests::testCreativeGlowStickFollowsRedstone);
     register("redstone_chain_without_signal", GlowStickTests::testRedstoneChainWithoutSignal);
     register(
       "redstone_chain_released_when_source_removed",
@@ -90,12 +111,22 @@ public final class ModGameTests {
   }
 
   private static void register(String name, Consumer<GameTestHelper> testFunction) {
-    register(name, testFunction, DEFAULT_ENVIRONMENT);
+    register(name, testFunction, DEFAULT_ENVIRONMENT, MAX_TICKS);
   }
 
   private static void register(
     String name, Consumer<GameTestHelper> testFunction, String environment) {
-    TEST_ENTRIES.add(new TestEntry(TEST_FUNCTIONS.register(name, () -> testFunction), environment));
+    register(name, testFunction, environment, MAX_TICKS);
+  }
+
+  private static void register(String name, Consumer<GameTestHelper> testFunction, int maxTicks) {
+    register(name, testFunction, DEFAULT_ENVIRONMENT, maxTicks);
+  }
+
+  private static void register(
+    String name, Consumer<GameTestHelper> testFunction, String environment, int maxTicks) {
+    TEST_ENTRIES.add(
+      new TestEntry(TEST_FUNCTIONS.register(name, () -> testFunction), environment, maxTicks));
   }
 
   @SubscribeEvent
@@ -115,13 +146,18 @@ public final class ModGameTests {
         new FunctionGameTestInstance(
           testEntry.testFunction().getKey(),
           new TestData<>(
-            environments.get(testEntry.environment()), STRUCTURE, MAX_TICKS, 0, true)));
+            environments.get(testEntry.environment()),
+            STRUCTURE,
+            testEntry.maxTicks(),
+            0,
+            true)));
     }
   }
 
   private record TestEntry(
     DeferredHolder<Consumer<GameTestHelper>, Consumer<GameTestHelper>> testFunction,
-    String environment) {
+    String environment,
+    int maxTicks) {
 
   }
 }

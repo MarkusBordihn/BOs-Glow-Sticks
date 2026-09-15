@@ -1,9 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "pattern": ["|#|", "|+|", "|#|"],
+  "pattern": [
+    "|#|",
+    "|+|",
+    "|#|"
+  ],
   "key": {
-    "#": "minecraft:white_stained_glass",
+    "#": "#glow_sticks:stained_glass/white",
     "|": "#glow_sticks:glass_panes",
     "+": "#glow_sticks:glow_item"
   },

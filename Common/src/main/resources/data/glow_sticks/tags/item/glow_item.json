@@ -4,6 +4,10 @@
     "minecraft:glow_berries",
     "minecraft:glow_ink_sac",
     "minecraft:glow_lichen",
-    "minecraft:glowstone_dust"
+    "minecraft:glowstone_dust",
+    {
+      "id": "#c:dusts/glowstone",
+      "required": false
+    }
   ]
 }
