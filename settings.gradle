@@ -20,5 +20,8 @@ pluginManagement {
   }
 }
 
-rootProject.name = 'Glow Sticks 26.2'
-include("Common", "Fabric", "Forge", "NeoForge")
+rootProject.name = 'Glow Sticks 26.3'
+// Forge has no Minecraft 26.3 release yet, latest is 65.0.0 for 26.2. ForgeGradle resolves the
+// userdev artifact during configuration, so the subproject has to be excluded here, not per task.
+include("Common", "Fabric", "NeoForge")
+// include("Forge")

@@ -46,7 +46,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:creative_glow_stick_light_blue"
+        "recipes": "glow_sticks:creative_glow_stick_light_blue"
       }
     }
   },

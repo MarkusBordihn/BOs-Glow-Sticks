@@ -55,7 +55,7 @@ tasks.register("generateCreativeGlowStickRecipes") {
               ],
               has_the_recipe: [
                   trigger   : "minecraft:recipe_unlocked",
-                  conditions: [recipe: recipeId]
+                  conditions: [recipes: recipeId]
               ]
           ],
           requirements: [["has_glow_stick", "has_echo_shard", "has_the_recipe"]]

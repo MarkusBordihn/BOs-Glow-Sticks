@@ -19,8 +19,6 @@
 
 package de.markusbordihn.glowsticks.block;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.markusbordihn.glowsticks.block.glowstick.BlockStateManager;
 import de.markusbordihn.glowsticks.block.glowstick.FallingLightTrail;
 import de.markusbordihn.glowsticks.block.glowstick.LavaInteraction;
@@ -66,16 +64,6 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
   public static final IntegerProperty LEVEL =
     IntegerProperty.create("level", 0, RedstoneCapable.MAX_LEVEL);
 
-  public static final MapCodec<GlowStickBlock> CODEC =
-    RecordCodecBuilder.mapCodec(
-      instance ->
-        instance
-          .group(
-            propertiesCodec(),
-            GlowStickColor.CODEC
-              .fieldOf("glow_stick_color")
-              .forGetter(block -> block.glowStickColor))
-          .apply(instance, GlowStickBlock::new));
   public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 2, 14);
 
   private static final int PLACEMENT_TICK_DELAY = 2;
@@ -283,10 +271,5 @@ public class GlowStickBlock extends FallingBlock implements SimpleWaterloggedBlo
     }
 
     return BlockStateManager.getStateForPlacement(this, blockPlaceContext);
-  }
-
-  @Override
-  protected MapCodec<? extends FallingBlock> codec() {
-    return CODEC;
   }
 }

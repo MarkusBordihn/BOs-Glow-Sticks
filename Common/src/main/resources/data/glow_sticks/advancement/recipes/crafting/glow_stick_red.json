@@ -29,7 +29,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:glow_stick_red_from_stained_glass_red"
+        "recipes": "glow_sticks:glow_stick_red_from_stained_glass_red"
       }
     }
   },

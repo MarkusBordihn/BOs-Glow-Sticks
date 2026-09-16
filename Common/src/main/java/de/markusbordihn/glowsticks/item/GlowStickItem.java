@@ -40,6 +40,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -182,7 +183,7 @@ public class GlowStickItem extends Item {
     level.removeBlock(blockPos, false);
 
     if (!player.getInventory().add(pickedUpStack)) {
-      player.drop(pickedUpStack, false);
+      player.drop(pickedUpStack, false, Prediction.PREDICTED);
     }
     level.playSound(null, blockPos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.4F, 1.0F);
 

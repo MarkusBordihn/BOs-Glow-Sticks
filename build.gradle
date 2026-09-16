@@ -8,8 +8,9 @@ if (ghostRefScript.exists()) apply from: ghostRefScript
 
 tasks.register('runAllGameTests') {
   group = 'verification'
-  description = 'Runs Fabric, Forge and NeoForge game tests.'
-  dependsOn ':Fabric:runGameTest', ':Forge:runGameTestServer', ':NeoForge:runGameTestServer'
+  description = 'Runs Fabric and NeoForge game tests.'
+  dependsOn ':Fabric:runGameTest', ':NeoForge:runGameTestServer'
+  // ':Forge:runGameTestServer' — Forge is commented out in settings.gradle for 26.3.
 }
 
 subprojects {

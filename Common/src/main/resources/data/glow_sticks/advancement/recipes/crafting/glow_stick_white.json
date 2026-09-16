@@ -30,7 +30,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:glow_stick_white_from_stained_glass_white"
+        "recipes": "glow_sticks:glow_stick_white_from_stained_glass_white"
       }
     },
     "has_glass": {
@@ -46,7 +46,7 @@
     "has_the_recipe_from_glass": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:glow_stick_white_from_glass"
+        "recipes": "glow_sticks:glow_stick_white_from_glass"
       }
     }
   },

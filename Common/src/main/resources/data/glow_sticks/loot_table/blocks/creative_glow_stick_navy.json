@@ -10,11 +10,9 @@
           "name": "glow_sticks:creative_glow_stick_navy"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
     }
   ]
 }

@@ -13,12 +13,15 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - Fixed the crafting advancements not triggering for the 16 new glow stick colors.
 - Fixed falling glow sticks staying dark until they landed on the ground.
 - Fixed throwing a glow stick doing nothing instead of spawning the thrown glow stick.
+- Fixed broken glow sticks still dropping when destroyed by an explosion.
+- Changed the mod to Minecraft 26.3.
 - Changed "Get all glow sticks" to require all 32 colors instead of the first 16.
 - Changed all glow stick recipes to accept glass, glass panes and glowstone dust from other mods.
   Modded stained glass is only accepted from mods that are listed by name, like Dye Depot.
 - Changed already placed glow sticks to restart with a full lifetime after the update.
 - Changed redstone control to always recharge glow sticks and freeze their lifetime.
 - Removed `glowStickRedstoneFreezesLifetime` and `glowStickRedstoneRecharges`.
+- Removed the Forge build until a Forge release for Minecraft 26.3 is available.
 - Added 16 new glow stick colors, craftable from two different vanilla stained glass colors.
 - Added a short fading light trail behind falling and thrown glow sticks.
 - Improved the waypoint search performance while sneaking with a glow stick in hand.
@@ -73,4 +76,4 @@ For the full changelog, please go to the [GitHub History][history] instead.
 - First release of reworked Glow Sticks mods for Fabric, Forge and NeoForge.
 - General Code optimizations and improvements.
 
-[history]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/commits/26.2
+[history]: https://github.com/MarkusBordihn/BOs-Glow-Sticks/commits/26.3

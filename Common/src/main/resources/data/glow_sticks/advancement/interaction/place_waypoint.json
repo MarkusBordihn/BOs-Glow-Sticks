@@ -19,14 +19,12 @@
     "place_glow_stick": {
       "trigger": "minecraft:placed_block",
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {
-              "items": "#glow_sticks:glow_sticks"
-            }
+        "location": {
+          "type": "minecraft:match_tool",
+          "predicate": {
+            "items": "#glow_sticks:glow_sticks"
           }
-        ]
+        }
       }
     }
   },

@@ -26,9 +26,7 @@ tasks.register("generateGlowStickLootTables") {
                           name: "glow_sticks:${itemName}"
                       ]
                   ],
-                  conditions: [
-                      [condition: "minecraft:survives_explosion"]
-                  ]
+                  condition: [type: "minecraft:survives_explosion"]
               ]
           ]
       ]

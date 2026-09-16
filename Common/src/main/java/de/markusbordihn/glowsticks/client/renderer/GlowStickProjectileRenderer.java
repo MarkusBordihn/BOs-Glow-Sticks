@@ -70,8 +70,8 @@ public class GlowStickProjectileRenderer
     SubmitNodeCollector submitNodeCollector,
     CameraRenderState cameraRenderState) {
     poseStack.pushPose();
-    poseStack.mulPose(cameraRenderState.orientation);
-    poseStack.mulPose(Axis.ZP.rotationDegrees(renderState.ageInTicks * SPIN_DEGREES_PER_TICK));
+    poseStack.rotate(cameraRenderState.orientation);
+    poseStack.rotateDegrees(Axis.ZP, renderState.ageInTicks * SPIN_DEGREES_PER_TICK);
     renderState.item.submit(
       poseStack,
       submitNodeCollector,

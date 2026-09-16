@@ -30,7 +30,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "glow_sticks:glow_stick_maroon_from_stained_glass_mix"
+        "recipes": "glow_sticks:glow_stick_maroon_from_stained_glass_mix"
       }
     }
   },

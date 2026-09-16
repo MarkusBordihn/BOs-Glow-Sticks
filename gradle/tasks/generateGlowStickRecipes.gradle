@@ -23,7 +23,7 @@ tasks.register("generateGlowStickRecipes") {
       [trigger: "minecraft:inventory_changed", conditions: [items: [itemPredicate]]]
     }
     def recipeUnlocked = { recipeId ->
-      [trigger: "minecraft:recipe_unlocked", conditions: [recipe: recipeId]]
+      [trigger: "minecraft:recipe_unlocked", conditions: [recipes: recipeId]]
     }
 
     def writeRecipe = { fileName, recipe ->
