@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 This change log includes the summarized changes.
 For the full changelog, please go to the [GitHub History][history] instead.
 
+### 7.5.1
+
+- Fixed #10 by preventing a crash when other mods list glow stick tooltips in the background.
+
 ### 7.5.0
 
 - Fixed #9 by using the stained glass from dye mods like Dye Depot for the new glow stick colors.
